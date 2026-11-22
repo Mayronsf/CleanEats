@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Financeiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8; --green-primary: #5BB033; --green-dark: #2D6A1F;
+  --orange: #F4A261; --ink: #1A2E1A; --gray-700: #4A5A4A;
+  --gray-500: #8A958A; --gray-300: #C8D2C8; --gray-100: #F0F3EE;
+  --gray-50: #FAFCF7; --white: #FFFFFF; --prot: #E76F51;
+  --blue: #457B9D; --blue-dark: #2D5A75; --blue-light: #7FAFCD;
+  --blue-bg: #E0F2FE; --blue-bg-deep: #C0E1F0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F5F8FB; color: var(--ink); -webkit-font-smoothing: antialiased; width: 1440px; margin: 0 auto; overflow-x: hidden; }
+.icon { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; flex-shrink: 0; }
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar { background: white; border-right: 1.5px solid #ECEEF2; padding: 28px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 999px; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 12px 24px; text-decoration: none; border-bottom: 1px solid #ECEEF2; margin-bottom: 18px; }
+.logo-mark { width: 38px; height: 38px; background: var(--green-primary); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; font-size: 19px; font-weight: 700; flex-shrink: 0; }
+.logo-text { font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+.role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--blue-bg); color: var(--blue-dark); padding: 6px 12px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 12px 18px; }
+.nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); font-weight: 800; padding: 10px 14px 6px; }
+.nav-list { display: flex; flex-direction: column; gap: 2px; list-style: none; margin-bottom: 14px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--gray-700); border-radius: 12px; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+.nav-item:hover { background: var(--blue-bg); color: var(--blue-dark); }
+.nav-item.active { background: var(--blue); color: white; }
+.nav-item.active .nav-icon-wrap { background: rgba(255,255,255,0.15); color: white; }
+.nav-icon-wrap { width: 28px; height: 28px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-700); }
+.nav-icon-wrap .icon { width: 15px; height: 15px; }
+.nav-item .badge { margin-left: auto; background: var(--orange); color: white; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; }
+.sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid #ECEEF2; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; text-decoration: none; color: inherit; }
+.sidebar-user:hover { background: var(--gray-50); }
+.sidebar-user-avatar { width: 38px; height: 38px; border-radius: 50%; background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&q=80'); background-size: cover; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-shrink: 0; position: relative; }
+.sidebar-user-dot { position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: var(--green-primary); border-radius: 50%; border: 2px solid white; }
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { font-size: 13px; font-weight: 800; }
+.sidebar-user-crn { font-size: 10px; color: var(--gray-500); }
+.sidebar-user-more { color: var(--gray-500); }
+
+/* MAIN */
+.main { padding: 32px; overflow-y: auto; }
+
+/* TOPBAR */
+.topbar { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.topbar-left h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.topbar-left p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.search-input-bar { display: flex; align-items: center; gap: 10px; background: white; border: 1.5px solid #ECEEF2; padding: 10px 16px; border-radius: 999px; width: 240px; }
+.search-input-bar input { flex: 1; border: none; background: none; outline: none; font-family: inherit; font-size: 13px; }
+.icon-btn { width: 38px; height: 38px; border-radius: 50%; background: white; border: 1.5px solid #ECEEF2; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); position: relative; text-decoration: none; }
+.icon-btn:hover { border-color: var(--blue); }
+.notif-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--prot); border-radius: 50%; border: 2px solid white; }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card { background: white; border: 1.5px solid #ECEEF2; border-radius: 20px; padding: 22px; position: relative; overflow: hidden; }
+.stat-card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.stat-card-val { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px; }
+.stat-card-val small { font-size: 13px; color: var(--gray-500); }
+.stat-card-label { font-size: 12px; color: var(--gray-500); font-weight: 700; }
+.stat-card-trend { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.trend-up { background: var(--green-bg); color: var(--green-dark); }
+.trend-down { background: #FDE2DC; color: var(--prot); }
+
+/* CARDS */
+.card { background: white; border: 1.5px solid #ECEEF2; border-radius: 22px; padding: 26px; }
+.card-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; gap: 12px; }
+.card-title { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+.card-sub { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+.card-action { font-size: 12px; font-weight: 800; color: var(--blue); text-decoration: none; }
+
+/* GRID */
+.dashboard-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+/* CHART BARS */
+.chart-bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; height: 180px; align-items: flex-end; margin-bottom: 16px; }
+.chart-col { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.chart-bar { width: 100%; background: linear-gradient(180deg, var(--blue-light), var(--blue)); border-radius: 8px 8px 4px 4px; min-height: 8px; position: relative; }
+.chart-bar-val { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; white-space: nowrap; }
+.chart-label { font-size: 11px; color: var(--gray-500); font-weight: 700; }
+
+/* TRANSACTIONS TABLE */
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; padding: 12px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); font-weight: 800; border-bottom: 1.5px solid #ECEEF2; }
+tbody td { padding: 14px; border-bottom: 1px solid #ECEEF2; }
+tbody tr:hover { background: var(--gray-50); }
+.status-badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+.status-paid { background: var(--green-bg); color: var(--green-dark); }
+.status-pending { background: #FEF3E5; color: var(--orange); }
+
+/* BANK INFO */
+.bank-card { display: flex; gap: 16px; align-items: center; padding: 16px; background: var(--gray-50); border-radius: 14px; }
+.bank-icon { width: 44px; height: 44px; background: var(--blue-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--blue-dark); }
+.bank-info { flex: 1; }
+.bank-name { font-size: 14px; font-weight: 700; }
+.bank-details { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+/* RESPONSIVE */
+@media (max-width: 1023px) { body { width: 100%; } .app { grid-template-columns: 1fr; } .sidebar { display: none; } .stats-grid { grid-template-columns: 1fr 1fr; } .dashboard-grid { grid-template-columns: 1fr; } }
+@media (max-width: 767px) { body { width: 100%; } .main { padding: 16px; } .stats-grid { grid-template-columns: 1fr; } .stat-card-val { font-size: 22px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="01-splash.html" class="sidebar-logo"><div class="logo-mark">C</div><div class="logo-text"><span>Clean</span><span class="green">Eats</span></div></a>
+    <div class="role-badge"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Painel Nutri</div>
+    <div class="nav-label">Principal</div>
+    <ul class="nav-list">
+      <li><a href="26-nutri-home.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Dashboard</a></li>
+      <li><a href="27-nutri-triagens.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Triagens <span class="badge">3</span></a></li>
+      <li><a href="28-nutri-clientes.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Meus clientes</a></li>
+      <li><a href="30-nutri-editor-plano.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span> Editor de plano</a></li>
+      <li><a href="31-nutri-catalogo.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Catálogo</a></li>
+      <li><a href="32-nutri-prescricao.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> Prescrições</a></li>
+      <li><a href="33-nutri-chat.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Mensagens <span class="badge">5</span></a></li>
+    </ul>
+    <div class="nav-label">Negócio</div>
+    <ul class="nav-list">
+      <li><a href="34-nutri-financeiro.html" class="nav-item active"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Financeiro</a></li>
+      <li><a href="35-nutri-perfil-profissional.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Meu perfil</a></li>
+    </ul>
+    <div class="sidebar-bottom">
+      <a href="35-nutri-perfil-profissional.html" class="sidebar-user">
+        <div class="sidebar-user-avatar"><span class="sidebar-user-dot"></span></div>
+        <div class="sidebar-user-info"><div class="sidebar-user-name">Dra. Ana Souza</div><div class="sidebar-user-crn">CRN-6 PE · 12345/P</div></div>
+        <span class="sidebar-user-more"><svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Financeiro</h1>
+        <p>Maio de 2025 · Resumo de receitas e repasses</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-input-bar">
+          <svg class="icon-sm" style="color:var(--gray-500)" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar transação...">
+        </div>
+        <a href="#" class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-dot"></span></a>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:var(--green-bg); color:var(--green-dark);">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="stat-card-val">R$ 4.320</div>
+        <div class="stat-card-label">Receita bruta</div>
+        <span class="stat-card-trend trend-up">+18% vs abril</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:var(--blue-bg); color:var(--blue-dark);">
+          <svg class="icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div class="stat-card-val">R$ 3.888</div>
+        <div class="stat-card-label">Receita líquida</div>
+        <span class="stat-card-trend trend-up">+15% vs abril</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:#FEF3E5; color:var(--orange);">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-card-val">24</div>
+        <div class="stat-card-label">Clientes pagantes</div>
+        <span class="stat-card-trend trend-up">+4 este mês</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:#FDE2DC; color:var(--prot);">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div class="stat-card-val">R$ 180</div>
+        <div class="stat-card-label">Ticket médio</div>
+        <span class="stat-card-trend trend-up">+R$ 12</span>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="dashboard-grid">
+      <!-- CHART -->
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Receita mensal</div><div class="card-sub">Últimos 6 meses</div></div>
+          <a href="#" class="card-action">Exportar</a>
+        </div>
+        <div class="chart-bars">
+          <div class="chart-col"><div class="chart-bar" style="height:45%"><span class="chart-bar-val">R$ 2.4k</span></div><span class="chart-label">Dez</span></div>
+          <div class="chart-col"><div class="chart-bar" style="height:55%"><span class="chart-bar-val">R$ 2.9k</span></div><span class="chart-label">Jan</span></div>
+          <div class="chart-col"><div class="chart-bar" style="height:60%"><span class="chart-bar-val">R$ 3.2k</span></div><span class="chart-label">Fev</span></div>
+          <div class="chart-col"><div class="chart-bar" style="height:58%"><span class="chart-bar-val">R$ 3.1k</span></div><span class="chart-label">Mar</span></div>
+          <div class="chart-col"><div class="chart-bar" style="height:70%"><span class="chart-bar-val">R$ 3.7k</span></div><span class="chart-label">Abr</span></div>
+          <div class="chart-col"><div class="chart-bar" style="height:85%"><span class="chart-bar-val">R$ 4.3k</span></div><span class="chart-label">Mai</span></div>
+        </div>
+      </div>
+
+      <!-- BANK INFO -->
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Dados bancários</div><div class="card-sub">Conta para recebimento</div></div>
+        </div>
+        <div class="bank-card" style="margin-bottom:16px;">
+          <div class="bank-icon"><svg class="icon-lg" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <div class="bank-info">
+            <div class="bank-name">Nubank · Conta Corrente</div>
+            <div class="bank-details">Ag 0001 · Cc 8273651-9</div>
+          </div>
+        </div>
+        <div class="bank-card">
+          <div class="bank-icon"><svg class="icon-lg" viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg></div>
+          <div class="bank-info">
+            <div class="bank-name">PIX</div>
+            <div class="bank-details">ana.souza.nutri@email.com</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px dashed #ECEEF2;">
+          <div style="font-size:12px; color:var(--gray-500); font-weight:700; margin-bottom:10px;">Próximo repasse</div>
+          <div style="font-size:22px; font-weight:800; color:var(--green-dark);">R$ 1.440,00</div>
+          <div style="font-size:12px; color:var(--gray-500); margin-top:4px;">Previsto para 20/05/2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS TABLE -->
+    <div class="card">
+      <div class="card-head">
+        <div><div class="card-title">Transações recentes</div><div class="card-sub">Últimos 30 dias</div></div>
+        <a href="#" class="card-action">Ver todas</a>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Plano</th>
+              <th>Valor</th>
+              <th>Data</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:700;">Maria Braga</td>
+              <td>Pro Mensal</td>
+              <td>R$ 189,90</td>
+              <td>18/05/2025</td>
+              <td><span class="status-badge status-paid">Pago</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">Carlos Jota</td>
+              <td>Pro Mensal</td>
+              <td>R$ 189,90</td>
+              <td>17/05/2025</td>
+              <td><span class="status-badge status-paid">Pago</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">Lucia Silva</td>
+              <td>Premium</td>
+              <td>R$ 249,90</td>
+              <td>15/05/2025</td>
+              <td><span class="status-badge status-paid">Pago</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">Roberto Oliveira</td>
+              <td>Pro Mensal</td>
+              <td>R$ 189,90</td>
+              <td>14/05/2025</td>
+              <td><span class="status-badge status-pending">Pendente</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;">Juliana Ferraz</td>
+              <td>Premium</td>
+              <td>R$ 249,90</td>
+              <td>12/05/2025</td>
+              <td><span class="status-badge status-paid">Pago</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

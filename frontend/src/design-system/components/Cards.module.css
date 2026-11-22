@@ -1,0 +1,141 @@
+/* Prato */
+.prato {
+  background: var(--white);
+  border-radius: var(--radius-card-lg);
+  padding: 20px;
+  border: 1.5px solid var(--line);
+  transition: all var(--dur);
+  position: relative;
+}
+.prato:hover { transform: translateY(-8px); border-color: var(--green-primary); box-shadow: var(--shadow-hover); }
+.pratoImg {
+  width: 100%;
+  aspect-ratio: 1.1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--green-bg);
+  position: relative;
+  margin-bottom: 18px;
+}
+.pratoImg img { width: 100%; height: 100%; object-fit: cover; }
+.pratoTag {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--white);
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 700;
+  color: var(--green-dark);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.fav {
+  position: absolute; top: 12px; right: 12px;
+  width: 38px; height: 38px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-500);
+  cursor: pointer; border: none;
+}
+.fav:hover, .favAtivo { color: var(--fat); }
+.notaBadge {
+  position: absolute; bottom: 12px; left: 12px;
+  background: var(--ink); color: var(--white);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+}
+.pratoRest {
+  font-size: 12px; color: var(--gray-500); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.pontoVerde { width: 6px; height: 6px; background: var(--green-primary); border-radius: 50%; }
+.pratoNome { font-size: 19px; font-weight: 800; margin-bottom: 14px; letter-spacing: -0.01em; }
+.pratoNome a { text-decoration: none; }
+.pratoNome a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.pratoNome a:focus-visible { outline: none; }
+.prato:has(.pratoNome a:focus-visible) { box-shadow: var(--ring-focus); border-color: var(--green-primary); }
+.pratoRodape {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 16px; margin-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+}
+.cta, .fav {
+  position: relative; z-index: 1;
+}
+.cta {
+  padding: 10px 18px;
+  background: var(--green-primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: all var(--dur-fast);
+}
+.cta:hover { background: var(--green-dark); }
+
+/* Restaurante */
+.rest {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1.5px solid var(--line);
+  transition: all var(--dur);
+  display: flex; flex-direction: column;
+  text-decoration: none; color: inherit;
+}
+.rest:hover { transform: translateY(-6px); border-color: var(--green-primary); box-shadow: var(--shadow-hover); }
+.rest:focus-visible { outline: none; box-shadow: var(--ring-focus); border-color: var(--green-primary); }
+.restCapa { width: 100%; height: 180px; position: relative; overflow: hidden; background: var(--green-bg); }
+.restCapa img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.rest:hover .restCapa img { transform: scale(1.05); }
+.restTags { position: absolute; top: 14px; left: 14px; display: flex; gap: 6px; flex-wrap: wrap; max-width: 60%; }
+.restTag { background: var(--white); padding: 4px 10px; border-radius: var(--radius-pill); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--green-dark); }
+.restTagDestaque { background: var(--orange); color: var(--white); }
+.restStatus {
+  position: absolute; bottom: 14px; right: 14px;
+  background: var(--ink); color: var(--white);
+  padding: 5px 12px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.restStatusPonto { width: 7px; height: 7px; background: var(--green-accent); border-radius: 50%; }
+.fechado { background: var(--gray-700); }
+.fechado .restStatusPonto { background: var(--gray-300); }
+.restCorpo { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
+.restNomeLinha { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.restLogo {
+  width: 36px; height: 36px;
+  background: var(--green-bg);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; color: var(--green-dark); font-size: 12px; flex-shrink: 0;
+}
+.restNome { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; flex: 1; min-width: 0; }
+.restNota { background: var(--green-bg); padding: 4px 10px; border-radius: var(--radius-pill); }
+.restMeta { display: flex; gap: 16px; font-size: 12px; color: var(--gray-700); margin-bottom: 14px; flex-wrap: wrap; }
+.restMeta span { display: inline-flex; align-items: center; gap: 4px; }
+.restCozinhas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.restCozinha { padding: 4px 10px; background: var(--gray-50); border-radius: var(--radius-pill); font-size: 11px; font-weight: 700; color: var(--gray-700); }
+.restRodape {
+  margin-top: auto; padding-top: 14px;
+  border-top: 1px dashed var(--line-strong);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.restInfo { font-size: 12px; color: var(--gray-700); }
+.restInfo strong { color: var(--ink); font-weight: 800; }
+.restCta { padding: 8px 18px; background: var(--green-primary); color: var(--white); border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+/* Stat */
+.stat { background: var(--white); border: 1.5px solid var(--line-panel); border-radius: var(--radius-card); padding: 22px; }
+.statIcone { width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.stat-verde { background: var(--green-bg); color: var(--green-dark); }
+.stat-azul { background: var(--blue-bg); color: var(--blue-dark); }
+.stat-coral { background: var(--coral-bg); color: var(--coral-dark); }
+.stat-laranja { background: var(--orange-bg); color: #A8571C; }
+.statValor { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.statRotulo { font-size: 12px; color: var(--gray-500); font-weight: 700; }
+.statTendencia { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: var(--radius-pill); }
+.positiva { background: var(--green-bg); color: var(--green-dark); }
+.negativa { background: var(--danger-bg); color: var(--danger-ink); }

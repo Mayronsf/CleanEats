@@ -1,0 +1,827 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Avaliar pedido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8;
+  --green-bg-deep: #D4ED9F;
+  --green-primary: #5BB033;
+  --green-dark: #2D6A1F;
+  --green-accent: #8BC34A;
+  --orange: #F4A261;
+  --ink: #1A2E1A;
+  --gray-700: #4A5A4A;
+  --gray-500: #8A958A;
+  --gray-300: #C8D2C8;
+  --gray-100: #F0F3EE;
+  --white: #FFFFFF;
+  --kcal: #F4A261;
+  --prot: #E76F51;
+  --fiber: #52B788;
+  --blue: #457B9D;
+  --fat: #C7402E;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: rgba(26,46,26,0.5);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  width: 1440px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* BACKGROUND (page mockup behind modal) */
+.bg-page {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(91,176,51,0.05), transparent 40%),
+    #FAFCF7;
+  opacity: 0.5;
+}
+.bg-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(91,176,51,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,176,51,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,46,26,0.65);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+/* MODAL */
+.modal {
+  background: white;
+  border-radius: 32px;
+  max-width: 720px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 32px 64px rgba(0,0,0,0.3);
+  margin: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid #E0E0E0;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--gray-700);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.modal-close:hover { background: white; }
+
+/* HEADER */
+.modal-head {
+  background: linear-gradient(135deg, var(--green-bg) 0%, var(--green-bg-deep) 100%);
+  padding: 40px 48px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.modal-head::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 240px; height: 240px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+.modal-head-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.modal-dish-img {
+  width: 88px; height: 88px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 4px solid white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+.modal-dish-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.modal-head-info { min-width: 0; }
+.modal-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--green-dark);
+  margin-bottom: 10px;
+}
+.modal-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.modal-title .script {
+  font-family: 'Caveat', cursive;
+  color: var(--green-primary);
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+.modal-sub {
+  font-size: 13px;
+  color: var(--gray-700);
+}
+.modal-sub .code {
+  font-family: monospace;
+  font-weight: 700;
+  background: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 6px;
+  font-size: 11px;
+}
+
+/* BODY */
+.modal-body {
+  padding: 32px 48px 36px;
+}
+
+/* SECTION */
+.review-section {
+  margin-bottom: 28px;
+}
+.review-section-label {
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.review-section-label .req {
+  color: var(--prot);
+}
+
+/* STAR RATING */
+.stars-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.star-btn {
+  width: 54px; height: 54px;
+  border: 2px solid #F0F0F0;
+  background: white;
+  border-radius: 14px;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #E0E0E0;
+  flex: 1;
+  max-width: 64px;
+}
+.star-btn:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+}
+.star-btn.active {
+  color: var(--orange);
+  background: #FBF1D2;
+  border-color: var(--orange);
+}
+.rating-feedback {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FBF1D2;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.rating-feedback-emoji { font-size: 22px; }
+.rating-feedback-text { line-height: 1.3; }
+.rating-feedback-text small { display: block; font-size: 11px; color: var(--gray-500); font-weight: 600; margin-top: 2px; }
+
+/* CRITERIA SLIDERS */
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.criterion {
+  display: grid;
+  grid-template-columns: 130px 1fr 60px;
+  gap: 16px;
+  align-items: center;
+}
+.criterion-label {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.criterion-label .emoji { font-size: 18px; }
+.criterion-stars {
+  display: flex;
+  gap: 4px;
+}
+.criterion-star {
+  width: 28px; height: 28px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: #E0E0E0;
+  padding: 0;
+}
+.criterion-star.active { color: var(--orange); }
+.criterion-value {
+  text-align: right;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: monospace;
+  color: var(--gray-700);
+}
+
+/* TAGS */
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.tag {
+  padding: 10px 14px;
+  background: white;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--gray-700);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.tag:hover { border-color: var(--ink); }
+.tag.selected {
+  background: var(--green-bg);
+  border-color: var(--green-primary);
+  color: var(--green-dark);
+}
+.tag.selected::before { content: '<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'; font-weight: 800; }
+.tag.negative.selected {
+  background: #FDE2DC;
+  border-color: var(--prot);
+  color: var(--prot);
+}
+
+/* COMMENT TEXTAREA */
+.comment-wrap {
+  position: relative;
+}
+.comment-input {
+  width: 100%;
+  padding: 16px 18px;
+  background: #FAFCF7;
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.55;
+}
+.comment-input:focus {
+  outline: none;
+  border-color: var(--green-primary);
+  background: white;
+}
+.comment-input::placeholder { color: var(--gray-500); }
+.comment-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 11px;
+  color: var(--gray-500);
+  font-weight: 700;
+  background: white;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+/* PHOTO UPLOAD */
+.photo-upload-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.photo-thumb {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background: #FAFCF7;
+  border: 1.5px dashed #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--gray-500);
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.photo-thumb:hover {
+  border-color: var(--green-primary);
+  background: white;
+}
+.photo-thumb-emoji { font-size: 22px; }
+.photo-thumb.has-img {
+  border-style: solid;
+  border-color: transparent;
+}
+.photo-thumb.has-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.photo-thumb-remove {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 22px; height: 22px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ANONYMOUS TOGGLE */
+.anon-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #FAFCF7;
+  border-radius: 14px;
+  margin-bottom: 8px;
+}
+.toggle {
+  width: 44px; height: 24px;
+  background: var(--gray-300);
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: left 0.2s;
+}
+.toggle.on { background: var(--green-primary); }
+.toggle.on::after { left: 22px; }
+.anon-info { flex: 1; min-width: 0; }
+.anon-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+.anon-desc {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+/* FOOTER */
+.modal-footer {
+  background: #FAFCF7;
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.footer-info {
+  font-size: 11px;
+  color: var(--gray-500);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-actions {
+  display: flex;
+  gap: 10px;
+}
+.btn-skip {
+  padding: 14px 22px;
+  background: white;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--ink);
+  text-decoration: none;
+}
+.btn-skip:hover { border-color: var(--ink); }
+.btn-submit {
+  padding: 14px 28px;
+  background: var(--green-primary);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(91,176,51,0.25);
+}
+.btn-submit:hover { background: var(--green-dark); }
+
+
+/* ===================== TABLET ===================== */
+@media (max-width: 1023px) {
+  body { width: 100%; }
+  .modal-overlay { padding: 24px; }
+  .modal-head { padding: 32px 36px 28px; }
+  .modal-body { padding: 28px 36px 32px; }
+  .modal-footer { padding: 18px 36px; }
+
+  .modal-title { font-size: 22px; }
+
+  .criterion {
+    grid-template-columns: 100px 1fr 50px;
+    gap: 12px;
+  }
+  .tags-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 767px) {
+  body { width: 100%; }
+  .bg-page::before { background-size: 30px 30px; }
+
+  .modal-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+  .modal {
+    border-radius: 22px 22px 0 0;
+    margin-top: auto;
+    max-width: 100%;
+    align-self: stretch;
+  }
+  .modal-close {
+    width: 36px; height: 36px;
+    top: 16px; right: 16px;
+    font-size: 16px;
+  }
+
+  .modal-head { padding: 28px 22px 24px; }
+  .modal-head::before { display: none; }
+  .modal-head-content { grid-template-columns: 64px 1fr; gap: 14px; }
+  .modal-dish-img { width: 64px; height: 64px; border-radius: 16px; border-width: 3px; }
+  .modal-title { font-size: 18px; }
+  .modal-sub { font-size: 12px; }
+  .modal-sub .code { font-size: 10px; }
+  .modal-eyebrow { font-size: 10px; }
+
+  .modal-body { padding: 24px 22px 28px; }
+
+  .review-section { margin-bottom: 24px; }
+  .review-section-label { font-size: 12px; margin-bottom: 12px; }
+
+  /* Stars mobile - keep horizontal but smaller */
+  .stars-row { gap: 6px; }
+  .star-btn {
+    width: 44px; height: 44px;
+    font-size: 22px;
+    border-radius: 12px;
+  }
+
+  .rating-feedback { padding: 8px 14px; font-size: 12px; }
+  .rating-feedback-emoji { font-size: 18px; }
+
+  /* Criteria mobile - vertical */
+  .criterion {
+    grid-template-columns: 1fr auto;
+    gap: 8px 14px;
+  }
+  .criterion-label { font-size: 12px; }
+  .criterion-stars { grid-column: 1 / 3; }
+  .criterion-star { width: 26px; height: 26px; font-size: 20px; }
+  .criterion-value { font-size: 12px; }
+
+  /* Tags mobile - 2 cols */
+  .tags-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .tag { padding: 8px 12px; font-size: 11px; }
+
+  /* Comment */
+  .comment-input { padding: 14px 16px; font-size: 13px; min-height: 90px; }
+
+  /* Photos */
+  .photo-upload-row { grid-template-columns: repeat(3, 1fr); }
+
+  /* Footer */
+  .modal-footer {
+    padding: 16px 22px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .footer-info { text-align: center; }
+  .footer-actions { flex-direction: column; gap: 8px; }
+  .btn-skip, .btn-submit { width: 100%; justify-content: center; padding: 14px; }
+}
+
+@media (max-width: 380px) {
+  .modal-title { font-size: 16px; }
+  .star-btn { width: 38px; height: 38px; font-size: 18px; }
+  .tags-grid { grid-template-columns: 1fr; }
+  .photo-upload-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* ICON BASE */
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
+}
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.icon-xl { width: 28px; height: 28px; stroke-width: 1.8; }
+</style>
+</head>
+<body>
+
+<!-- Background mockup -->
+<div class="bg-page"></div>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay">
+  <div class="modal">
+
+    <!-- CLOSE -->
+    <a href="19-cliente-historico.html" class="modal-close"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></a>
+
+    <!-- HEAD -->
+    <div class="modal-head">
+      <div class="modal-head-content">
+        <div class="modal-dish-img">
+          <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=85" alt="Salmão com Quinoa">
+        </div>
+        <div class="modal-head-info">
+          <div class="modal-eyebrow"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg> Como foi?</div>
+          <h2 class="modal-title">Avalie seu <span class="script">Salmão</span><br>com Quinoa</h2>
+          <p class="modal-sub">Mar & Terra · 06 Mai 2026 <span class="code">#CE-4701</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="modal-body">
+
+      <!-- NOTA GERAL -->
+      <section class="review-section">
+        <div class="review-section-label">
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg> Nota geral <span class="req">*</span>
+        </div>
+        <div class="stars-row">
+          <button class="star-btn"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+          <button class="star-btn active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+          <button class="star-btn active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+          <button class="star-btn active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+          <button class="star-btn active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+        </div>
+        <div class="rating-feedback">
+          <span class="rating-feedback-emoji"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></span>
+          <div class="rating-feedback-text">
+            <strong>Excelente!</strong>
+            <small>Sua avaliação ajuda outros clientes a escolher</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- CRITÉRIOS -->
+      <section class="review-section">
+        <div class="review-section-label">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Avalie por critério (opcional)
+        </div>
+        <div class="criteria-list">
+
+          <div class="criterion">
+            <div class="criterion-label"><span class="emoji"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span> Sabor</div>
+            <div class="criterion-stars">
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+            </div>
+            <div class="criterion-value">5/5</div>
+          </div>
+
+          <div class="criterion">
+            <div class="criterion-label"><span class="emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></span> Apresentação</div>
+            <div class="criterion-stars">
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+            </div>
+            <div class="criterion-value">4/5</div>
+          </div>
+
+          <div class="criterion">
+            <div class="criterion-label"><span class="emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M16 16v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/><polyline points="10 9 10 15"/><polyline points="7 12 13 12"/></svg></span> Porção</div>
+            <div class="criterion-stars">
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+            </div>
+            <div class="criterion-value">5/5</div>
+          </div>
+
+          <div class="criterion">
+            <div class="criterion-label"><span class="emoji"><svg class="icon" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span> Entrega</div>
+            <div class="criterion-stars">
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+            </div>
+            <div class="criterion-value">5/5</div>
+          </div>
+
+          <div class="criterion">
+            <div class="criterion-label"><span class="emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></span> Temperatura</div>
+            <div class="criterion-stars">
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star active"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+              <button class="criterion-star"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg></button>
+            </div>
+            <div class="criterion-value">4/5</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAGS -->
+      <section class="review-section">
+        <div class="review-section-label">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> O que mais gostou? (escolha quantas quiser)
+        </div>
+        <div class="tags-grid">
+          <button class="tag selected">Bem temperado</button>
+          <button class="tag selected">Ingredientes frescos</button>
+          <button class="tag selected">Macros corretos</button>
+          <button class="tag">Boa apresentação</button>
+          <button class="tag">Embalagem boa</button>
+          <button class="tag">Entrega rápida</button>
+          <button class="tag">Vale o preço</button>
+          <button class="tag selected">Repetiria</button>
+          <button class="tag">Recomendaria</button>
+        </div>
+      </section>
+
+      <!-- COMENTÁRIO -->
+      <section class="review-section">
+        <div class="review-section-label">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comentário (opcional)
+        </div>
+        <div class="comment-wrap">
+          <textarea class="comment-input" placeholder="Conte com mais detalhes sobre sua experiência. Outras pessoas vão ler isso pra decidir.">Salmão grelhado no ponto perfeito, quinoa soltinha e o tempero estava no nível certo. Chegou quentinho e bem embalado. Tô consumindo essa marmita semanalmente — bate certinho com minhas metas de proteína.</textarea>
+          <span class="comment-counter">232 / 500</span>
+        </div>
+      </section>
+
+      <!-- FOTOS -->
+      <section class="review-section">
+        <div class="review-section-label">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Adicione fotos do seu pedido (opcional)
+        </div>
+        <div class="photo-upload-row">
+          <div class="photo-thumb has-img">
+            <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=300&q=80" alt="">
+            <button class="photo-thumb-remove"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+          <div class="photo-thumb has-img">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80" alt="">
+            <button class="photo-thumb-remove"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+          <div class="photo-thumb">
+            <span class="photo-thumb-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+            Adicionar foto
+          </div>
+          <div class="photo-thumb">
+            <span class="photo-thumb-emoji">+</span>
+            Adicionar mais
+          </div>
+        </div>
+      </section>
+
+      <!-- ANÔNIMO -->
+      <div class="anon-row">
+        <div class="toggle"></div>
+        <div class="anon-info">
+          <div class="anon-title">Avaliar como anônimo</div>
+          <div class="anon-desc">Seu nome e foto não aparecerão na avaliação pública</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="modal-footer">
+      <div class="footer-info">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Sua avaliação será revisada antes da publicação
+      </div>
+      <div class="footer-actions">
+        <a href="19-cliente-historico.html" class="btn-skip">Pular por agora</a>
+        <a href="19-cliente-historico.html" class="btn-submit">
+          Publicar avaliação
+          <span style="font-size:16px;"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>

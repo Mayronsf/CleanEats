@@ -1,0 +1,53 @@
+/* Badge */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.tom-novo { background: var(--blue-bg); color: var(--blue-dark); }
+.tom-preparo { background: var(--orange-bg); color: #A8571C; }
+.tom-pronto { background: var(--green-bg); color: var(--green-dark); }
+.tom-entregue { background: var(--gray-100); color: var(--gray-700); }
+.tom-perigo { background: var(--danger-bg); color: var(--danger-ink); }
+.tom-neutro { background: var(--gray-100); color: var(--gray-700); }
+.tom-destaque { background: var(--orange); color: var(--white); }
+.tom-ouro { background: var(--gold); color: var(--ink); }
+
+/* Chip */
+.chip {
+  padding: 10px 20px;
+  background: var(--gray-100);
+  border-radius: var(--radius-pill);
+  font-size: 14px; font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  border: none;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.chip:hover { background: var(--accent-bg); color: var(--accent-dark); }
+.chip:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+.chipAtivo, .chipAtivo:hover { background: var(--accent); color: var(--white); }
+.chipContagem { font-size: 11px; font-weight: 800; opacity: 0.7; }
+.filtro { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.filtroRotulo { font-size: 13px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 8px; }
+
+/* Preço */
+.preco { font-weight: 800; color: var(--ink); letter-spacing: -0.02em; display: inline-flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+.preco small { font-size: 0.58em; }
+.preco-sm { font-size: 16px; }
+.preco-md { font-size: 24px; }
+.preco-lg { font-size: 36px; }
+.riscado { font-size: 0.55em; color: var(--gray-500); font-weight: 600; }
+
+/* Estrelas */
+.nota { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; }
+.estrelaIcone { color: var(--orange); }
+.notaTotal { color: var(--gray-500); font-weight: 600; }
+.estrelas { display: flex; gap: 6px; }
+.estrelaBtn { background: none; border: none; cursor: pointer; color: var(--gray-300); padding: 2px; border-radius: var(--radius-xs); transition: transform var(--dur-fast), color var(--dur-fast); }
+.estrelaBtn:hover { transform: scale(1.1); }
+.cheia { color: var(--orange); }
+
+/* Quantidade */
+.qtd { display: inline-flex; align-items: center; background: var(--white); border-radius: var(--radius-pill); border: 1.5px solid var(--line-strong); padding: 6px; }
+.qtdBtn { width: 36px; height: 36px; border-radius: 50%; background: var(--gray-100); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.qtdBtn:hover:not(:disabled) { background: var(--green-bg); }
+.qtdBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.qtdNum { padding: 0 16px; font-weight: 800; font-size: 16px; min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }

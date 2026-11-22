@@ -1,0 +1,31 @@
+.campo { margin-bottom: 20px; }
+.rotulo { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.entrada {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--field-bg);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-field);
+  font-size: 15px;
+  transition: all var(--dur-fast);
+}
+.entrada::placeholder { color: var(--gray-500); }
+.entrada:focus { outline: none; border-color: var(--accent); background: var(--white); box-shadow: var(--ring-focus); }
+.entrada:disabled { opacity: 0.6; cursor: not-allowed; }
+.comErro { border-color: var(--fat); background: var(--white); }
+.erro { margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--danger-ink); }
+.dica { margin-top: 6px; font-size: 12px; color: var(--gray-700); }
+
+.senha { position: relative; }
+.senha .entrada { padding-right: 52px; }
+.alternar {
+  position: absolute;
+  right: 10px;
+  top: 37px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: var(--radius-sm);
+  color: var(--gray-500);
+  cursor: pointer;
+}
+.alternar:hover { color: var(--ink); }

@@ -1,0 +1,55 @@
+.pagina { max-width: 1440px; margin: 0 auto; padding: 48px var(--page-pad-x) 120px; background: var(--gray-50); min-height: 100vh; }
+.topo { margin-bottom: 56px; }
+.titulo { font-size: 56px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin: 40px 0 16px; }
+.sub { font-size: 16px; color: var(--gray-700); max-width: 64ch; line-height: 1.6; }
+
+.secao { margin-bottom: 72px; }
+.secaoTitulo { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1.5px solid var(--line-strong); }
+
+.grupoCores { margin-bottom: 24px; }
+.rotuloGrupo { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 12px; }
+.amostras { display: flex; flex-wrap: wrap; gap: 16px; }
+.amostra { display: flex; flex-direction: column; gap: 6px; width: 140px; font-size: 12px; }
+.cor { height: 64px; border-radius: var(--radius-field); border: 1px solid rgba(0, 0, 0, 0.06); }
+.amostra code { font-weight: 700; }
+.hex { color: var(--gray-700); font-variant-numeric: tabular-nums; }
+
+.tipoDisplay { font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 16px; }
+.tipoHeadline { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+.tipoTitulo { font-size: 19px; font-weight: 800; margin-bottom: 8px; }
+.tipoCorpo { font-size: 15px; color: var(--gray-700); max-width: 68ch; line-height: 1.6; margin-bottom: 12px; }
+.tipoRotulo { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 12px; }
+.formatos { font-size: 13px; font-weight: 600; }
+
+.linha { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 24px; }
+.grade2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-bottom: 24px; }
+.grade3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-bottom: 24px; align-items: start; }
+.grade4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; padding-top: 24px; align-items: stretch; }
+.pilha { display: flex; flex-direction: column; gap: 16px; }
+
+.cartaoClaro { background: var(--white); border: 1.5px solid var(--line); border-radius: var(--radius-card); padding: 24px; margin-bottom: 24px; }
+.cartaoEscuro { background: var(--ink); color: var(--white); border-radius: var(--radius-xl); padding: 28px; position: relative; overflow: hidden; }
+.cartaoEscuro::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: var(--green-primary); opacity: 0.2; border-radius: 50%; }
+.cartaoEscuroTitulo { font-size: 18px; font-weight: 800; position: relative; }
+
+.moldura { border: 1.5px solid var(--line); border-radius: var(--radius-card); overflow: hidden; margin-bottom: 24px; background: var(--white); }
+.moldura header { position: relative; }
+.molduraSidebar { border: 1.5px solid var(--line-panel); border-radius: var(--radius-card); overflow: hidden; height: 620px; background: var(--white); }
+.molduraSidebar aside { height: 100%; position: relative; }
+.nota { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-700); }
+
+.rodape { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line-strong); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--gray-700); }
+
+@media (max-width: 1023px) {
+  .grade3, .grade4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .molduraSidebar { height: auto; min-height: 120px; }
+}
+@media (max-width: 767px) {
+  .titulo { font-size: 40px; }
+  .grade2, .grade3, .grade4 { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Na vitrine, o botão de abrir o drawer fica dentro da moldura (nos painéis reais ele é fixo no topo) */
+.molduraSidebar { position: relative; }
+.molduraSidebar > button[aria-label='Abrir menu do painel'] { position: absolute; top: 12px; left: 12px; }
+.amostra { width: 120px; }

@@ -1,0 +1,35 @@
+# Configuração do CleanEats API.
+# Nenhum segredo aqui: tudo vem de variáveis de ambiente (veja backend/.env.example)
+# ou de application-local.yml (ignorado pelo git).
+spring:
+  application:
+    name: cleaneats-api
+  config:
+    import: optional:file:./application-local.yml
+  datasource:
+    # Supabase > Project Settings > Database > Connection string (Session pooler, porta 5432)
+    url: ${SUPABASE_DB_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${SUPABASE_DB_USER:postgres}
+    password: ${SUPABASE_DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none   # o schema é versionado em supabase/migrations
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: America/Recife
+  jackson:
+    time-zone: America/Recife
+
+server:
+  port: ${PORT:8080}
+
+cleaneats:
+  supabase:
+    url: ${SUPABASE_URL:http://localhost:54321}
+    jwt-secret: ${SUPABASE_JWT_SECRET:}
+  cors:
+    origens: ${CORS_ORIGENS:http://localhost:5173}

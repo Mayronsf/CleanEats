@@ -1,0 +1,1249 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Cliente · Breno Filho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8;
+  --green-bg-deep: #D4ED9F;
+  --green-primary: #5BB033;
+  --green-dark: #2D6A1F;
+  --orange: #F4A261;
+  --ink: #1A2E1A;
+  --gray-700: #4A5A4A;
+  --gray-500: #8A958A;
+  --gray-300: #C8D2C8;
+  --gray-100: #F0F3EE;
+  --gray-50: #FAFCF7;
+  --white: #FFFFFF;
+  --prot: #E76F51;
+  --kcal: #F4A261;
+  --carb: #E9C46A;
+  --fat: #C7402E;
+  --fiber: #52B788;
+
+  --blue: #457B9D;
+  --blue-dark: #2D5A75;
+  --blue-light: #7FAFCD;
+  --blue-bg: #E0F2FE;
+  --blue-bg-deep: #C0E1F0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #F5F8FB;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  width: 1440px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: white;
+  border-right: 1.5px solid #ECEEF2;
+  padding: 28px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 999px; }
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px 24px;
+  text-decoration: none;
+  border-bottom: 1px solid #ECEEF2;
+  margin-bottom: 18px;
+}
+.logo-mark {
+  width: 38px; height: 38px;
+  background: var(--green-primary);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 19px;
+  font-weight: 700;
+  position: relative;
+  flex-shrink: 0;
+}
+.logo-mark::before {
+  content: '';
+  position: absolute;
+  bottom: 6px; left: 6px; right: 6px;
+  height: 5px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2px;
+}
+.logo-text {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--blue-bg);
+  color: var(--blue-dark);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 12px 18px;
+  align-self: flex-start;
+}
+
+.nav-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-500);
+  font-weight: 800;
+  padding: 10px 14px 6px;
+}
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  margin-bottom: 14px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  text-decoration: none;
+  color: var(--gray-700);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.nav-item:hover {
+  background: var(--blue-bg);
+  color: var(--blue-dark);
+}
+.nav-item.active {
+  background: var(--blue);
+  color: white;
+}
+.nav-item.active .nav-emoji-wrap { background: rgba(255,255,255,0.15); }
+.nav-emoji-wrap {
+  width: 28px; height: 28px;
+  background: var(--gray-100);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.nav-item .badge {
+  margin-left: auto;
+  background: var(--orange);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+.nav-item.active .badge { background: white; color: var(--blue); }
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #ECEEF2;
+}
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+.sidebar-user:hover { background: var(--gray-50); }
+.sidebar-user-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&q=80');
+  background-size: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+  position: relative;
+}
+.sidebar-user-dot {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 10px; height: 10px;
+  background: var(--green-primary);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name {
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-user-crn {
+  font-size: 10px;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+.sidebar-user-more { font-size: 18px; color: var(--gray-500); }
+
+/* MAIN */
+.main {
+  padding: 32px 48px 80px;
+  min-width: 0;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.back-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 1.5px solid #ECEEF2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 16px;
+}
+.back-btn:hover { border-color: var(--blue); }
+.breadcrumb-text {
+  font-size: 13px;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+.breadcrumb-text a {
+  color: var(--gray-700);
+  text-decoration: none;
+}
+.breadcrumb-text a:hover { color: var(--blue); }
+.breadcrumb-text .sep { color: var(--gray-300); margin: 0 8px; }
+.breadcrumb-text .current { color: var(--ink); font-weight: 800; }
+.menu-btn {
+  display: none;
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: var(--gray-100);
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* CLIENT HEADER */
+.client-header {
+  background: white;
+  border: 1.5px solid #ECEEF2;
+  border-radius: 22px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.client-h-avatar {
+  width: 92px; height: 92px;
+  border-radius: 26px;
+  background: var(--blue-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--blue-dark);
+  font-size: 32px;
+  flex-shrink: 0;
+  position: relative;
+}
+.client-h-status {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 20px; height: 20px;
+  background: var(--green-primary);
+  border-radius: 50%;
+  border: 3px solid white;
+}
+
+.client-h-info { min-width: 0; }
+.client-h-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.client-h-name {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.client-h-tier {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--green-bg);
+  color: var(--green-dark);
+}
+.client-h-meta {
+  font-size: 13px;
+  color: var(--gray-700);
+  margin-bottom: 12px;
+}
+.client-h-meta .dot { color: var(--gray-300); margin: 0 6px; }
+.client-h-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.client-h-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.tag-objetivo { background: #FDE2DC; color: var(--prot); }
+.tag-restricao { background: var(--blue-bg); color: var(--blue-dark); }
+.tag-neutra { background: var(--gray-50); color: var(--gray-700); }
+
+.client-h-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+.btn-primary {
+  padding: 12px 22px;
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: var(--blue-dark); }
+.btn-secondary {
+  padding: 11px 22px;
+  background: white;
+  color: var(--ink);
+  border: 1.5px solid #ECEEF2;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.btn-secondary:hover { border-color: var(--ink); }
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1.5px solid #ECEEF2;
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 14px 22px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--gray-500);
+  position: relative;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.tab:hover { color: var(--ink); }
+.tab.active {
+  color: var(--blue);
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 16px;
+  right: 16px;
+  height: 3px;
+  background: var(--blue);
+  border-radius: 999px 999px 0 0;
+}
+
+/* CONTENT GRID */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 24px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  border: 1.5px solid #ECEEF2;
+  border-radius: 22px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.card:last-child { margin-bottom: 0; }
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 22px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.card-title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-sub {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 4px;
+}
+.card-action {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+/* ADESÃO — HERO STAT */
+.adesao-block {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding-bottom: 22px;
+  border-bottom: 1px dashed #ECEEF2;
+  margin-bottom: 22px;
+}
+.adesao-info { min-width: 0; }
+.adesao-eyebrow {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+}
+.adesao-val {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 6px;
+  color: var(--green-dark);
+}
+.adesao-val small { font-size: 18px; color: var(--gray-500); font-weight: 600; }
+.adesao-desc {
+  font-size: 13px;
+  color: var(--gray-700);
+}
+.adesao-desc strong { color: var(--green-dark); font-weight: 800; }
+
+/* Adesão ring */
+.adesao-ring {
+  width: 110px; height: 110px;
+  position: relative;
+  flex-shrink: 0;
+}
+.adesao-ring svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+.adesao-ring-bg { stroke: var(--gray-100); stroke-width: 10; fill: none; }
+.adesao-ring-fg { stroke: var(--green-primary); stroke-width: 10; fill: none; stroke-linecap: round; }
+.adesao-ring-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* DIAS */
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.wd {
+  text-align: center;
+  padding: 12px 4px;
+  border-radius: 12px;
+  background: var(--gray-50);
+}
+.wd-name {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.wd-num {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.wd-dots {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+.wd-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gray-300);
+}
+.wd-dot.done { background: var(--green-primary); }
+.wd-dot.missed { background: var(--prot); }
+.wd.today { background: var(--blue-bg); }
+.wd.today .wd-num { color: var(--blue-dark); }
+
+/* DIÁRIO ALIMENTAR — lista de pedidos recentes */
+.diary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.diary-item {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--gray-50);
+  border-radius: 14px;
+}
+.diary-img {
+  width: 64px; height: 64px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--green-bg);
+  flex-shrink: 0;
+}
+.diary-img img { width: 100%; height: 100%; object-fit: cover; }
+.diary-info { min-width: 0; }
+.diary-meal {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+.diary-name {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.diary-macros {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--gray-700);
+}
+.diary-macros span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.diary-macros .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.diary-time {
+  text-align: right;
+  flex-shrink: 0;
+}
+.diary-time-hour {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.diary-time-date {
+  font-size: 10px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* SIDE - GOALS & EVOLUÇÃO */
+.goal-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ECEEF2;
+}
+.goal-row:last-child { border-bottom: none; }
+.goal-dot {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.goal-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+.goal-detail {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+.goal-target {
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+.goal-target small { color: var(--gray-500); font-size: 11px; font-weight: 600; }
+
+/* WEIGHT MINI CHART */
+.weight-block {
+  padding: 18px;
+  background: var(--gray-50);
+  border-radius: 16px;
+  margin-bottom: 18px;
+}
+.weight-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.weight-curr {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.weight-curr small { font-size: 13px; color: var(--gray-500); font-weight: 600; }
+.weight-delta {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--green-bg);
+  color: var(--green-dark);
+}
+.weight-chart {
+  height: 50px;
+  position: relative;
+}
+.weight-chart svg { width: 100%; height: 100%; }
+.weight-foot {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 10px;
+}
+.weight-foot strong { color: var(--ink); font-weight: 800; }
+
+
+/* ===================== TABLET ===================== */
+@media (max-width: 1023px) {
+  body { width: 100%; }
+  .app { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    border-right: none;
+    box-shadow: 16px 0 32px rgba(0,0,0,0.1);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .menu-btn { display: flex; align-items: center; justify-content: center; }
+
+  .main { padding: 24px 28px 80px; }
+
+  .client-header {
+    grid-template-columns: 80px 1fr;
+    padding: 22px;
+    gap: 18px;
+  }
+  .client-h-actions {
+    grid-column: 1 / 3;
+    flex-direction: row;
+    padding-top: 14px;
+    border-top: 1px dashed #ECEEF2;
+    align-items: stretch;
+  }
+  .btn-primary, .btn-secondary { flex: 1; justify-content: center; }
+
+  .content-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 767px) {
+  body { width: 100%; }
+
+  .main { padding: 18px 16px 80px; }
+
+  .breadcrumb-text { font-size: 11px; }
+  .back-btn { width: 36px; height: 36px; font-size: 14px; }
+
+  .client-header { padding: 18px; border-radius: 18px; }
+  .client-h-avatar { width: 64px; height: 64px; font-size: 22px; border-radius: 18px; }
+  .client-h-name { font-size: 20px; }
+  .client-h-meta { font-size: 12px; }
+  .client-h-tag { font-size: 10px; padding: 3px 8px; }
+
+  .tab { padding: 12px 16px; font-size: 12px; }
+
+  .card { padding: 20px; border-radius: 18px; }
+  .card-title { font-size: 16px; }
+
+  .adesao-block { grid-template-columns: 1fr; gap: 16px; text-align: center; }
+  .adesao-ring { margin: 0 auto; width: 90px; height: 90px; }
+  .adesao-val { font-size: 34px; }
+
+  .wd-num { font-size: 14px; }
+  .wd-name { font-size: 9px; }
+  .wd { padding: 8px 4px; }
+
+  .diary-item { grid-template-columns: 54px 1fr; gap: 12px; padding: 12px; }
+  .diary-img { width: 54px; height: 54px; }
+  .diary-time {
+    grid-column: 1 / 3;
+    text-align: right;
+    padding-top: 8px;
+    border-top: 1px dashed #ECEEF2;
+  }
+  .diary-time-hour { font-size: 13px; }
+  .diary-macros { font-size: 10px; gap: 8px; }
+
+  .weight-curr { font-size: 22px; }
+}
+
+@media (max-width: 380px) {
+  .client-h-name { font-size: 18px; }
+}
+
+/* ICON BASE */
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
+}
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.icon-xl { width: 28px; height: 28px; stroke-width: 1.8; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a href="01-splash.html" class="sidebar-logo">
+      <div class="logo-mark">C</div>
+      <div class="logo-text"><span>Clean</span><span class="green">Eats</span></div>
+    </a>
+
+    <div class="role-badge"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Painel Nutri</div>
+
+    <div class="nav-label">Principal</div>
+    <ul class="nav-list">
+      <li><a href="26-nutri-home.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Dashboard
+      </a></li>
+      <li><a href="27-nutri-triagens.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> Triagens
+        <span class="badge">3</span>
+      </a></li>
+      <li><a href="28-nutri-clientes.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Meus clientes
+      </a></li>
+      <li><a href="29-nutri-cliente-perfil.html" class="nav-item active">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Acompanhamento
+      </a></li>
+    </ul>
+
+    <div class="nav-label">Ferramentas</div>
+    <ul class="nav-list">
+      <li><a href="30-nutri-editor-plano.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span> Editor de plano
+      </a></li>
+      <li><a href="31-nutri-catalogo.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span> Catálogo
+      </a></li>
+      <li><a href="32-nutri-prescricao.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Prescrições
+      </a></li>
+      <li><a href="33-nutri-mensagens.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span> Mensagens
+        <span class="badge">5</span>
+      </a></li>
+    </ul>
+
+    <div class="nav-label">Negócio</div>
+    <ul class="nav-list">
+      <li><a href="34-nutri-financeiro.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Financeiro
+      </a></li>
+      <li><a href="35-nutri-perfil.html" class="nav-item">
+        <span class="nav-emoji-wrap"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Meu perfil
+      </a></li>
+    </ul>
+
+    <div class="sidebar-bottom">
+      <a href="35-nutri-perfil.html" class="sidebar-user">
+        <div class="sidebar-user-avatar">
+          <span class="sidebar-user-dot"></span>
+        </div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">Dra. Ana Souza</div>
+          <div class="sidebar-user-crn">CRN-6 PE · 12345/P</div>
+        </div>
+        <span class="sidebar-user-more">⋯</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+      <a href="28-nutri-clientes.html" class="back-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg></a>
+      <div class="breadcrumb-text">
+        <a href="28-nutri-clientes.html">Meus clientes</a>
+        <span class="sep">/</span>
+        <span class="current">Breno Filho</span>
+      </div>
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.add('open')"><svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
+
+    <!-- CLIENT HEADER -->
+    <section class="client-header">
+      <div class="client-h-avatar">
+        BF
+        <span class="client-h-status"></span>
+      </div>
+      <div class="client-h-info">
+        <div class="client-h-name-row">
+          <h1 class="client-h-name">Breno Filho</h1>
+          <span class="client-h-tier">Pro</span>
+        </div>
+        <div class="client-h-meta">
+          23 anos <span class="dot">·</span> 78kg · 1,78m · IMC 24.6 <span class="dot">·</span> Cliente desde fev/2026
+        </div>
+        <div class="client-h-tags">
+          <span class="client-h-tag tag-objetivo"><svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Ganho de massa</span>
+          <span class="client-h-tag tag-restricao"><svg class="icon" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><rect x="5" y="3" width="11" height="18" rx="1"/></svg> Sem lactose</span>
+          <span class="client-h-tag tag-neutra"><svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Treina 4x/sem</span>
+        </div>
+      </div>
+      <div class="client-h-actions">
+        <a href="30-nutri-editor-plano.html" class="btn-primary">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar plano
+        </a>
+        <a href="33-nutri-mensagens.html" class="btn-secondary">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Enviar mensagem
+        </a>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <a href="#" class="tab active"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Visão geral</a>
+      <a href="30-nutri-editor-plano.html" class="tab"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Plano alimentar</a>
+      <a href="#" class="tab"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Pedidos</a>
+      <a href="32-nutri-prescricao.html" class="tab"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Prescrições</a>
+      <a href="33-nutri-mensagens.html" class="tab"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Mensagens</a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-grid">
+
+      <!-- LEFT - ADESÃO + DIÁRIO -->
+      <div>
+
+        <!-- ADESÃO -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="card-title"><svg class="icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Adesão ao plano</h3>
+              <p class="card-sub">Últimos 7 dias · semana atual</p>
+            </div>
+            <a href="#" class="card-action">Ver histórico <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+
+          <div class="adesao-block">
+            <div class="adesao-info">
+              <div class="adesao-eyebrow">Adesão da semana</div>
+              <div class="adesao-val">92<small>%</small></div>
+              <p class="adesao-desc">
+                <strong>Excelente.</strong> Bateu meta de proteína em 6 dos 7 dias. Manteve disciplina mesmo no fim de semana.
+              </p>
+            </div>
+            <div class="adesao-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="adesao-ring-bg" cx="50" cy="50" r="42" />
+                <circle class="adesao-ring-fg" cx="50" cy="50" r="42"
+                  stroke-dasharray="264" stroke-dashoffset="21" />
+              </svg>
+              <div class="adesao-ring-num">92%</div>
+            </div>
+          </div>
+
+          <!-- WEEK DAYS -->
+          <div class="week-days">
+            <div class="wd">
+              <div class="wd-name">Seg</div>
+              <div class="wd-num">12</div>
+              <div class="wd-dots">
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+              </div>
+            </div>
+            <div class="wd">
+              <div class="wd-name">Ter</div>
+              <div class="wd-num">13</div>
+              <div class="wd-dots">
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+              </div>
+            </div>
+            <div class="wd today">
+              <div class="wd-name">Qua</div>
+              <div class="wd-num">14</div>
+              <div class="wd-dots">
+                <span class="wd-dot done"></span>
+                <span class="wd-dot done"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+              </div>
+            </div>
+            <div class="wd">
+              <div class="wd-name">Qui</div>
+              <div class="wd-num">15</div>
+              <div class="wd-dots">
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+              </div>
+            </div>
+            <div class="wd">
+              <div class="wd-name">Sex</div>
+              <div class="wd-num">16</div>
+              <div class="wd-dots">
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+              </div>
+            </div>
+            <div class="wd">
+              <div class="wd-name">Sáb</div>
+              <div class="wd-num">17</div>
+              <div class="wd-dots">
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+              </div>
+            </div>
+            <div class="wd">
+              <div class="wd-name">Dom</div>
+              <div class="wd-num">18</div>
+              <div class="wd-dots">
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+                <span class="wd-dot"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DIÁRIO ALIMENTAR -->
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <h3 class="card-title"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Diário alimentar</h3>
+              <p class="card-sub">Últimas refeições registradas via pedido</p>
+            </div>
+            <a href="#" class="card-action">Ver todos <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+
+          <div class="diary-list">
+
+            <div class="diary-item">
+              <div class="diary-img"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80" alt=""></div>
+              <div class="diary-info">
+                <div class="diary-meal">Almoço · Sabor Natural</div>
+                <div class="diary-name">Frango Grelhado Fitness</div>
+                <div class="diary-macros">
+                  <span><span class="dot" style="background:var(--kcal);"></span>420 kcal</span>
+                  <span><span class="dot" style="background:var(--prot);"></span>38g prot</span>
+                </div>
+              </div>
+              <div class="diary-time">
+                <div class="diary-time-hour">12:35</div>
+                <div class="diary-time-date">Hoje</div>
+              </div>
+            </div>
+
+            <div class="diary-item">
+              <div class="diary-img"><img src="https://images.unsplash.com/photo-1517959105821-eaf2591984ca?w=200&q=80" alt=""></div>
+              <div class="diary-info">
+                <div class="diary-meal">Café · FitFood</div>
+                <div class="diary-name">Tapioca com Ovo e Banana</div>
+                <div class="diary-macros">
+                  <span><span class="dot" style="background:var(--kcal);"></span>320 kcal</span>
+                  <span><span class="dot" style="background:var(--prot);"></span>18g prot</span>
+                </div>
+              </div>
+              <div class="diary-time">
+                <div class="diary-time-hour">07:12</div>
+                <div class="diary-time-date">Hoje</div>
+              </div>
+            </div>
+
+            <div class="diary-item">
+              <div class="diary-img"><img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&q=80" alt=""></div>
+              <div class="diary-info">
+                <div class="diary-meal">Jantar · Mar & Terra</div>
+                <div class="diary-name">Salmão com Quinoa</div>
+                <div class="diary-macros">
+                  <span><span class="dot" style="background:var(--kcal);"></span>480 kcal</span>
+                  <span><span class="dot" style="background:var(--prot);"></span>35g prot</span>
+                </div>
+              </div>
+              <div class="diary-time">
+                <div class="diary-time-hour">19:48</div>
+                <div class="diary-time-date">Ontem</div>
+              </div>
+            </div>
+
+            <div class="diary-item">
+              <div class="diary-img"><img src="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=200&q=80" alt=""></div>
+              <div class="diary-info">
+                <div class="diary-meal">Lanche · Açaí Club</div>
+                <div class="diary-name">Açaí Proteico</div>
+                <div class="diary-macros">
+                  <span><span class="dot" style="background:var(--kcal);"></span>350 kcal</span>
+                  <span><span class="dot" style="background:var(--prot);"></span>25g prot</span>
+                </div>
+              </div>
+              <div class="diary-time">
+                <div class="diary-time-hour">15:42</div>
+                <div class="diary-time-date">Ontem</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT - METAS + PESO -->
+      <div>
+
+        <!-- METAS -->
+        <section class="card">
+          <div class="card-head" style="margin-bottom: 14px;">
+            <div>
+              <h3 class="card-title"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Metas atuais</h3>
+              <p class="card-sub">Definidas no plano</p>
+            </div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-dot" style="background:#FEF3E5;"><svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+            <div>
+              <div class="goal-name">Calorias</div>
+              <div class="goal-detail">Diárias · ganho de massa</div>
+            </div>
+            <div class="goal-target">2.200 <small>kcal</small></div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-dot" style="background:#FDE2DC;"><svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div>
+              <div class="goal-name">Proteína</div>
+              <div class="goal-detail">~1.8g/kg corporal</div>
+            </div>
+            <div class="goal-target">140 <small>g</small></div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-dot" style="background:#FBF1D2;"><svg class="icon" viewBox="0 0 24 24"><path d="M2 22L12 12"/><path d="M12 12c2-2 4-2 6-1s4 1 6-1"/><path d="M12 12c-2-2-2-4-1-6s1-4-1-6"/></svg></div>
+            <div>
+              <div class="goal-name">Carboidrato</div>
+              <div class="goal-detail">Pré e pós-treino</div>
+            </div>
+            <div class="goal-target">240 <small>g</small></div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-dot" style="background:#E0F2DD;"><svg class="icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></div>
+            <div>
+              <div class="goal-name">Fibras</div>
+              <div class="goal-detail">Vegetais + frutas</div>
+            </div>
+            <div class="goal-target">30 <small>g</small></div>
+          </div>
+
+          <div class="goal-row">
+            <div class="goal-dot" style="background:var(--blue-bg);"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
+            <div>
+              <div class="goal-name">Hidratação</div>
+              <div class="goal-detail">~32ml por kg</div>
+            </div>
+            <div class="goal-target">2.5 <small>L</small></div>
+          </div>
+        </section>
+
+        <!-- EVOLUÇÃO DE PESO -->
+        <section class="card">
+          <div class="card-head" style="margin-bottom: 14px;">
+            <div>
+              <h3 class="card-title"><svg class="icon" viewBox="0 0 24 24"><path d="M16 16v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/><polyline points="10 9 10 15"/><polyline points="7 12 13 12"/></svg> Evolução de peso</h3>
+              <p class="card-sub">Últimos 3 meses</p>
+            </div>
+          </div>
+
+          <div class="weight-block">
+            <div class="weight-row">
+              <div class="weight-curr">78,2 <small>kg</small></div>
+              <span class="weight-delta"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg> +2,4 kg</span>
+            </div>
+            <div class="weight-chart">
+              <svg viewBox="0 0 200 50" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#5BB033" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#5BB033" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M 0 36 L 25 32 L 50 30 L 75 26 L 100 22 L 125 20 L 150 15 L 175 13 L 200 10 L 200 50 L 0 50 Z"
+                  fill="url(#chartGrad)"/>
+                <path d="M 0 36 L 25 32 L 50 30 L 75 26 L 100 22 L 125 20 L 150 15 L 175 13 L 200 10"
+                  fill="none" stroke="var(--green-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="200" cy="10" r="4" fill="var(--green-primary)" stroke="white" stroke-width="2"/>
+              </svg>
+            </div>
+            <p class="weight-foot">
+              Inicial em fev/26: <strong>75,8 kg</strong> · Meta: <strong>82 kg até nov/26</strong>
+            </p>
+          </div>
+
+          <a href="#" class="btn-secondary" style="width:100%; justify-content:center;">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Registrar nova medição
+          </a>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>

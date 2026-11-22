@@ -1,0 +1,124 @@
+/*
+ * CleanEats — tokens extraídos do CSS das telas HTML (telas-html/).
+ * Fonte da verdade: as telas. Não invente valores novos aqui; documente em DESIGN.md.
+ */
+:root {
+  /* Verde (marca + acento do cliente) */
+  --green-bg: #E8F5D8;
+  --green-bg-deep: #D4ED9F;
+  --green-primary: #5BB033;
+  --green-dark: #2D6A1F;
+  --green-accent: #8BC34A;
+
+  /* Azul-aço (acento da nutricionista) */
+  --blue: #457B9D;
+  --blue-dark: #2D5A75;
+  --blue-light: #7FAFCD;
+  --blue-bg: #E0F2FE;
+  --blue-bg-deep: #C0E1F0;
+
+  /* Coral (acento do restaurante) */
+  --coral: #E07856;
+  --coral-light: #F0A080;
+  --coral-dark: #C2543A;
+  --coral-bg: #FDE8E0;
+
+  /* Destaques */
+  --orange: #F4A261;
+  --orange-bg: #FEF3E5;
+  --gold: #C9A961;
+  --warning-bg: #FEF7E0;
+  --warning-border: #FCE89A;
+  --warning-ink: #5A4A1A;
+  --danger-bg: #FDECEC;
+  --danger-ink: #9B2C2C;
+
+  /* Macros — cores fixas */
+  --kcal: #F4A261;
+  --prot: #E76F51;
+  --carb: #E9C46A;
+  --fat: #C7402E;
+  --fiber: #52B788;
+
+  /* Neutros (base verde-acinzentada) */
+  --ink: #1A2E1A;
+  --ink-soft: #2D3A2D;
+  --gray-700: #4A5A4A;
+  --gray-500: #8A958A;
+  --gray-300: #C8D2C8;
+  --gray-100: #F0F3EE;
+  --gray-50: #FAFCF7;
+  --field-bg: #F7F9F5;
+  --white: #FFFFFF;
+  --line: #F0F0F0;
+  --line-strong: #E0E0E0;
+  --line-panel: #ECEEF2;
+
+  /* Acento do contexto atual (sobrescrito por .tema-nutri / .tema-restaurante) */
+  --accent: var(--green-primary);
+  --accent-dark: var(--green-dark);
+  --accent-bg: var(--green-bg);
+  --accent-bg-deep: var(--green-bg-deep);
+
+  /* Tipografia */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-script: 'Caveat', cursive;
+
+  /* Raios */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-field: 14px;
+  --radius-lg: 18px;
+  --radius-card: 20px;
+  --radius-card-lg: 22px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-avatar: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.08);
+  --shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.2);
+  --shadow-cta: 0 8px 20px rgba(91, 176, 51, 0.25);
+  --ring-focus: 0 0 0 4px rgba(91, 176, 51, 0.2);
+
+  /* Movimento */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 0.2s;
+  --dur: 0.3s;
+
+  /* Layout */
+  --sidebar-w: 260px;
+  --page-pad-x: 64px;
+}
+
+.tema-nutri {
+  --accent: var(--blue);
+  --accent-dark: var(--blue-dark);
+  --accent-bg: var(--blue-bg);
+  --accent-bg-deep: var(--blue-bg-deep);
+  --ring-focus: 0 0 0 4px rgba(69, 123, 157, 0.2);
+}
+
+/* Telas do restaurante usam neutros quentes */
+.tema-restaurante {
+  --accent: var(--coral);
+  --accent-dark: var(--coral-dark);
+  --accent-bg: var(--coral-bg);
+  --accent-bg-deep: var(--coral-light);
+  --ink: #2A1F1A;
+  --gray-700: #5A4A4A;
+  --gray-500: #958A8A;
+  --gray-300: #D2C8C8;
+  --gray-100: #F3F0EE;
+  --gray-50: #F9F6F3;
+  --ring-focus: 0 0 0 4px rgba(224, 120, 86, 0.2);
+}
+
+@media (max-width: 1023px) {
+  :root { --page-pad-x: 32px; }
+}
+@media (max-width: 767px) {
+  :root { --page-pad-x: 16px; }
+}

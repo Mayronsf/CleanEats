@@ -1,0 +1,1368 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Olá, Breno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8;
+  --green-bg-deep: #D4ED9F;
+  --green-primary: #5BB033;
+  --green-dark: #2D6A1F;
+  --green-accent: #8BC34A;
+  --orange: #F4A261;
+  --ink: #1A2E1A;
+  --gray-700: #4A5A4A;
+  --gray-500: #8A958A;
+  --gray-300: #C8D2C8;
+  --gray-100: #F0F3EE;
+  --white: #FFFFFF;
+  --kcal: #F4A261;
+  --prot: #E76F51;
+  --carb: #E9C46A;
+  --fat: #C7402E;
+  --fiber: #52B788;
+  --blue: #457B9D;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #FAFCF7;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  width: 1440px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* ============ NAVBAR ============ */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 64px;
+  background: var(--white);
+  border-bottom: 1px solid #F0F0F0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 42px; height: 42px;
+  background: var(--green-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  position: relative;
+  flex-shrink: 0;
+}
+.logo-mark::before {
+  content: '';
+  position: absolute;
+  bottom: 6px; left: 6px; right: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2px;
+}
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+.nav-links {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
+.nav-links a {
+  text-decoration: none;
+  font-size: 15px;
+  color: var(--gray-700);
+  font-weight: 500;
+  position: relative;
+  padding: 8px 0;
+}
+.nav-links a.active {
+  color: var(--green-primary);
+  font-weight: 700;
+}
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -28px;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--green-primary);
+  border-radius: 2px;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--gray-100);
+  padding: 10px 18px;
+  border-radius: 999px;
+  width: 260px;
+  gap: 10px;
+}
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  flex: 1;
+  min-width: 0;
+}
+.icon-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.icon-btn .notif-dot {
+  position: absolute;
+  top: 8px; right: 10px;
+  width: 8px; height: 8px;
+  background: var(--orange);
+  border-radius: 50%;
+  border: 2px solid var(--gray-100);
+}
+.avatar-nav {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--green-bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--green-dark);
+  font-size: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.menu-btn {
+  display: none;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--gray-100);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Mobile menu */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 300;
+  padding: 24px;
+  flex-direction: column;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.mobile-menu a {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 700;
+  padding: 16px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+.mobile-menu a.active { color: var(--green-primary); }
+
+/* ============ MAIN ============ */
+.main { padding: 32px 64px 120px; }
+
+/* HERO BANNER */
+.hero-banner {
+  background: linear-gradient(135deg, var(--green-bg) 0%, var(--green-bg-deep) 100%);
+  border-radius: 28px;
+  padding: 40px 48px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: 40%;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+.hb-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.7);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 16px;
+}
+.hb-title {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
+}
+.hb-title .script {
+  font-family: 'Caveat', cursive;
+  color: var(--green-primary);
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+.hb-sub {
+  font-size: 15px;
+  color: var(--gray-700);
+  margin-bottom: 24px;
+  max-width: 480px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 2;
+}
+.hb-badges {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+}
+.hb-badge {
+  background: white;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.hb-badge-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.hb-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green-primary);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 6px 16px rgba(91,176,51,0.3);
+  position: relative;
+  z-index: 2;
+  transition: all 0.2s;
+}
+.hb-cta:hover {
+  background: var(--green-dark);
+  transform: translateY(-1px);
+}
+
+.hb-stats {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.hb-stat {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: left;
+  position: relative;
+}
+.hb-stat-icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.hb-stat-val {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.hb-stat-label {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+.hb-stat-progress {
+  margin-top: 10px;
+  height: 6px;
+  background: var(--gray-100);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.hb-stat-progress div {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* QUICK ACTIONS */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.qa-card {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1.5px solid #F0F0F0;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.qa-card:hover {
+  border-color: var(--green-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+}
+.qa-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+.qa-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.qa-sub {
+  font-size: 13px;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.qa-sub-arrow {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--ink);
+  transition: all 0.2s;
+}
+.qa-card:hover .qa-sub-arrow {
+  background: var(--green-primary);
+  color: white;
+}
+
+/* SECTION */
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.section-title .green { color: var(--green-primary); }
+.section-link {
+  color: var(--green-primary);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* TWO COLUMN GRID */
+.col-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+/* Today's Plan */
+.plan-card {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1.5px solid #F0F0F0;
+}
+.plan-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.plan-head-left h3 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.plan-head-left p {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+.plan-nutri {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green-bg);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+.plan-nutri-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&q=80');
+  background-size: cover;
+  border: 2px solid white;
+  flex-shrink: 0;
+}
+
+.meal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.meal {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px;
+  background: #FAFCF7;
+  border-radius: 16px;
+  transition: all 0.2s;
+}
+.meal:hover { background: var(--green-bg); }
+.meal-img {
+  width: 60px; height: 60px;
+  border-radius: 14px;
+  background: var(--green-bg-deep);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.meal-img img { width: 100%; height: 100%; object-fit: cover; }
+.meal-time {
+  font-size: 11px;
+  color: var(--gray-500);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.meal-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+.meal-kcal {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+.meal-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.meal-check {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--fiber);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.meal-action {
+  padding: 8px 16px;
+  background: var(--green-primary);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.meal-pending {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-500);
+}
+
+/* Macros today */
+.macros-card {
+  background: var(--ink);
+  color: white;
+  border-radius: 24px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.macros-card::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 200px; height: 200px;
+  background: var(--green-primary);
+  opacity: 0.2;
+  border-radius: 50%;
+}
+.macros-head {
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+.macros-head h3 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.macros-head p {
+  font-size: 12px;
+  opacity: 0.6;
+}
+.kcal-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 20px 0;
+}
+.kcal-circle {
+  width: 180px; height: 180px;
+  position: relative;
+}
+.kcal-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.kcal-svg circle {
+  fill: none;
+  stroke-width: 12;
+}
+.kcal-track { stroke: rgba(255,255,255,0.1); }
+.kcal-progress {
+  stroke: var(--green-accent);
+  stroke-linecap: round;
+  stroke-dasharray: 502;
+  stroke-dashoffset: 200;
+}
+.kcal-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.kcal-num {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.kcal-of {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+.kcal-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  opacity: 0.7;
+  font-weight: 600;
+}
+.macros-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+.macro-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.macro-icon {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 11px;
+  color: white;
+  flex-shrink: 0;
+}
+.macro-info { flex: 1; min-width: 0; }
+.macro-info-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+.macro-info-name { font-weight: 700; }
+.macro-info-val { opacity: 0.7; white-space: nowrap; }
+.macro-info-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.macro-info-bar div {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* RECOMMENDED DISHES */
+.recommended {
+  margin-bottom: 48px;
+}
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.rec-card {
+  background: white;
+  border-radius: 22px;
+  padding: 20px;
+  border: 1.5px solid #F0F0F0;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+.rec-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--green-primary);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.06);
+}
+.rec-img-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--green-bg);
+  position: relative;
+  margin-bottom: 16px;
+}
+.rec-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.4s;
+}
+.rec-card:hover .rec-img-wrap img { transform: scale(1.05); }
+.rec-tag {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: white;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green-dark);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.rec-fav {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 36px; height: 36px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-size: 16px;
+}
+.rec-fav.active { color: var(--fat); }
+.rec-rest {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.rec-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.rec-macros {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 0;
+  border-top: 1px dashed #E0E0E0;
+  border-bottom: 1px dashed #E0E0E0;
+  flex-wrap: wrap;
+}
+.rec-macro {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rec-macro-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rec-macro-val {
+  font-size: 12px;
+  font-weight: 700;
+}
+.rec-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+.rec-price {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.rec-add {
+  width: 40px; height: 40px;
+  background: var(--green-primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.rec-add:hover { background: var(--green-dark); transform: scale(1.1); }
+
+/* Tab bar bottom */
+.tabbar {
+  display: none;
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  padding: 10px;
+  border-radius: 999px;
+  gap: 4px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+  z-index: 50;
+}
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tab.active {
+  background: var(--green-primary);
+  color: white;
+}
+
+
+/* ===================== TABLET (768-1023px) ===================== */
+@media (max-width: 1023px) {
+  body { width: 100%; }
+  .nav { padding: 20px 32px; }
+  .nav-links { gap: 28px; }
+  .nav-links a { font-size: 14px; }
+  .search-box { width: 200px; }
+
+  .main { padding: 24px 32px 100px; }
+
+  /* Hero */
+  .hero-banner {
+    padding: 32px;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .hb-title { font-size: 36px; }
+  .hb-stats { grid-template-columns: repeat(4, 1fr); }
+
+  /* Quick actions */
+  .quick-actions { grid-template-columns: repeat(2, 1fr); }
+
+  /* Col grid */
+  .col-grid { grid-template-columns: 1fr; gap: 20px; }
+
+  /* Rec grid */
+  .rec-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+/* ===================== MOBILE (<768px) ===================== */
+@media (max-width: 767px) {
+  body { width: 100%; }
+
+  /* Nav mobile */
+  .nav { padding: 16px 20px; gap: 12px; }
+  .nav-links { display: none; }
+  .search-box { display: none; }
+  .menu-btn { display: flex; align-items: center; justify-content: center; }
+  .logo-text { font-size: 20px; }
+  .logo-mark { width: 36px; height: 36px; font-size: 18px; }
+  .nav-right .icon-btn { display: none; }
+
+  .main { padding: 16px 16px 100px; }
+
+  /* Hero mobile */
+  .hero-banner {
+    padding: 24px 20px;
+    border-radius: 22px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+    min-height: auto;
+  }
+  .hero-banner::before { display: none; }
+  .hb-greeting { font-size: 12px; margin-bottom: 12px; }
+  .hb-title { font-size: 28px; margin-bottom: 10px; }
+  .hb-sub { font-size: 14px; margin-bottom: 18px; }
+  .hb-badges { gap: 8px; margin-bottom: 18px; }
+  .hb-badge { padding: 7px 14px; font-size: 12px; }
+  .hb-cta { padding: 12px 22px; font-size: 13px; }
+
+  .hb-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hb-stat { padding: 16px; border-radius: 14px; }
+  .hb-stat-icon { width: 36px; height: 36px; font-size: 18px; margin-bottom: 10px; }
+  .hb-stat-val { font-size: 22px; }
+  .hb-stat-label { font-size: 11px; }
+
+  /* Quick actions */
+  .quick-actions {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .qa-card { padding: 18px; border-radius: 16px; }
+  .qa-icon { width: 44px; height: 44px; font-size: 20px; margin-bottom: 12px; }
+  .qa-title { font-size: 15px; }
+  .qa-sub { font-size: 12px; }
+  .qa-sub-arrow { width: 24px; height: 24px; font-size: 11px; }
+
+  /* Section head */
+  .section-head { margin-bottom: 18px; }
+  .section-title { font-size: 22px; }
+  .section-link { font-size: 13px; }
+
+  /* Col grid */
+  .col-grid { gap: 16px; margin-bottom: 32px; }
+  .plan-card { padding: 22px 18px; border-radius: 20px; }
+  .plan-head { margin-bottom: 18px; }
+  .plan-head-left h3 { font-size: 18px; }
+  .plan-nutri { padding: 6px 12px; font-size: 12px; }
+  .plan-nutri-avatar { width: 24px; height: 24px; }
+
+  .meal {
+    padding: 12px;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    border-radius: 14px;
+  }
+  .meal-img { width: 52px; height: 52px; border-radius: 12px; }
+  .meal-name { font-size: 14px; }
+  .meal-kcal { font-size: 11px; }
+  .meal-status {
+    grid-column: 1 / 3;
+    justify-content: flex-end;
+    padding-top: 4px;
+    border-top: 1px dashed #E0E0E0;
+    margin-top: 4px;
+  }
+
+  .macros-card { padding: 22px 18px; border-radius: 20px; }
+  .kcal-circle { width: 150px; height: 150px; }
+  .kcal-num { font-size: 30px; }
+
+  /* Rec grid mobile */
+  .rec-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .rec-card { padding: 12px; border-radius: 18px; }
+  .rec-img-wrap { margin-bottom: 12px; border-radius: 14px; }
+  .rec-rest { font-size: 10px; }
+  .rec-name { font-size: 15px; margin-bottom: 10px; }
+  .rec-macros { padding: 8px 0; margin-bottom: 10px; gap: 8px; }
+  .rec-macro-val { font-size: 11px; }
+  .rec-price { font-size: 18px; }
+  .rec-add { width: 34px; height: 34px; font-size: 16px; }
+
+  /* Tab bar mobile */
+  .tabbar { display: flex; }
+}
+
+@media (max-width: 380px) {
+  .hb-title { font-size: 24px; }
+  .hb-stats { grid-template-columns: 1fr 1fr; }
+  .quick-actions { grid-template-columns: 1fr; }
+  .rec-grid { grid-template-columns: 1fr; }
+}
+
+/* ICON BASE */
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
+}
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.icon-xl { width: 28px; height: 28px; stroke-width: 1.8; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <a href="01-splash.html" class="logo">
+    <div class="logo-mark">C</div>
+    <div class="logo-text"><span>Clean</span><span class="green">Eats</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="10-cliente-home.html" class="active">Home</a></li>
+    <li><a href="11-cliente-marketplace.html">Marketplace</a></li>
+    <li><a href="24-cliente-plano-alimentar.html">Meu plano</a></li>
+    <li><a href="19-cliente-historico.html">Pedidos</a></li>
+    <li><a href="25-cliente-chatbot.html">NutriBot</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="search-box">
+      <span style="color:var(--gray-500);"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" placeholder="Buscar marmitas...">
+    </div>
+    <a href="16-cliente-carrinho.html" class="icon-btn">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="notif-dot"></span>
+    </a>
+    <a href="21-cliente-perfil.html" class="avatar-nav">BF</a>
+    <button class="menu-btn" onclick="document.getElementById('mm').classList.add('open')"><svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mm" class="mobile-menu">
+  <div class="mobile-menu-head">
+    <a href="01-splash.html" class="logo">
+      <div class="logo-mark">C</div>
+      <div class="logo-text"><span>Clean</span><span class="green">Eats</span></div>
+    </a>
+    <button class="icon-btn" onclick="document.getElementById('mm').classList.remove('open')"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <a href="10-cliente-home.html" class="active">Home</a>
+  <a href="11-cliente-marketplace.html">Marketplace</a>
+  <a href="24-cliente-plano-alimentar.html">Meu plano</a>
+  <a href="19-cliente-historico.html">Pedidos</a>
+  <a href="25-cliente-chatbot.html">NutriBot</a>
+  <a href="21-cliente-perfil.html">Meu perfil</a>
+  <a href="16-cliente-carrinho.html">Carrinho</a>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO BANNER -->
+  <section class="hero-banner">
+    <div>
+      <div class="hb-greeting"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Bom dia, Breno!</div>
+      <h1 class="hb-title">O que vamos<br><span class="script">comer</span> hoje?</h1>
+      <p class="hb-sub">Seu plano da semana está atualizado. Você já consumiu 1.247 kcal de 2.200 hoje — bom ritmo!</p>
+      <div class="hb-badges">
+        <div class="hb-badge">
+          <span class="hb-badge-dot" style="background:var(--green-primary);"></span>
+          Plano <strong>Pro</strong>
+        </div>
+        <div class="hb-badge">
+          <span class="hb-badge-dot" style="background:var(--prot);"></span>
+          Ganho de massa
+        </div>
+        <div class="hb-badge">
+          <span class="hb-badge-dot" style="background:var(--kcal);"></span>
+          Meta: 2.200 kcal
+        </div>
+      </div>
+      <a href="11-cliente-marketplace.html" class="hb-cta">
+        Explorar marketplace <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <div class="hb-stats">
+      <div class="hb-stat">
+        <div class="hb-stat-icon" style="background:#FEF3E5; color:var(--kcal);"><svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div class="hb-stat-val">1.247</div>
+        <div class="hb-stat-label">de 2.200 kcal hoje</div>
+        <div class="hb-stat-progress"><div style="width:57%; background:var(--kcal);"></div></div>
+      </div>
+      <div class="hb-stat">
+        <div class="hb-stat-icon" style="background:#FDE2DC; color:var(--prot);"><svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="hb-stat-val">86g</div>
+        <div class="hb-stat-label">de 140g proteína</div>
+        <div class="hb-stat-progress"><div style="width:61%; background:var(--prot);"></div></div>
+      </div>
+      <div class="hb-stat">
+        <div class="hb-stat-icon" style="background:#FBF1D2; color:var(--ink);"><svg class="icon" viewBox="0 0 24 24"><path d="M2 22L12 12"/><path d="M12 12c2-2 4-2 6-1s4 1 6-1"/><path d="M12 12c-2-2-2-4-1-6s1-4-1-6"/></svg></div>
+        <div class="hb-stat-val">142g</div>
+        <div class="hb-stat-label">de 240g carbs</div>
+        <div class="hb-stat-progress"><div style="width:59%; background:var(--carb);"></div></div>
+      </div>
+      <div class="hb-stat">
+        <div class="hb-stat-icon" style="background:#E0F2DD; color:var(--fiber);"><svg class="icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></div>
+        <div class="hb-stat-val">18g</div>
+        <div class="hb-stat-label">de 30g fibras</div>
+        <div class="hb-stat-progress"><div style="width:60%; background:var(--fiber);"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK ACTIONS -->
+  <section class="quick-actions">
+    <a href="11-cliente-marketplace.html" class="qa-card">
+      <div class="qa-icon" style="background:var(--green-bg); color:var(--green-primary);"><svg class="icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+      <div class="qa-title">Marketplace</div>
+      <div class="qa-sub">
+        <span>120 restaurantes</span>
+        <span class="qa-sub-arrow"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div>
+    </a>
+    <a href="24-cliente-plano-alimentar.html" class="qa-card">
+      <div class="qa-icon" style="background:#FEF3E5; color:var(--kcal);"><svg class="icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+      <div class="qa-title">Meu plano</div>
+      <div class="qa-sub">
+        <span>3 refeições hoje</span>
+        <span class="qa-sub-arrow"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div>
+    </a>
+    <a href="25-cliente-chatbot.html" class="qa-card">
+      <div class="qa-icon" style="background:#E8F0F8; color:#457B9D;"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></div>
+      <div class="qa-title">NutriBot</div>
+      <div class="qa-sub">
+        <span>Tire dúvidas agora</span>
+        <span class="qa-sub-arrow"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div>
+    </a>
+    <a href="19-cliente-historico.html" class="qa-card">
+      <div class="qa-icon" style="background:#FDE2DC; color:var(--prot);"><svg class="icon" viewBox="0 0 24 24"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+      <div class="qa-title">Histórico</div>
+      <div class="qa-sub">
+        <span>42 pedidos feitos</span>
+        <span class="qa-sub-arrow"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div>
+    </a>
+  </section>
+
+  <!-- TODAY'S PLAN + MACROS -->
+  <div class="col-grid">
+    <div class="plan-card">
+      <div class="plan-head">
+        <div class="plan-head-left">
+          <h3>Seu plano de hoje</h3>
+          <p>Quarta, 13 de Maio · 4 refeições</p>
+        </div>
+        <div class="plan-nutri">
+          <div class="plan-nutri-avatar"></div>
+          Dra. Ana Souza
+        </div>
+      </div>
+
+      <div class="meal-list">
+        <div class="meal">
+          <div class="meal-img"><img src="https://images.unsplash.com/photo-1517959105821-eaf2591984ca?w=200&q=80" alt=""></div>
+          <div>
+            <div class="meal-time">07:00 · Café da manhã</div>
+            <div class="meal-name">Tapioca com Ovo e Banana</div>
+            <div class="meal-kcal">320 kcal · 18g prot · 42g carb</div>
+          </div>
+          <div class="meal-status">
+            <span style="font-size:12px; color:var(--fiber); font-weight:700;">Consumido</span>
+            <div class="meal-check"><svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+        </div>
+
+        <div class="meal">
+          <div class="meal-img"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=80" alt=""></div>
+          <div>
+            <div class="meal-time">12:30 · Almoço</div>
+            <div class="meal-name">Frango Grelhado Fitness</div>
+            <div class="meal-kcal">420 kcal · 38g prot · 32g carb</div>
+          </div>
+          <div class="meal-status">
+            <span style="font-size:12px; color:var(--fiber); font-weight:700;">Consumido</span>
+            <div class="meal-check"><svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+        </div>
+
+        <div class="meal" style="background:var(--green-bg); border:1.5px solid var(--green-primary);">
+          <div class="meal-img"><img src="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=200&q=80" alt=""></div>
+          <div>
+            <div class="meal-time" style="color:var(--green-dark);">15:30 · Lanche · agora</div>
+            <div class="meal-name">Açaí Proteico</div>
+            <div class="meal-kcal">350 kcal · 25g prot · 42g carb</div>
+          </div>
+          <div class="meal-status">
+            <a href="16-cliente-carrinho.html" class="meal-action">Pedir agora <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+        </div>
+
+        <div class="meal">
+          <div class="meal-img"><img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&q=80" alt=""></div>
+          <div>
+            <div class="meal-time">19:30 · Jantar</div>
+            <div class="meal-name">Salmão com Quinoa</div>
+            <div class="meal-kcal">480 kcal · 35g prot · 28g carb</div>
+          </div>
+          <div class="meal-status">
+            <span class="meal-pending">Em 4h</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="macros-card">
+      <div class="macros-head">
+        <h3>Macros de hoje</h3>
+        <p>Atualizado em tempo real</p>
+      </div>
+
+      <div class="kcal-ring">
+        <div class="kcal-circle">
+          <svg class="kcal-svg" viewBox="0 0 180 180">
+            <circle class="kcal-track" cx="90" cy="90" r="80"/>
+            <circle class="kcal-progress" cx="90" cy="90" r="80"/>
+          </svg>
+          <div class="kcal-center">
+            <div class="kcal-num">1.247</div>
+            <div class="kcal-of">/ 2.200 kcal</div>
+            <div class="kcal-label">57% da meta</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="macros-list">
+        <div class="macro-row">
+          <div class="macro-icon" style="background:var(--prot);">P</div>
+          <div class="macro-info">
+            <div class="macro-info-top"><span class="macro-info-name">Proteína</span><span class="macro-info-val">86 / 140g</span></div>
+            <div class="macro-info-bar"><div style="width:61%; background:var(--prot);"></div></div>
+          </div>
+        </div>
+        <div class="macro-row">
+          <div class="macro-icon" style="background:var(--carb); color:var(--ink);">C</div>
+          <div class="macro-info">
+            <div class="macro-info-top"><span class="macro-info-name">Carboidratos</span><span class="macro-info-val">142 / 240g</span></div>
+            <div class="macro-info-bar"><div style="width:59%; background:var(--carb);"></div></div>
+          </div>
+        </div>
+        <div class="macro-row">
+          <div class="macro-icon" style="background:var(--fat);">G</div>
+          <div class="macro-info">
+            <div class="macro-info-top"><span class="macro-info-name">Gordura</span><span class="macro-info-val">42 / 70g</span></div>
+            <div class="macro-info-bar"><div style="width:60%; background:var(--fat);"></div></div>
+          </div>
+        </div>
+        <div class="macro-row">
+          <div class="macro-icon" style="background:var(--fiber);">F</div>
+          <div class="macro-info">
+            <div class="macro-info-top"><span class="macro-info-name">Fibras</span><span class="macro-info-val">18 / 30g</span></div>
+            <div class="macro-info-bar"><div style="width:60%; background:var(--fiber);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDED -->
+  <section class="recommended">
+    <div class="section-head">
+      <h2 class="section-title">Recomendado <span class="green">pra você</span></h2>
+      <a href="11-cliente-marketplace.html" class="section-link">Ver todos <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </div>
+
+    <div class="rec-grid">
+      <article class="rec-card">
+        <div class="rec-img-wrap">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80" alt="">
+          <div class="rec-tag">Alta Proteína</div>
+          <button class="rec-fav active"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/></svg></button>
+        </div>
+        <div class="rec-rest">Sabor Natural</div>
+        <div class="rec-name">Frango Grelhado Fitness</div>
+        <div class="rec-macros">
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--kcal);"></span><span class="rec-macro-val">420kcal</span></div>
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--prot);"></span><span class="rec-macro-val">38g</span></div>
+        </div>
+        <div class="rec-bottom">
+          <div class="rec-price">R$ 24<span style="font-size:14px;">,90</span></div>
+          <button class="rec-add">+</button>
+        </div>
+      </article>
+
+      <article class="rec-card">
+        <div class="rec-img-wrap">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80" alt="">
+          <div class="rec-tag">Vegano</div>
+          <button class="rec-fav"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+        <div class="rec-rest">Verde Vida</div>
+        <div class="rec-name">Bowl Vegano Power</div>
+        <div class="rec-macros">
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--kcal);"></span><span class="rec-macro-val">380kcal</span></div>
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--prot);"></span><span class="rec-macro-val">18g</span></div>
+        </div>
+        <div class="rec-bottom">
+          <div class="rec-price">R$ 22<span style="font-size:14px;">,90</span></div>
+          <button class="rec-add">+</button>
+        </div>
+      </article>
+
+      <article class="rec-card">
+        <div class="rec-img-wrap">
+          <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=80" alt="">
+          <div class="rec-tag">Sem Glúten</div>
+          <button class="rec-fav"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+        <div class="rec-rest">Mar & Terra</div>
+        <div class="rec-name">Salmão com Quinoa</div>
+        <div class="rec-macros">
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--kcal);"></span><span class="rec-macro-val">480kcal</span></div>
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--prot);"></span><span class="rec-macro-val">35g</span></div>
+        </div>
+        <div class="rec-bottom">
+          <div class="rec-price">R$ 32<span style="font-size:14px;">,90</span></div>
+          <button class="rec-add">+</button>
+        </div>
+      </article>
+
+      <article class="rec-card">
+        <div class="rec-img-wrap">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="">
+          <div class="rec-tag">Low Carb</div>
+          <button class="rec-fav"><svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        </div>
+        <div class="rec-rest">Sabor Natural</div>
+        <div class="rec-name">Steak com Batata Doce</div>
+        <div class="rec-macros">
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--kcal);"></span><span class="rec-macro-val">520kcal</span></div>
+          <div class="rec-macro"><span class="rec-macro-dot" style="background:var(--prot);"></span><span class="rec-macro-val">42g</span></div>
+        </div>
+        <div class="rec-bottom">
+          <div class="rec-price">R$ 28<span style="font-size:14px;">,90</span></div>
+          <button class="rec-add">+</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<!-- TAB BAR (mobile only) -->
+<div class="tabbar">
+  <a href="10-cliente-home.html" class="tab active"><svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Home</a>
+  <a href="11-cliente-marketplace.html" class="tab"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Buscar</a>
+  <a href="19-cliente-historico.html" class="tab"><svg class="icon" viewBox="0 0 24 24"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Pedidos</a>
+  <a href="21-cliente-perfil.html" class="tab"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Perfil</a>
+</div>
+
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>

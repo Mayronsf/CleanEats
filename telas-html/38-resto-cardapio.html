@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Cardápio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8; --green-primary: #5BB033; --green-dark: #2D6A1F;
+  --orange: #E07856; --orange-light: #F0A080; --orange-dark: #C2543A;
+  --orange-bg: #FDE8E0; --ink: #2A1F1A; --gray-700: #5A4A4A;
+  --gray-500: #958A8A; --gray-300: #D2C8C8; --gray-100: #F3F0EE;
+  --gray-50: #F9F6F3; --white: #FFFFFF; --prot: #E76F51;
+  --blue: #457B9D; --blue-dark: #2D5A75; --blue-bg: #E0F2FE;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--ink); -webkit-font-smoothing: antialiased; width: 1440px; margin: 0 auto; overflow-x: hidden; }
+.icon { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; flex-shrink: 0; }
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+.sidebar { background: white; border-right: 1.5px solid #ECEEF2; padding: 28px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 999px; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 12px 24px; text-decoration: none; border-bottom: 1px solid #ECEEF2; margin-bottom: 18px; }
+.logo-mark { width: 38px; height: 38px; background: var(--green-primary); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; font-size: 19px; font-weight: 700; flex-shrink: 0; }
+.logo-text { font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+.role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--orange-bg); color: var(--orange-dark); padding: 6px 12px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 12px 18px; }
+.nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); font-weight: 800; padding: 10px 14px 6px; }
+.nav-list { display: flex; flex-direction: column; gap: 2px; list-style: none; margin-bottom: 14px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--gray-700); border-radius: 12px; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+.nav-item:hover { background: var(--orange-bg); color: var(--orange-dark); }
+.nav-item.active { background: var(--orange); color: white; }
+.nav-item.active .nav-icon-wrap { background: rgba(255,255,255,0.15); color: white; }
+.nav-icon-wrap { width: 28px; height: 28px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-700); }
+.nav-icon-wrap .icon { width: 15px; height: 15px; }
+.nav-item .badge { margin-left: auto; background: var(--prot); color: white; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; }
+.sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid #ECEEF2; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; text-decoration: none; color: inherit; }
+.sidebar-user:hover { background: var(--gray-50); }
+.sidebar-user-avatar { width: 38px; height: 38px; border-radius: 12px; background-image: url('https://images.unsplash.com/photo-1567521464027-f127ff144326?w=200&q=80'); background-size: cover; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-shrink: 0; }
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { font-size: 13px; font-weight: 800; }
+.sidebar-user-role { font-size: 10px; color: var(--gray-500); }
+.sidebar-user-more { color: var(--gray-500); }
+
+/* MAIN */
+.main { padding: 32px; overflow-y: auto; }
+.topbar { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.topbar-left h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.topbar-left p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.btn-primary { padding: 12px 24px; background: var(--orange); color: white; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.btn-primary:hover { background: var(--orange-dark); }
+
+/* TOOLBAR */
+.toolbar { background: white; border: 1.5px solid #ECEEF2; border-radius: 14px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.search-bar { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 200px; }
+.search-bar input { flex: 1; border: none; background: transparent; outline: none; font-size: 14px; font-family: inherit; font-weight: 600; }
+.search-bar input::placeholder { color: var(--gray-500); font-weight: 500; }
+.toolbar-divider { width: 1px; height: 28px; background: #ECEEF2; }
+.toolbar-select { padding: 8px 14px; background: var(--gray-50); border: 1.5px solid transparent; border-radius: 999px; font-size: 13px; font-family: inherit; font-weight: 700; cursor: pointer; color: var(--ink); }
+.toolbar-select:hover { border-color: var(--orange); }
+
+/* TABLE */
+.card { background: white; border: 1.5px solid #ECEEF2; border-radius: 22px; padding: 0; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; padding: 16px 18px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); font-weight: 800; background: var(--gray-50); border-bottom: 1.5px solid #ECEEF2; }
+tbody td { padding: 16px 18px; border-bottom: 1px solid #ECEEF2; vertical-align: middle; }
+tbody tr:hover { background: var(--gray-50); }
+tbody tr:last-child td { border-bottom: none; }
+.dish-cell { display: flex; align-items: center; gap: 14px; }
+.dish-img { width: 48px; height: 48px; border-radius: 12px; background: var(--gray-100); object-fit: cover; flex-shrink: 0; }
+.dish-name { font-weight: 700; }
+.dish-cat { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.status-active { color: var(--green-dark); font-weight: 700; }
+.status-inactive { color: var(--gray-500); font-weight: 700; }
+.table-actions { display: flex; gap: 6px; }
+.table-action-btn { width: 32px; height: 32px; border-radius: 8px; background: var(--gray-50); border: 1px solid #ECEEF2; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--gray-700); transition: all 0.2s; }
+.table-action-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* PAGINATION */
+.pagination { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; border-top: 1px solid #ECEEF2; }
+.pagination-info { font-size: 12px; color: var(--gray-500); }
+.pagination-btns { display: flex; gap: 4px; }
+.page-btn { width: 32px; height: 32px; border-radius: 8px; background: white; border: 1px solid #ECEEF2; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; }
+.page-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+@media (max-width: 1023px) { body { width: 100%; } .app { grid-template-columns: 1fr; } .sidebar { display: none; } }
+@media (max-width: 767px) { body { width: 100%; } .main { padding: 16px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a href="01-splash.html" class="sidebar-logo"><div class="logo-mark">C</div><div class="logo-text"><span>Clean</span><span class="green">Eats</span></div></a>
+    <div class="role-badge"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Restaurante</div>
+    <div class="nav-label">Principal</div>
+    <ul class="nav-list">
+      <li><a href="36-resto-dashboard.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard</a></li>
+      <li><a href="37-resto-pedidos.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Pedidos <span class="badge">8</span></a></li>
+      <li><a href="38-resto-cardapio.html" class="nav-item active"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> Cardápio</a></li>
+      <li><a href="39-resto-criar-prato.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Novo prato</a></li>
+    </ul>
+    <div class="nav-label">Gestão</div>
+    <ul class="nav-list">
+      <li><a href="40-resto-aprovacao.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> Aprovação</a></li>
+      <li><a href="41-resto-analytics.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Analytics</a></li>
+      <li><a href="42-resto-financeiro.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Financeiro</a></li>
+      <li><a href="43-resto-relatorios.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span> Relatórios</a></li>
+      <li><a href="44-resto-perfil.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83"/></svg></span> Perfil</a></li>
+    </ul>
+    <div class="sidebar-bottom">
+      <a href="44-resto-perfil.html" class="sidebar-user">
+        <div class="sidebar-user-avatar"></div>
+        <div class="sidebar-user-info"><div class="sidebar-user-name">Sabor & Saúde</div><div class="sidebar-user-role">Restaurante parceiro</div></div>
+        <span class="sidebar-user-more"><svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Cardápio</h1><p>12 pratos cadastrados · 10 ativos</p></div>
+      <div class="topbar-right"><a href="39-resto-criar-prato.html" class="btn-primary"><svg class="icon-sm" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Novo prato</a></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-bar"><svg class="icon" style="color:var(--gray-500)" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar prato..."></div>
+      <span class="toolbar-divider"></span>
+      <select class="toolbar-select"><option>Todas categorias</option><option>Bowls</option><option>Marmitas</option><option>Wraps</option><option>Sucos</option></select>
+      <select class="toolbar-select"><option>Todos status</option><option>Ativo</option><option>Inativo</option></select>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead><tr><th>Prato</th><th>Preço</th><th>Calorias</th><th>Pedidos</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="dish-cell"><img class="dish-img" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=100&q=80" alt=""><div><div class="dish-name">Bowl Proteico Frango</div><div class="dish-cat">Bowl · Alta proteína</div></div></div></td>
+            <td><strong>R$ 32,90</strong></td>
+            <td>420 kcal</td>
+            <td>48</td>
+            <td><span class="status-active">Ativo</span></td>
+            <td><div class="table-actions"><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td><div class="dish-cell"><img class="dish-img" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&q=80" alt=""><div><div class="dish-name">Bowl Mediterrâneo</div><div class="dish-cat">Bowl · Vegetariano</div></div></div></td>
+            <td><strong>R$ 34,90</strong></td>
+            <td>380 kcal</td>
+            <td>35</td>
+            <td><span class="status-active">Ativo</span></td>
+            <td><div class="table-actions"><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td><div class="dish-cell"><img class="dish-img" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=100&q=80" alt=""><div><div class="dish-name">Marmita Fit Salmão</div><div class="dish-cat">Marmita · Omega 3</div></div></div></td>
+            <td><strong>R$ 38,90</strong></td>
+            <td>450 kcal</td>
+            <td>28</td>
+            <td><span class="status-active">Ativo</span></td>
+            <td><div class="table-actions"><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td><div class="dish-cell"><img class="dish-img" src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=100&q=80" alt=""><div><div class="dish-name">Marmita Low Carb</div><div class="dish-cat">Marmita · Low carb</div></div></div></td>
+            <td><strong>R$ 36,90</strong></td>
+            <td>350 kcal</td>
+            <td>22</td>
+            <td><span class="status-active">Ativo</span></td>
+            <td><div class="table-actions"><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td><div class="dish-cell"><img class="dish-img" src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=100&q=80" alt=""><div><div class="dish-name">Bowl Vegano</div><div class="dish-cat">Bowl · Vegano</div></div></div></td>
+            <td><strong>R$ 29,90</strong></td>
+            <td>320 kcal</td>
+            <td>18</td>
+            <td><span class="status-active">Ativo</span></td>
+            <td><div class="table-actions"><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+          </tr>
+          <tr style="opacity:0.5">
+            <td><div class="dish-cell"><img class="dish-img" src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=100&q=80" alt=""><div><div class="dish-name">Sopa Detox</div><div class="dish-cat">Sopa · Inverno</div></div></div></td>
+            <td><strong>R$ 24,90</strong></td>
+            <td>180 kcal</td>
+            <td>5</td>
+            <td><span class="status-inactive">Inativo</span></td>
+            <td><div class="table-actions"><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="table-action-btn"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span class="pagination-info">Mostrando 1-6 de 12 pratos</span>
+        <div class="pagination-btns">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

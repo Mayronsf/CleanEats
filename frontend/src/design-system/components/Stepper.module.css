@@ -1,0 +1,20 @@
+.stepper { display: flex; align-items: center; gap: 12px; margin: 0 auto 40px; max-width: 440px; width: 100%; list-style: none; }
+.etapa { display: flex; align-items: center; gap: 10px; }
+.circulo {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+.ativo .circulo { background: var(--green-primary); color: var(--white); }
+.feito .circulo { background: var(--green-bg-deep); color: var(--green-dark); }
+.pendente .circulo { background: var(--line); color: var(--gray-500); }
+.rotulo { font-size: 12px; font-weight: 600; color: var(--gray-500); white-space: nowrap; }
+.ativo .rotulo { color: var(--ink); }
+.linha { flex: 1; height: 2px; background: var(--line); margin: 0 4px; border-radius: 2px; }
+.linhaFeita { background: var(--green-primary); }
+
+@media (max-width: 767px) {
+  .stepper { margin-bottom: 28px; gap: 6px; }
+  .circulo { width: 24px; height: 24px; font-size: 11px; }
+  .rotulo { display: none; }
+}

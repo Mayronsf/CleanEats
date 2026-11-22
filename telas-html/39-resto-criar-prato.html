@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Criar Prato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8; --green-primary: #5BB033; --green-dark: #2D6A1F;
+  --orange: #E07856; --orange-light: #F0A080; --orange-dark: #C2543A;
+  --orange-bg: #FDE8E0; --ink: #2A1F1A; --gray-700: #5A4A4A;
+  --gray-500: #958A8A; --gray-300: #D2C8C8; --gray-100: #F3F0EE;
+  --gray-50: #F9F6F3; --white: #FFFFFF; --prot: #E76F51;
+  --blue: #457B9D; --blue-dark: #2D5A75; --blue-bg: #E0F2FE;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--ink); -webkit-font-smoothing: antialiased; width: 1440px; margin: 0 auto; overflow-x: hidden; }
+.icon { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; flex-shrink: 0; }
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+.sidebar { background: white; border-right: 1.5px solid #ECEEF2; padding: 28px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 999px; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 12px 24px; text-decoration: none; border-bottom: 1px solid #ECEEF2; margin-bottom: 18px; }
+.logo-mark { width: 38px; height: 38px; background: var(--green-primary); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; font-size: 19px; font-weight: 700; flex-shrink: 0; }
+.logo-text { font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+.role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--orange-bg); color: var(--orange-dark); padding: 6px 12px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 12px 18px; }
+.nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); font-weight: 800; padding: 10px 14px 6px; }
+.nav-list { display: flex; flex-direction: column; gap: 2px; list-style: none; margin-bottom: 14px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--gray-700); border-radius: 12px; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+.nav-item:hover { background: var(--orange-bg); color: var(--orange-dark); }
+.nav-item.active { background: var(--orange); color: white; }
+.nav-item.active .nav-icon-wrap { background: rgba(255,255,255,0.15); color: white; }
+.nav-icon-wrap { width: 28px; height: 28px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-700); }
+.nav-icon-wrap .icon { width: 15px; height: 15px; }
+.nav-item .badge { margin-left: auto; background: var(--prot); color: white; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; }
+.sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid #ECEEF2; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; text-decoration: none; color: inherit; }
+.sidebar-user:hover { background: var(--gray-50); }
+.sidebar-user-avatar { width: 38px; height: 38px; border-radius: 12px; background-image: url('https://images.unsplash.com/photo-1567521464027-f127ff144326?w=200&q=80'); background-size: cover; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-shrink: 0; }
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { font-size: 13px; font-weight: 800; }
+.sidebar-user-role { font-size: 10px; color: var(--gray-500); }
+.sidebar-user-more { color: var(--gray-500); }
+
+/* MAIN */
+.main { padding: 32px; overflow-y: auto; }
+.topbar { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.topbar-left h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.topbar-left p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+.topbar-right { display: flex; gap: 10px; }
+.btn-secondary { padding: 12px 24px; background: white; color: var(--ink); border: 1.5px solid #ECEEF2; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; text-decoration: none; }
+.btn-secondary:hover { border-color: var(--orange); }
+.btn-primary { padding: 12px 24px; background: var(--orange); color: white; border: none; border-radius: 999px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary:hover { background: var(--orange-dark); }
+
+/* FORM GRID */
+.form-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+.card { background: white; border: 1.5px solid #ECEEF2; border-radius: 22px; padding: 26px; margin-bottom: 24px; }
+.card-title { font-size: 17px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.form-row { margin-bottom: 18px; }
+.form-row:last-child { margin-bottom: 0; }
+.form-label { font-size: 12px; font-weight: 700; color: var(--gray-700); margin-bottom: 6px; display: block; }
+.form-input { width: 100%; padding: 12px 16px; border: 1.5px solid #ECEEF2; border-radius: 12px; font-family: inherit; font-size: 14px; color: var(--ink); background: var(--gray-50); transition: border-color 0.2s; }
+.form-input:focus { outline: none; border-color: var(--orange); background: white; }
+.form-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-input-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* MACROS */
+.macro-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.macro-item { text-align: center; padding: 14px; background: var(--gray-50); border-radius: 12px; border: 1.5px solid #ECEEF2; }
+.macro-item label { font-size: 10px; color: var(--gray-500); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+.macro-item input { width: 100%; text-align: center; border: none; background: transparent; font-size: 18px; font-weight: 800; font-family: inherit; color: var(--ink); outline: none; }
+
+/* ALLERGENS */
+.allergen-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.allergen-item { padding: 8px 16px; background: var(--gray-50); border: 1.5px solid #ECEEF2; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.allergen-item.active { background: var(--orange-bg); border-color: var(--orange); color: var(--orange-dark); font-weight: 700; }
+.allergen-item:hover { border-color: var(--orange-light); }
+
+/* IMAGE UPLOAD */
+.upload-area { border: 2px dashed var(--gray-300); border-radius: 16px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.upload-area:hover { border-color: var(--orange); background: var(--orange-bg); }
+.upload-icon { width: 48px; height: 48px; background: var(--gray-100); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: var(--gray-500); }
+.upload-text { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.upload-hint { font-size: 12px; color: var(--gray-500); }
+
+@media (max-width: 1023px) { body { width: 100%; } .app { grid-template-columns: 1fr; } .sidebar { display: none; } .form-grid { grid-template-columns: 1fr; } }
+@media (max-width: 767px) { body { width: 100%; } .main { padding: 16px; } .macro-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a href="01-splash.html" class="sidebar-logo"><div class="logo-mark">C</div><div class="logo-text"><span>Clean</span><span class="green">Eats</span></div></a>
+    <div class="role-badge"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Restaurante</div>
+    <div class="nav-label">Principal</div>
+    <ul class="nav-list">
+      <li><a href="36-resto-dashboard.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard</a></li>
+      <li><a href="37-resto-pedidos.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Pedidos <span class="badge">8</span></a></li>
+      <li><a href="38-resto-cardapio.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> Cardápio</a></li>
+      <li><a href="39-resto-criar-prato.html" class="nav-item active"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Novo prato</a></li>
+    </ul>
+    <div class="nav-label">Gestão</div>
+    <ul class="nav-list">
+      <li><a href="40-resto-aprovacao.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> Aprovação</a></li>
+      <li><a href="41-resto-analytics.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Analytics</a></li>
+      <li><a href="42-resto-financeiro.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Financeiro</a></li>
+      <li><a href="43-resto-relatorios.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span> Relatórios</a></li>
+      <li><a href="44-resto-perfil.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83"/></svg></span> Perfil</a></li>
+    </ul>
+    <div class="sidebar-bottom">
+      <a href="44-resto-perfil.html" class="sidebar-user">
+        <div class="sidebar-user-avatar"></div>
+        <div class="sidebar-user-info"><div class="sidebar-user-name">Sabor & Saúde</div><div class="sidebar-user-role">Restaurante parceiro</div></div>
+        <span class="sidebar-user-more"><svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Novo Prato</h1><p>Cadastre um novo item no cardápio</p></div>
+      <div class="topbar-right"><a href="38-resto-cardapio.html" class="btn-secondary">Cancelar</a><button class="btn-primary"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar prato</button></div>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <!-- INFO -->
+        <div class="card">
+          <div class="card-title"><svg class="icon" style="color:var(--orange)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Informações básicas</div>
+          <div class="form-row"><label class="form-label">Nome do prato</label><input class="form-input" placeholder="Ex: Bowl Proteico Frango Grelhado"></div>
+          <div class="form-row"><label class="form-label">Descrição</label><textarea class="form-input" rows="3" style="resize:vertical" placeholder="Descreva os ingredientes e modo de preparo..."></textarea></div>
+          <div class="form-row">
+            <div class="form-input-row">
+              <div><label class="form-label">Categoria</label><select class="form-input"><option>Selecione</option><option>Bowl</option><option>Marmita</option><option>Wrap</option><option>Suco</option><option>Sobremesa</option></select></div>
+              <div><label class="form-label">Preço</label><input class="form-input" placeholder="R$ 0,00"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-input-row-3">
+              <div><label class="form-label">Peso (g)</label><input class="form-input" placeholder="350"></div>
+              <div><label class="form-label">Tempo preparo</label><input class="form-input" placeholder="15 min"></div>
+              <div><label class="form-label">Porção</label><input class="form-input" placeholder="1 pessoa"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MACROS -->
+        <div class="card">
+          <div class="card-title"><svg class="icon" style="color:var(--orange)" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Informações nutricionais</div>
+          <div class="macro-grid">
+            <div class="macro-item"><label>Calorias</label><input value="420" placeholder="kcal"></div>
+            <div class="macro-item"><label>Proteínas</label><input value="38" placeholder="g"></div>
+            <div class="macro-item"><label>Carboidratos</label><input value="42" placeholder="g"></div>
+            <div class="macro-item"><label>Gorduras</label><input value="12" placeholder="g"></div>
+          </div>
+        </div>
+
+        <!-- ALLERGENS -->
+        <div class="card">
+          <div class="card-title"><svg class="icon" style="color:var(--orange)" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Alérgenos</div>
+          <div class="allergen-grid">
+            <span class="allergen-item active">Glúten</span>
+            <span class="allergen-item">Lactose</span>
+            <span class="allergen-item">Soja</span>
+            <span class="allergen-item active">Ovo</span>
+            <span class="allergen-item">Amendoim</span>
+            <span class="allergen-item">Frutos do mar</span>
+            <span class="allergen-item">Castanhas</span>
+            <span class="allergen-item">Trigo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <div class="card">
+          <div class="card-title"><svg class="icon" style="color:var(--orange)" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Imagem do prato</div>
+          <div class="upload-area">
+            <div class="upload-icon"><svg class="icon-lg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+            <div class="upload-text">Arraste ou clique para enviar</div>
+            <div class="upload-hint">JPG, PNG ou WebP · Máx. 5MB</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><svg class="icon" style="color:var(--orange)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83"/></svg> Configurações</div>
+          <div class="form-row"><label class="form-label">Disponibilidade</label><select class="form-input"><option>Ativo no cardápio</option><option>Inativo (oculto)</option></select></div>
+          <div class="form-row"><label class="form-label">Tags especiais</label><input class="form-input" placeholder="Ex: Mais vendido, Novidade"></div>
+          <div class="form-row"><label class="form-label">Observações internas</label><textarea class="form-input" rows="3" style="resize:vertical" placeholder="Notas para a equipe de cozinha..."></textarea></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

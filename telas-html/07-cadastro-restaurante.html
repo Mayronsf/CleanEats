@@ -1,0 +1,1179 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Cadastro Restaurante</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8;
+  --green-bg-deep: #D4ED9F;
+  --green-primary: #5BB033;
+  --green-dark: #2D6A1F;
+  --green-accent: #8BC34A;
+  --orange: #F4A261;
+  --ink: #1A2E1A;
+  --gray-700: #4A5A4A;
+  --gray-500: #8A958A;
+  --gray-300: #C8D2C8;
+  --gray-100: #F0F3EE;
+  --white: #FFFFFF;
+  --rest: #E76F51;
+  --rest-bg: #FDE2DC;
+  --rest-dark: #B5402A;
+  --prot: #E76F51;
+  --fiber: #52B788;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #FAFCF7;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  width: 1440px;
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 64px;
+  background: var(--white);
+  border-bottom: 1px solid #F0F0F0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 42px; height: 42px;
+  background: var(--green-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  position: relative;
+  flex-shrink: 0;
+}
+.logo-mark::before {
+  content: '';
+  position: absolute;
+  bottom: 6px; left: 6px; right: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 2px;
+}
+.logo-text {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+.back-link {
+  text-decoration: none;
+  color: var(--gray-700);
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1.5px solid #E0E0E0;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.back-link:hover { border-color: var(--ink); }
+
+/* STEPPER */
+.stepper-strip {
+  padding: 24px 64px;
+  background: var(--white);
+  border-bottom: 1px solid #F0F0F0;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.step-dot { display: flex; align-items: center; gap: 10px; }
+.step-dot-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.step-dot.done .step-dot-circle { background: var(--rest); color: white; }
+.step-dot.active .step-dot-circle {
+  background: var(--rest); color: white;
+  box-shadow: 0 0 0 4px rgba(231,111,81,0.2);
+}
+.step-dot.pending .step-dot-circle { background: #F0F0F0; color: var(--gray-500); }
+.step-dot-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+.step-dot.active .step-dot-label,
+.step-dot.done .step-dot-label { color: var(--ink); }
+.step-dot-line {
+  flex: 1;
+  height: 2px;
+  background: #F0F0F0;
+  border-radius: 2px;
+  margin: 0 4px;
+}
+.step-dot-line.done { background: var(--rest); }
+
+/* MAIN */
+.main {
+  padding: 56px 64px 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rest);
+  margin-bottom: 20px;
+  justify-content: center;
+}
+.eyebrow::before, .eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background: var(--rest);
+}
+.head-title {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+.head-title .script {
+  font-family: 'Caveat', cursive;
+  color: var(--rest);
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+.head-sub {
+  font-size: 17px;
+  color: var(--gray-700);
+  line-height: 1.5;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* COMMISSION BANNER */
+.commission-banner {
+  background: linear-gradient(135deg, var(--rest) 0%, var(--rest-dark) 100%);
+  border-radius: 24px;
+  padding: 28px 32px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.commission-banner::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.commission-icon {
+  width: 64px; height: 64px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+.commission-text {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+.commission-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.commission-desc {
+  font-size: 14px;
+  opacity: 0.95;
+  line-height: 1.5;
+}
+.commission-rate {
+  background: rgba(255,255,255,0.95);
+  color: var(--rest-dark);
+  border-radius: 18px;
+  padding: 16px 24px;
+  text-align: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+.commission-rate-num {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.commission-rate-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+  color: var(--gray-700);
+}
+
+/* CONTENT GRID */
+.content-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* LOGO COLUMN */
+.logo-column {
+  background: white;
+  border: 1.5px solid #F0F0F0;
+  border-radius: 24px;
+  padding: 28px;
+  position: sticky;
+  top: 28px;
+}
+.logo-upload {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 24px;
+  background: var(--rest-bg);
+  border: 3px dashed var(--rest);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.logo-upload img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.logo-upload-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.65));
+  padding: 30px 20px 16px;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.logo-upload-icon {
+  width: 36px; height: 36px;
+  background: white;
+  color: var(--rest);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.photo-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--rest-bg);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--rest-dark);
+  margin-bottom: 16px;
+}
+.photo-status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--fiber);
+}
+.photo-tips {
+  background: #FAFCF7;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 12px;
+  color: var(--gray-700);
+  line-height: 1.5;
+}
+.photo-tips strong {
+  display: block;
+  color: var(--ink);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.photo-tips ul { list-style: none; padding: 0; }
+.photo-tips li {
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 4px;
+}
+.photo-tips li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--fiber);
+  font-weight: 800;
+}
+
+/* FORM COLUMN */
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  background: white;
+  border: 1.5px solid #F0F0F0;
+  border-radius: 24px;
+  padding: 28px;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.section-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--rest-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.section-head-text { flex: 1; }
+.section-title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+.section-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--rest-bg);
+  color: var(--rest-dark);
+}
+.section-badge.optional {
+  background: #F0F0F0;
+  color: var(--gray-500);
+}
+
+/* Fields */
+.field-row {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.field-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.field-row.cols-3 { grid-template-columns: 2fr 1fr 1fr; }
+.field-row:last-child { margin-bottom: 0; }
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.field-label .req { color: var(--prot); }
+.field-label .info {
+  font-weight: 500;
+  color: var(--gray-500);
+  font-size: 12px;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%;
+  padding: 14px 18px;
+  background: #F7F9F5;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: all 0.2s;
+  color: var(--ink);
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  outline: none;
+  border-color: var(--rest);
+  background: white;
+}
+.field-input::placeholder, .field-textarea::placeholder { color: var(--gray-500); }
+.field-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+.field-select { cursor: pointer; }
+.field-helper {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+/* CNPJ validation */
+.cnpj-validation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--rest-bg);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--rest-dark);
+  font-weight: 600;
+}
+.cnpj-validation-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--fiber);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Address with CEP autocomplete */
+.cep-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Cuisine types */
+.cuisine-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.cuisine-pill {
+  border: 1.5px solid #E0E0E0;
+  background: white;
+  padding: 16px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: all 0.2s;
+  text-align: center;
+  color: var(--gray-700);
+}
+.cuisine-pill:hover { border-color: var(--rest); }
+.cuisine-pill.selected {
+  background: var(--rest-bg);
+  border-color: var(--rest);
+  color: var(--rest-dark);
+}
+.cuisine-emoji { font-size: 28px; }
+.cuisine-label { font-size: 13px; font-weight: 700; }
+
+/* Hours grid */
+.hours-grid {
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+.hours-grid:last-child { border-bottom: none; }
+.hours-day {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hours-toggle {
+  width: 36px; height: 20px;
+  background: var(--gray-300);
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.hours-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.hours-toggle.on { background: var(--rest); }
+.hours-toggle.on::after { left: 18px; }
+.hours-time-input {
+  padding: 10px 14px;
+  background: #F7F9F5;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 600;
+}
+.hours-time-input:focus { outline: none; border-color: var(--rest); background: white; }
+.hours-closed {
+  grid-column: 2 / 4;
+  font-size: 13px;
+  color: var(--gray-500);
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* Char counter */
+.textarea-wrap {
+  position: relative;
+}
+.char-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 11px;
+  color: var(--gray-500);
+  font-weight: 600;
+  background: white;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+/* Info banner */
+.info-banner {
+  background: linear-gradient(135deg, var(--rest-bg) 0%, white 100%);
+  border: 1.5px solid var(--rest);
+  border-radius: 18px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.info-banner-icon {
+  width: 40px; height: 40px;
+  background: var(--rest);
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.info-banner-text {
+  flex: 1;
+  font-size: 14px;
+  color: var(--gray-700);
+  line-height: 1.5;
+}
+.info-banner-text strong {
+  color: var(--rest-dark);
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+/* Nav buttons */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+.btn-prev {
+  padding: 16px 28px;
+  background: white;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.btn-prev:hover { border-color: var(--ink); }
+.btn-next {
+  padding: 18px 36px;
+  background: var(--rest);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(231,111,81,0.3);
+  transition: all 0.2s;
+}
+.btn-next:hover {
+  background: var(--rest-dark);
+  transform: translateY(-2px);
+}
+
+/* ===================== TABLET ===================== */
+@media (max-width: 1023px) {
+  body { width: 100%; }
+  .topbar { padding: 20px 32px; }
+  .stepper-strip { padding: 20px 32px; }
+  .main { padding: 40px 32px 64px; }
+
+  .head-title { font-size: 42px; }
+
+  .commission-banner { flex-direction: column; align-items: flex-start; padding: 24px; }
+  .commission-rate { align-self: stretch; }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .logo-column {
+    position: relative;
+    top: 0;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .logo-upload { margin-bottom: 0; }
+  .logo-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .photo-status { margin-bottom: 0; }
+
+  .cuisine-grid { grid-template-columns: repeat(3, 1fr); }
+  .field-row.cols-3 { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 767px) {
+  body { width: 100%; }
+
+  .topbar { padding: 16px 20px; }
+  .logo-text { font-size: 22px; }
+  .logo-mark { width: 38px; height: 38px; font-size: 19px; }
+  .back-link { font-size: 12px; padding: 8px 14px; }
+  .back-link span { display: none; }
+
+  .stepper-strip { padding: 16px 20px; }
+  .step-dot-label { display: none; }
+  .step-dot-circle { width: 28px; height: 28px; font-size: 12px; }
+
+  .main { padding: 28px 20px 64px; }
+
+  .head { margin-bottom: 28px; }
+  .eyebrow { font-size: 11px; margin-bottom: 14px; }
+  .eyebrow::before, .eyebrow::after { width: 20px; }
+  .head-title { font-size: 30px; margin-bottom: 12px; }
+  .head-sub { font-size: 14px; }
+
+  .commission-banner {
+    padding: 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .commission-title { font-size: 18px; }
+  .commission-desc { font-size: 13px; }
+  .commission-rate { padding: 14px; }
+  .commission-rate-num { font-size: 28px; }
+
+  .content-grid { gap: 16px; }
+
+  .logo-column {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 16px;
+  }
+  .logo-upload { width: 180px; margin: 0 auto; aspect-ratio: 1; border-radius: 20px; }
+
+  .section { padding: 20px; border-radius: 18px; }
+  .section-head { margin-bottom: 18px; gap: 12px; }
+  .section-icon { width: 40px; height: 40px; font-size: 20px; }
+  .section-title { font-size: 16px; }
+  .section-sub { font-size: 12px; }
+  .section-badge { font-size: 10px; padding: 3px 10px; }
+
+  .field-row.cols-2, .field-row.cols-3 {
+    grid-template-columns: 1fr;
+  }
+  .cep-row { grid-template-columns: 1fr; }
+
+  .field-input, .field-select, .field-textarea {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .cuisine-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cuisine-pill { padding: 14px 10px; }
+  .cuisine-emoji { font-size: 24px; }
+  .cuisine-label { font-size: 12px; }
+
+  .hours-grid {
+    grid-template-columns: 90px 1fr 1fr;
+    gap: 8px;
+    padding: 10px 0;
+  }
+  .hours-day { font-size: 13px; gap: 8px; }
+  .hours-time-input { padding: 8px 10px; font-size: 13px; }
+
+  .info-banner { padding: 16px 18px; gap: 12px; }
+  .info-banner-icon { width: 36px; height: 36px; font-size: 18px; }
+  .info-banner-text { font-size: 13px; }
+
+  .nav-buttons {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  .btn-prev, .btn-next {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .head-title { font-size: 26px; }
+  .cuisine-grid { grid-template-columns: 1fr 1fr; }
+  .hours-grid { grid-template-columns: 80px 1fr 1fr; }
+}
+
+/* ICON BASE */
+.icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
+}
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.icon-xl { width: 28px; height: 28px; stroke-width: 1.8; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="01-splash.html" class="logo">
+    <div class="logo-mark">C</div>
+    <div class="logo-text"><span>Clean</span><span class="green">Eats</span></div>
+  </a>
+  <a href="04-cadastro-perfil.html" class="back-link"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg> <span>Voltar</span></a>
+</div>
+
+<!-- STEPPER -->
+<div class="stepper-strip">
+  <div class="stepper">
+    <div class="step-dot done">
+      <div class="step-dot-circle"><svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="step-dot-label">Conta</div>
+    </div>
+    <div class="step-dot-line done"></div>
+    <div class="step-dot done">
+      <div class="step-dot-circle"><svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="step-dot-label">Perfil</div>
+    </div>
+    <div class="step-dot-line done"></div>
+    <div class="step-dot active">
+      <div class="step-dot-circle">3</div>
+      <div class="step-dot-label">Estabelecimento</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="head">
+    <div class="eyebrow">Cadastro de Restaurante · Etapa 3 de 3</div>
+    <h1 class="head-title">Conte sobre seu <span class="script">negócio</span></h1>
+    <p class="head-sub">Cadastre seu restaurante no CleanEats. Após aprovação, você poderá começar a publicar pratos no marketplace e receber pedidos.</p>
+  </div>
+
+  <!-- COMMISSION BANNER -->
+  <div class="commission-banner">
+    <div class="commission-icon"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+    <div class="commission-text">
+      <div class="commission-title">Modelo simples e transparente</div>
+      <div class="commission-desc">Cobramos apenas uma comissão por pedido entregue. Sem mensalidade, sem taxa de adesão, sem letra miúda. Você só paga quando vende.</div>
+    </div>
+    <div class="commission-rate">
+      <div class="commission-rate-num">8%</div>
+      <div class="commission-rate-label">por pedido</div>
+    </div>
+  </div>
+
+  <!-- INFO BANNER -->
+  <div class="info-banner">
+    <div class="info-banner-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+    <div class="info-banner-text">
+      <strong>Aprovação manual do restaurante</strong>
+      Validamos CNPJ e endereço comercial antes de ativar seu perfil. O processo leva até 72h úteis. Após aprovado, você pode começar a cadastrar pratos com fichas nutricionais.
+    </div>
+  </div>
+
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+
+    <!-- LEFT - LOGO -->
+    <aside class="logo-column">
+      <div class="logo-upload">
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=85" alt="Logo restaurante">
+        <div class="logo-upload-overlay">
+          <div class="logo-upload-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+          Alterar logo
+        </div>
+      </div>
+      <div class="logo-side">
+        <div class="photo-status">
+          <span class="photo-status-dot"></span>
+          Logo carregada · 2.4 MB
+        </div>
+        <div class="photo-tips">
+          <strong>Dicas para a logo:</strong>
+          <ul>
+            <li>Use a logo oficial do restaurante</li>
+            <li>Fundo neutro ou transparente</li>
+            <li>Formato quadrado, mín. 500×500px</li>
+            <li>PNG (preferencial) ou JPG, até 5MB</li>
+            <li>Evite logos com muito texto pequeno</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT - FORM -->
+    <div class="form-column">
+
+      <!-- DADOS DA EMPRESA -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><line x1="9" y1="18" x2="9" y2="18.01"/><line x1="15" y1="18" x2="15" y2="18.01"/></svg></div>
+          <div class="section-head-text">
+            <h3 class="section-title">Dados da empresa</h3>
+            <p class="section-sub">Informações jurídicas para validação</p>
+          </div>
+          <span class="section-badge">Obrigatório</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Nome fantasia do restaurante <span class="req">*</span> <span class="info">· aparece no marketplace</span></label>
+          <input type="text" class="field-input" placeholder="Ex: Sabor Natural" value="Sabor Natural">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Razão social <span class="req">*</span></label>
+          <input type="text" class="field-input" placeholder="Ex: Sabor Natural Alimentação Saudável Ltda" value="Sabor Natural Alimentação Saudável Ltda">
+        </div>
+
+        <div class="field-row cols-2">
+          <div class="field">
+            <label class="field-label">CNPJ <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="00.000.000/0000-00" value="34.567.890/0001-23">
+            <div class="cnpj-validation">
+              <span class="cnpj-validation-icon"><svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+              CNPJ válido · Atividade compatível
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Telefone comercial <span class="req">*</span></label>
+            <input type="tel" class="field-input" placeholder="(81) 99999-9999" value="(81) 3344-5566">
+          </div>
+        </div>
+      </section>
+
+      <!-- ENDEREÇO -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="section-head-text">
+            <h3 class="section-title">Endereço comercial</h3>
+            <p class="section-sub">Local de funcionamento do restaurante</p>
+          </div>
+          <span class="section-badge">Obrigatório</span>
+        </div>
+
+        <div class="cep-row">
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">CEP <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="00000-000" value="50030-000">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">Rua <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="Nome da rua" value="Avenida Boa Viagem">
+          </div>
+        </div>
+
+        <div class="field-row cols-3">
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">Bairro <span class="req">*</span></label>
+            <input type="text" class="field-input" value="Boa Viagem">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">Número <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="123" value="1820">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">Complemento</label>
+            <input type="text" class="field-input" placeholder="Loja 3" value="Loja 3">
+          </div>
+        </div>
+
+        <div class="field-row cols-2">
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">Cidade <span class="req">*</span></label>
+            <input type="text" class="field-input" value="Recife">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label">Estado <span class="req">*</span></label>
+            <select class="field-select">
+              <option selected>Pernambuco</option>
+              <option>São Paulo</option>
+              <option>Rio de Janeiro</option>
+              <option>Minas Gerais</option>
+              <option>Bahia</option>
+              <option>Ceará</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- TIPO DE COZINHA -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+          <div class="section-head-text">
+            <h3 class="section-title">Tipo de cozinha</h3>
+            <p class="section-sub">Selecione tudo que se aplica ao seu cardápio</p>
+          </div>
+          <span class="section-badge">Obrigatório</span>
+        </div>
+
+        <div class="cuisine-grid">
+          <div class="cuisine-pill selected" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+            <span class="cuisine-label">Fitness</span>
+          </div>
+          <div class="cuisine-pill selected" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></span>
+            <span class="cuisine-label">Saudável</span>
+          </div>
+          <div class="cuisine-pill" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></span>
+            <span class="cuisine-label">Vegano</span>
+          </div>
+          <div class="cuisine-pill" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></span>
+            <span class="cuisine-label">Vegetariano</span>
+          </div>
+          <div class="cuisine-pill selected" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <span class="cuisine-label">Low Carb</span>
+          </div>
+          <div class="cuisine-pill" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M2 22L12 12"/><path d="M12 12c2-2 4-2 6-1s4 1 6-1"/><path d="M12 12c-2-2-2-4-1-6s1-4-1-6"/></svg></span>
+            <span class="cuisine-label">Sem Glúten</span>
+          </div>
+          <div class="cuisine-pill" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
+            <span class="cuisine-label">Pescetariano</span>
+          </div>
+          <div class="cuisine-pill" onclick="this.classList.toggle('selected')">
+            <span class="cuisine-emoji"><svg class="icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>
+            <span class="cuisine-label">Bowls</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- HORÁRIO DE FUNCIONAMENTO -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="section-head-text">
+            <h3 class="section-title">Horário de funcionamento</h3>
+            <p class="section-sub">Quando o restaurante aceita pedidos</p>
+          </div>
+          <span class="section-badge">Obrigatório</span>
+        </div>
+
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle on" onclick="this.classList.toggle('on')"></span> Segunda</div>
+          <input type="time" class="hours-time-input" value="08:00">
+          <input type="time" class="hours-time-input" value="22:00">
+        </div>
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle on" onclick="this.classList.toggle('on')"></span> Terça</div>
+          <input type="time" class="hours-time-input" value="08:00">
+          <input type="time" class="hours-time-input" value="22:00">
+        </div>
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle on" onclick="this.classList.toggle('on')"></span> Quarta</div>
+          <input type="time" class="hours-time-input" value="08:00">
+          <input type="time" class="hours-time-input" value="22:00">
+        </div>
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle on" onclick="this.classList.toggle('on')"></span> Quinta</div>
+          <input type="time" class="hours-time-input" value="08:00">
+          <input type="time" class="hours-time-input" value="22:00">
+        </div>
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle on" onclick="this.classList.toggle('on')"></span> Sexta</div>
+          <input type="time" class="hours-time-input" value="08:00">
+          <input type="time" class="hours-time-input" value="23:00">
+        </div>
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle on" onclick="this.classList.toggle('on')"></span> Sábado</div>
+          <input type="time" class="hours-time-input" value="11:00">
+          <input type="time" class="hours-time-input" value="22:00">
+        </div>
+        <div class="hours-grid">
+          <div class="hours-day"><span class="hours-toggle" onclick="this.classList.toggle('on')"></span> Domingo</div>
+          <div class="hours-closed">Fechado</div>
+        </div>
+      </section>
+
+      <!-- DESCRIÇÃO -->
+      <section class="section">
+        <div class="section-head">
+          <div class="section-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+          <div class="section-head-text">
+            <h3 class="section-title">Apresentação do restaurante</h3>
+            <p class="section-sub">Como você quer aparecer pros clientes</p>
+          </div>
+          <span class="section-badge">Obrigatório</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Slogan curto <span class="info">· aparece no card de busca</span></label>
+          <input type="text" class="field-input" placeholder="Em uma frase, o que define seu restaurante?" value="Marmitas saudáveis com proteína de qualidade e tempero da casa.">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Descrição completa <span class="req">*</span> <span class="info">· mín. 100 caracteres</span></label>
+          <div class="textarea-wrap">
+            <textarea class="field-textarea" rows="5" placeholder="Conte sobre seu restaurante, abordagem, diferenciais...">No Sabor Natural a gente acredita que comer bem é o melhor remédio. Há 4 anos servimos marmitas saudáveis em Recife com ingredientes frescos, proteínas grelhadas e acompanhamentos balanceados. Nossas receitas são desenvolvidas em parceria com nutricionistas e priorizam o sabor sem abrir mão da qualidade nutricional. Atendemos atletas, famílias e quem busca uma rotina mais leve.</textarea>
+            <span class="char-counter">432 / 500</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- NAV -->
+      <div class="nav-buttons">
+        <a href="04-cadastro-perfil.html" class="btn-prev"><svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg> Voltar</a>
+        <a href="01-splash.html" class="btn-next">
+          Enviar para aprovação
+          <span style="font-size:18px;"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CleanEats — Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-bg: #E8F5D8; --green-primary: #5BB033; --green-dark: #2D6A1F;
+  --orange: #E07856; --orange-light: #F0A080; --orange-dark: #C2543A;
+  --orange-bg: #FDE8E0; --ink: #2A1F1A; --gray-700: #5A4A4A;
+  --gray-500: #958A8A; --gray-300: #D2C8C8; --gray-100: #F3F0EE;
+  --gray-50: #F9F6F3; --white: #FFFFFF; --prot: #E76F51;
+  --blue: #457B9D; --blue-dark: #2D5A75; --blue-bg: #E0F2FE;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--gray-50); color: var(--ink); -webkit-font-smoothing: antialiased; width: 1440px; margin: 0 auto; overflow-x: hidden; }
+.icon { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; flex-shrink: 0; }
+.icon-sm { width: 14px; height: 14px; stroke-width: 2.2; }
+.icon-lg { width: 22px; height: 22px; }
+.app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+.sidebar { background: white; border-right: 1.5px solid #ECEEF2; padding: 28px 16px; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow-y: auto; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 999px; }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 12px 24px; text-decoration: none; border-bottom: 1px solid #ECEEF2; margin-bottom: 18px; }
+.logo-mark { width: 38px; height: 38px; background: var(--green-primary); border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; font-size: 19px; font-weight: 700; flex-shrink: 0; }
+.logo-text { font-size: 21px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.logo-text .green { color: var(--green-primary); font-weight: 800; }
+.role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--orange-bg); color: var(--orange-dark); padding: 6px 12px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; margin: 0 12px 18px; }
+.nav-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); font-weight: 800; padding: 10px 14px 6px; }
+.nav-list { display: flex; flex-direction: column; gap: 2px; list-style: none; margin-bottom: 14px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; text-decoration: none; color: var(--gray-700); border-radius: 12px; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+.nav-item:hover { background: var(--orange-bg); color: var(--orange-dark); }
+.nav-item.active { background: var(--orange); color: white; }
+.nav-item.active .nav-icon-wrap { background: rgba(255,255,255,0.15); color: white; }
+.nav-icon-wrap { width: 28px; height: 28px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-700); }
+.nav-icon-wrap .icon { width: 15px; height: 15px; }
+.nav-item .badge { margin-left: auto; background: var(--prot); color: white; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; }
+.sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid #ECEEF2; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; text-decoration: none; color: inherit; }
+.sidebar-user:hover { background: var(--gray-50); }
+.sidebar-user-avatar { width: 38px; height: 38px; border-radius: 12px; background-image: url('https://images.unsplash.com/photo-1567521464027-f127ff144326?w=200&q=80'); background-size: cover; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-shrink: 0; }
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { font-size: 13px; font-weight: 800; }
+.sidebar-user-role { font-size: 10px; color: var(--gray-500); }
+.sidebar-user-more { color: var(--gray-500); }
+
+/* MAIN */
+.main { padding: 32px; overflow-y: auto; }
+.topbar { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.topbar-left h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.topbar-left p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.period-select { padding: 10px 18px; background: white; border: 1.5px solid #ECEEF2; border-radius: 999px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.period-select:hover { border-color: var(--orange); }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card { background: white; border: 1.5px solid #ECEEF2; border-radius: 20px; padding: 22px; }
+.stat-card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.stat-card-val { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px; }
+.stat-card-label { font-size: 12px; color: var(--gray-500); font-weight: 700; }
+.stat-card-trend { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.trend-up { background: var(--green-bg); color: var(--green-dark); }
+
+/* CARDS */
+.card { background: white; border: 1.5px solid #ECEEF2; border-radius: 22px; padding: 26px; margin-bottom: 24px; }
+.card-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+.card-title { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+.card-sub { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+
+/* CHART */
+.chart-bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 180px; align-items: flex-end; margin-bottom: 16px; }
+.chart-col { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.chart-bar { width: 100%; border-radius: 8px 8px 4px 4px; min-height: 8px; position: relative; }
+.chart-bar-val { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 800; white-space: nowrap; }
+.chart-label { font-size: 11px; color: var(--gray-500); font-weight: 700; }
+
+.dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* TOP DISHES TABLE */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; padding: 12px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); font-weight: 800; border-bottom: 1.5px solid #ECEEF2; }
+tbody td { padding: 14px 0; border-bottom: 1px solid #ECEEF2; }
+tbody tr:last-child td { border-bottom: none; }
+.rank { width: 28px; height: 28px; border-radius: 8px; background: var(--gray-100); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.rank-1 { background: var(--orange-bg); color: var(--orange-dark); }
+.rank-2 { background: var(--gray-100); color: var(--gray-700); }
+.rank-3 { background: var(--green-bg); color: var(--green-dark); }
+
+/* RATING BARS */
+.rating-bars { display: flex; flex-direction: column; gap: 12px; }
+.rating-row { display: grid; grid-template-columns: 30px 1fr 40px; gap: 12px; align-items: center; font-size: 13px; }
+.rating-label { font-weight: 700; color: var(--gray-700); }
+.rating-bar-bg { height: 8px; background: var(--gray-100); border-radius: 999px; overflow: hidden; }
+.rating-bar-fill { height: 100%; border-radius: 999px; background: var(--orange); }
+.rating-count { font-size: 12px; color: var(--gray-500); text-align: right; }
+
+@media (max-width: 1023px) { body { width: 100%; } .app { grid-template-columns: 1fr; } .sidebar { display: none; } .stats-grid { grid-template-columns: 1fr 1fr; } .dashboard-grid { grid-template-columns: 1fr; } }
+@media (max-width: 767px) { body { width: 100%; } .main { padding: 16px; } .stats-grid { grid-template-columns: 1fr; } .chart-bars { grid-template-columns: repeat(7, 1fr); height: 120px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a href="01-splash.html" class="sidebar-logo"><div class="logo-mark">C</div><div class="logo-text"><span>Clean</span><span class="green">Eats</span></div></a>
+    <div class="role-badge"><svg class="icon-sm" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg> Restaurante</div>
+    <div class="nav-label">Principal</div>
+    <ul class="nav-list">
+      <li><a href="36-resto-dashboard.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span> Dashboard</a></li>
+      <li><a href="37-resto-pedidos.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Pedidos <span class="badge">8</span></a></li>
+      <li><a href="38-resto-cardapio.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></span> Cardápio</a></li>
+      <li><a href="39-resto-criar-prato.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Novo prato</a></li>
+    </ul>
+    <div class="nav-label">Gestão</div>
+    <ul class="nav-list">
+      <li><a href="40-resto-aprovacao.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> Aprovação</a></li>
+      <li><a href="41-resto-analytics.html" class="nav-item active"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Analytics</a></li>
+      <li><a href="42-resto-financeiro.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Financeiro</a></li>
+      <li><a href="43-resto-relatorios.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span> Relatórios</a></li>
+      <li><a href="44-resto-perfil.html" class="nav-item"><span class="nav-icon-wrap"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83"/></svg></span> Perfil</a></li>
+    </ul>
+    <div class="sidebar-bottom">
+      <a href="44-resto-perfil.html" class="sidebar-user">
+        <div class="sidebar-user-avatar"></div>
+        <div class="sidebar-user-info"><div class="sidebar-user-name">Sabor & Saúde</div><div class="sidebar-user-role">Restaurante parceiro</div></div>
+        <span class="sidebar-user-more"><svg class="icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left"><h1>Analytics</h1><p>Métricas de desempenho e comportamento de vendas</p></div>
+      <div class="topbar-right"><select class="period-select"><option>Últimos 7 dias</option><option>Últimos 30 dias</option><option>Este mês</option><option>Último trimestre</option></select></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:var(--orange-bg); color:var(--orange-dark);"><svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="stat-card-val">42</div>
+        <div class="stat-card-label">Pedidos na semana</div>
+        <span class="stat-card-trend trend-up">+15% vs semana anterior</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:var(--green-bg); color:var(--green-dark);"><svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="stat-card-val">R$ 2.180</div>
+        <div class="stat-card-label">Faturamento semanal</div>
+        <span class="stat-card-trend trend-up">+12%</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:var(--blue-bg); color:var(--blue-dark);"><svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="stat-card-val">4.8</div>
+        <div class="stat-card-label">Nota média</div>
+        <span class="stat-card-trend trend-up">+0.1</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background:#FEF3E5; color:var(--orange);"><svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="stat-card-val">78%</div>
+        <div class="stat-card-label">Taxa de recompra</div>
+        <span class="stat-card-trend trend-up">+5%</span>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="card">
+      <div class="card-head"><div><div class="card-title">Pedidos por dia</div><div class="card-sub">Últimos 7 dias</div></div></div>
+      <div class="chart-bars">
+        <div class="chart-col"><div class="chart-bar" style="height:50%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">5</span></div><span class="chart-label">Seg</span></div>
+        <div class="chart-col"><div class="chart-bar" style="height:70%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">7</span></div><span class="chart-label">Ter</span></div>
+        <div class="chart-col"><div class="chart-bar" style="height:60%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">6</span></div><span class="chart-label">Qua</span></div>
+        <div class="chart-col"><div class="chart-bar" style="height:85%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">9</span></div><span class="chart-label">Qui</span></div>
+        <div class="chart-col"><div class="chart-bar" style="height:90%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">10</span></div><span class="chart-label">Sex</span></div>
+        <div class="chart-col"><div class="chart-bar" style="height:40%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">3</span></div><span class="chart-label">Sáb</span></div>
+        <div class="chart-col"><div class="chart-bar" style="height:25%; background: linear-gradient(180deg, var(--orange-light), var(--orange));"><span class="chart-bar-val">2</span></div><span class="chart-label">Dom</span></div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- TOP DISHES -->
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Pratos mais vendidos</div><div class="card-sub">Top 5 da semana</div></div></div>
+        <table>
+          <thead><tr><th>#</th><th>Prato</th><th>Pedidos</th><th>Receita</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rank rank-1">1</span></td><td style="font-weight:700;">Bowl Proteico Frango</td><td>12</td><td>R$ 394,80</td></tr>
+            <tr><td><span class="rank rank-2">2</span></td><td style="font-weight:700;">Bowl Mediterrâneo</td><td>9</td><td>R$ 314,10</td></tr>
+            <tr><td><span class="rank rank-3">3</span></td><td style="font-weight:700;">Marmita Fit Salmão</td><td>8</td><td>R$ 311,20</td></tr>
+            <tr><td><span class="rank">4</span></td><td style="font-weight:700;">Marmita Low Carb</td><td>7</td><td>R$ 258,30</td></tr>
+            <tr><td><span class="rank">5</span></td><td style="font-weight:700;">Bowl Vegano</td><td>6</td><td>R$ 179,40</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RATINGS -->
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Distribuição de avaliações</div><div class="card-sub">Baseado em 89 avaliações</div></div></div>
+        <div class="rating-bars">
+          <div class="rating-row"><span class="rating-label">5</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:65%"></div></div><span class="rating-count">58</span></div>
+          <div class="rating-row"><span class="rating-label">4</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:22%"></div></div><span class="rating-count">20</span></div>
+          <div class="rating-row"><span class="rating-label">3</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:8%"></div></div><span class="rating-count">7</span></div>
+          <div class="rating-row"><span class="rating-label">2</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:3%"></div></div><span class="rating-count">3</span></div>
+          <div class="rating-row"><span class="rating-label">1</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:1%"></div></div><span class="rating-count">1</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

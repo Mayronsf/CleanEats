@@ -1,0 +1,35 @@
+.vazio { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 56px 24px; border: 1.5px dashed var(--line-strong); border-radius: var(--radius-card); background: var(--gray-50); }
+.compacto { padding: 32px 16px; border: none; background: none; }
+.vazioIcone { width: 56px; height: 56px; border-radius: 16px; background: var(--accent-bg); color: var(--accent-dark); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+.vazioTitulo { font-size: 17px; font-weight: 800; }
+.vazioDescricao { font-size: 14px; color: var(--gray-700); max-width: 42ch; margin-bottom: 6px; }
+
+.erro { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 18px; border-radius: var(--radius-md); background: var(--danger-bg); color: var(--danger-ink); font-size: 14px; font-weight: 600; }
+.erro p { flex: 1; min-width: 200px; }
+
+.skeleton { display: block; background: linear-gradient(90deg, var(--gray-100) 0%, #E6EBE3 50%, var(--gray-100) 100%); background-size: 200% 100%; animation: brilho 1.4s ease-in-out infinite; }
+@keyframes brilho { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.skeletonCard { background: var(--white); border-radius: var(--radius-card-lg); padding: 20px; border: 1.5px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.skeletonImg { aspect-ratio: 1.1; border-radius: var(--radius-lg); background: var(--gray-100); margin-bottom: 6px; }
+
+.toasts { position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; max-width: min(420px, calc(100vw - 32px)); }
+.toast { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: var(--radius-field); font-size: 14px; font-weight: 600; box-shadow: var(--shadow-pop); background: var(--ink); color: var(--white); animation: entrar 0.3s var(--ease); }
+.toast span { flex: 1; }
+.toast button { background: none; border: none; color: inherit; opacity: 0.7; cursor: pointer; padding: 4px; }
+.sucesso svg:first-child { color: var(--green-accent); }
+.erro.toast, .toast.erro { background: var(--danger-ink); }
+.info svg:first-child { color: var(--blue-light); }
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 767px) { .toasts { left: 16px; right: 16px; bottom: 96px; } }
+
+.uploadRotulo { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.upload { width: 100%; min-height: 180px; border: 2px dashed var(--gray-300); border-radius: var(--radius-card); background: var(--gray-50); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; padding: 20px; overflow: hidden; transition: all var(--dur-fast); }
+.upload:hover, .arrastando { border-color: var(--accent); background: var(--accent-bg); }
+.upload:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+.uploadErro { border-color: var(--fat); }
+.uploadIcone { width: 52px; height: 52px; border-radius: 16px; background: var(--white); color: var(--accent-dark); display: flex; align-items: center; justify-content: center; }
+.uploadTexto { font-size: 14px; color: var(--gray-700); }
+.uploadTexto strong { color: var(--accent-dark); }
+.uploadDica { font-size: 12px; color: var(--gray-500); }
+.preview { width: 100%; height: 100%; max-height: 260px; object-fit: cover; border-radius: var(--radius-md); }
+.uploadMsgErro { margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--danger-ink); }

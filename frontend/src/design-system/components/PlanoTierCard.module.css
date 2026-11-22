@@ -1,0 +1,61 @@
+.plano {
+  background: var(--white);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 32px 28px;
+  position: relative;
+  transition: all var(--dur);
+  display: flex; flex-direction: column;
+}
+.plano:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+.recomendado {
+  border-color: var(--green-primary);
+  box-shadow: 0 20px 40px rgba(91, 176, 51, 0.15);
+  background: linear-gradient(180deg, var(--green-bg) 0%, var(--white) 40%);
+  transform: translateY(-12px);
+}
+.recomendado:hover { transform: translateY(-18px); }
+.premium { background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%); color: var(--white); border-color: var(--gold); }
+.etiqueta {
+  position: absolute; top: -14px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--green-primary); color: var(--white);
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 16px; border-radius: var(--radius-pill);
+  box-shadow: 0 6px 14px rgba(91, 176, 51, 0.3);
+  white-space: nowrap;
+}
+.premium .etiqueta { background: var(--gold); color: var(--ink); box-shadow: 0 6px 14px rgba(201, 169, 97, 0.4); }
+.cabeca { margin-bottom: 24px; }
+.icone { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.icone-FREE { background: var(--gray-100); color: var(--gray-700); }
+.icone-BASIC { background: var(--blue-bg); color: var(--blue-dark); }
+.icone-PRO { background: var(--green-bg-deep); color: var(--green-dark); }
+.icone-PREMIUM { background: rgba(201, 169, 97, 0.2); color: var(--gold); }
+.nome { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+.descricao { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+.premium .descricao { color: rgba(255, 255, 255, 0.75); }
+.preco { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px dashed var(--line-strong); }
+.premium .preco { border-bottom-color: rgba(255, 255, 255, 0.15); }
+.linhaPreco { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
+.moeda { font-size: 18px; font-weight: 700; color: var(--gray-500); }
+.premium .moeda, .premium .periodo, .premium .notaPreco { color: rgba(255, 255, 255, 0.7); }
+.num { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.centavos { font-size: 22px; font-weight: 800; }
+.gratis { color: var(--green-primary); }
+.periodo { font-size: 14px; color: var(--gray-500); font-weight: 600; }
+.notaPreco { font-size: 12px; color: var(--gray-500); }
+.secao { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 12px; }
+.premium .secao { color: rgba(255, 255, 255, 0.6); }
+.recursos { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.recurso { display: flex; gap: 10px; font-size: 13px; line-height: 1.45; color: var(--gray-700); }
+.premium .recurso { color: rgba(255, 255, 255, 0.88); }
+.sim { color: var(--green-primary); flex-shrink: 0; margin-top: 1px; }
+.premium .sim { color: var(--gold); }
+.ausente { color: var(--gray-500); }
+.ausente svg { flex-shrink: 0; margin-top: 1px; }
+.botao { margin-top: auto; }
+
+@media (max-width: 1023px) {
+  .recomendado, .recomendado:hover { transform: none; }
+}

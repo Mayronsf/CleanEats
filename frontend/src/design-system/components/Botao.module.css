@@ -1,0 +1,37 @@
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--dur-fast);
+}
+.botao:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; transform: none; }
+.botao:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+
+.sm { padding: 8px 18px; font-size: 12px; border-radius: var(--radius-pill); }
+.md { padding: 14px 24px; font-size: 14px; border-radius: var(--radius-field); }
+.lg { padding: 18px; font-size: 16px; border-radius: var(--radius-field); }
+.total { width: 100%; }
+
+.primario { background: var(--accent); color: var(--white); box-shadow: var(--shadow-cta); }
+.primario:hover:not(:disabled) { background: var(--accent-dark); transform: translateY(-1px); }
+
+.secundario { background: var(--white); color: var(--ink); border: 1.5px solid var(--line-strong); }
+.secundario:hover:not(:disabled) { border-color: var(--ink); background: #FAFAFA; }
+
+.fantasma { background: transparent; color: var(--accent-dark); }
+.fantasma:hover:not(:disabled) { background: var(--accent-bg); }
+
+.escuro { background: var(--ink); color: var(--white); }
+.escuro:hover:not(:disabled) { background: var(--ink-soft); }
+
+.perigo { background: var(--danger-bg); color: var(--danger-ink); }
+.perigo:hover:not(:disabled) { background: #F9D9D9; }
+
+.girando { animation: girar 0.8s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }

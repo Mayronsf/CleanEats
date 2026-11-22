@@ -1,0 +1,29 @@
+# Segredos
+.env
+.env.*
+!.env.example
+application-local.yml
+.claude/settings.local.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+
+# Backend
+backend/target/
+*.class
+
+# Supabase CLI
+supabase/.branches/
+supabase/.temp/
+
+# Impeccable (config local)
+.impeccable/config.local.json
+
+# SO / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
