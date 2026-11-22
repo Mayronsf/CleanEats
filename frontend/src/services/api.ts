@@ -51,5 +51,5 @@ export const HOME_DO_PERFIL: Record<PerfilUsuario, string> = {
   CLIENTE: '/app',
   NUTRICIONISTA: '/nutri',
   RESTAURANTE: '/restaurante',
-  ADMIN: '/admin/aprovacoes',
+  ADMIN: '/admin',
 };

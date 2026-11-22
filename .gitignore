@@ -27,3 +27,5 @@ Thumbs.db
 .idea/
 .vscode/
 *.log
+supabase/seed-completo.sql
+node_modules/

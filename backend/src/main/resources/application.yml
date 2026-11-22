@@ -5,7 +5,9 @@ spring:
   application:
     name: cleaneats-api
   config:
-    import: optional:file:./application-local.yml
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:./application-local.yml
   datasource:
     # Supabase > Project Settings > Database > Connection string (Session pooler, porta 5432)
     url: ${SUPABASE_DB_URL:jdbc:postgresql://localhost:5432/postgres}
@@ -33,3 +35,15 @@ cleaneats:
     jwt-secret: ${SUPABASE_JWT_SECRET:}
   cors:
     origens: ${CORS_ORIGENS:http://localhost:5173}
+  supabase-servico:
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+  nutribot:
+    api-key: ${ANTHROPIC_API_KEY:}
+    modelo: ${ANTHROPIC_MODEL:claude-opus-5-5}
+  email:
+    resend-api-key: ${RESEND_API_KEY:}
+    remetente: ${EMAIL_REMETENTE:CleanEats <onboarding@resend.dev>}
+    redirecionar-para: ${EMAIL_REDIRECIONAR_PARA:}
+  entrega:
+    segundos-ate-sair: ${ENTREGA_SEGUNDOS_ATE_SAIR:20}
+    segundos-ate-entregar: ${ENTREGA_SEGUNDOS_ATE_ENTREGAR:40}

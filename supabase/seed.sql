@@ -2,9 +2,10 @@
 -- CleanEats — seed de demonstração (coerente com as telas HTML)
 -- Unificado: ano 2026, Recife, restaurante principal "Sabor Natural".
 -- Senha de TODOS os usuários de demo: CleanEats@2026
--- Fase 0: núcleo (tiers, restrições, usuários, restaurantes, pratos,
--- perfil do Breno). Pedidos, avaliações, plano da semana e faturas
--- entram na Fase 1 (seed_fase1.sql), extraídos das telas 19, 21, 24.
+-- NÚCLEO (sessão principal): tiers, restrições, usuários de demo, restaurantes,
+-- pratos e perfil do Breno. Cada frente completa os dados das suas telas em
+-- supabase/seeds/frente-<x>.sql. Ordem: seed.sql → seeds/frente-a.sql →
+-- seeds/frente-b.sql → seeds/frente-c.sql (scripts/aplicar-banco.mjs faz isso).
 -- =====================================================================
 
 -- ---------- Tiers (tela 09) ----------
@@ -90,32 +91,39 @@ insert into horario_funcionamento (id_restaurante, dia_semana, abre, fecha)
   from restaurante r cross join generate_series(1, 6) d;
 
 -- ---------- Pratos (telas 10, 11, 12) — macros e preços iguais aos do HTML ----------
--- Gorduras: valor exibido na tela 12 (Frango) ou derivado da proporção da barra de macros da tela 11.
+-- Cada prato abaixo traz um marcador [MACROS EXATOS] / [GORDURA DERIVADA] / [GORDURA ESTIMADA].
+-- kcal, proteínas, carboidratos e preço vêm direto das telas 10, 11 e 12.
 insert into marmita (id, id_restaurante, nome, descricao, categoria, imagem_url, preco, porcao_g, calorias, proteinas, carboidratos, gorduras, fibras, sodio_mg,
                      objetivos, status_prato, avaliado_por, avaliado_em, nota_media, total_avaliacoes, aprovado_por_nutri) values
+  -- PRATO 1/7 [MACROS EXATOS] tela 12 mostra kcal, P, C, G (12 g), fibras (8 g) e sódio (480 mg).
   ('00000000-0000-4000-b000-000000000001', '00000000-0000-4000-a000-000000000001', 'Frango Grelhado Fitness',
    'Filé de frango grelhado com batata doce assada, brócolis no vapor e arroz integral. Refeição completa, alta em proteínas, ideal para ganho de massa muscular. Tempero natural sem óleos refinados.',
    'Alta Proteína', '/img/pratos/frango-grelhado-fitness.jpg', 24.90, 350, 420, 38, 32, 12, 8, 480,
-   array['GANHO_MASSA','EQUILIBRIO']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.9, 312, true),
+   array['GANHO_MASSA','EQUILIBRIO']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.9, 312, true),
+  -- PRATO 2/7 [GORDURA DERIVADA] 18 g P x 11%/24% da barra da tela 11 = 8 g — confirmar com o Verde Vida. Fibras e sódio dos pratos 2–7 também são estimados.
   ('00000000-0000-4000-b000-000000000002', '00000000-0000-4000-a000-000000000002', 'Bowl Vegano Power',
    'Bowl de grão-de-bico, quinoa, legumes assados e tahine.', 'Vegano', '/img/pratos/bowl-vegano-power.jpg', 22.90, 380, 380, 18, 52, 8, 11, 390,
-   array['EMAGRECIMENTO','EQUILIBRIO']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.8, 218, true),
+   array['EMAGRECIMENTO','EQUILIBRIO']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.8, 218, true),
+  -- PRATO 3/7 [GORDURA DERIVADA] 35 g P x 26%/41% da barra da tela 11 = 22 g — confirmar com o Mar & Terra. Fibras e sódio dos pratos 2–7 também são estimados.
   ('00000000-0000-4000-b000-000000000003', '00000000-0000-4000-a000-000000000003', 'Salmão com Quinoa',
    'Salmão grelhado com quinoa e legumes no vapor.', 'Sem Glúten', '/img/pratos/salmao-com-quinoa.jpg', 32.90, 360, 480, 35, 28, 22, 6, 420,
-   array['GANHO_MASSA','EQUILIBRIO']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.9, 156, true),
+   array['GANHO_MASSA','EQUILIBRIO']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.9, 156, true),
+  -- PRATO 4/7 [GORDURA DERIVADA] 42 g P x 18%/43% da barra da tela 11 = 18 g — confirmar com o Sabor Natural. Fibras e sódio dos pratos 2–7 também são estimados.
   ('00000000-0000-4000-b000-000000000004', '00000000-0000-4000-a000-000000000001', 'Steak com Batata Doce',
    'Steak de patinho grelhado com batata doce e salada verde.', 'Low Carb', '/img/pratos/steak-com-batata-doce.jpg', 28.90, 380, 520, 42, 38, 18, 7, 510,
-   array['GANHO_MASSA']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.7, 188, false),
+   array['GANHO_MASSA']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.7, 188, false),
+  -- PRATO 5/7 [GORDURA DERIVADA] 25 g P x 10%/28% da barra da tela 11 = 9 g — confirmar com o Verde Vida. Fibras e sódio dos pratos 2–7 também são estimados.
   ('00000000-0000-4000-b000-000000000005', '00000000-0000-4000-a000-000000000002', 'Açaí Proteico',
    'Açaí com whey vegetal, banana e granola sem açúcar.', 'Vegano', '/img/pratos/acai-proteico.jpg', 18.90, 400, 350, 25, 42, 9, 6, 80,
-   array['GANHO_MASSA','EQUILIBRIO']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.8, 97, false),
+   array['GANHO_MASSA','EQUILIBRIO']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.8, 97, false),
+  -- PRATO 6/7 [GORDURA DERIVADA] 22 g P x 18%/32% da barra da tela 11 = 12 g — confirmar com o FitFood. Fibras e sódio dos pratos 2–7 também são estimados.
   ('00000000-0000-4000-b000-000000000006', '00000000-0000-4000-a000-000000000004', 'Wrap Integral Light',
    'Wrap integral com frango desfiado, folhas e molho de iogurte sem lactose.', 'Low Carb', '/img/pratos/wrap-integral-light.jpg', 19.90, 280, 320, 22, 35, 12, 5, 450,
-   array['EMAGRECIMENTO','EQUILIBRIO']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.6, 74, false),
-  -- Tapioca com Ovo e Banana (tela 10: 320 kcal · 18g P · 42g C). Gordura ESTIMADA pelo balanço calórico: confirmar com o restaurante.
+   array['EMAGRECIMENTO','EQUILIBRIO']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.6, 74, false),
+  -- PRATO 7/7 [GORDURA ESTIMADA] tela 10 não mostra gordura; (320 - 18x4 - 42x4) / 9 = 9 g — confirmar com o FitFood. Fibras e sódio dos pratos 2–7 também são estimados.
   ('00000000-0000-4000-b000-000000000007', '00000000-0000-4000-a000-000000000004', 'Tapioca com Ovo e Banana',
    'Tapioca com ovos mexidos e banana.', 'Café da manhã', null, 16.90, 250, 320, 18, 42, 9, 3, 260,
-   array['EQUILIBRIO','GANHO_MASSA']::objetivo_nutricional[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.7, 40, false);
+   array['EQUILIBRIO','GANHO_MASSA']::text[], 'APROVADO', '00000000-0000-4000-8000-000000000004', now(), 4.7, 40, false);
 
 -- Ingredientes do Frango Grelhado Fitness (tela 12)
 insert into ingrediente_marmita (id_marmita, nome, quantidade, preparo, ordem) values

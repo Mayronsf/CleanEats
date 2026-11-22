@@ -1,0 +1,29 @@
+# Blueprint do Render para a API (Dashboard > New > Blueprint > este repositório)
+services:
+  - type: web
+    name: cleaneats-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: starter            # o plano free "dorme" após 15 min — ruim para a apresentação
+    region: oregon
+    healthCheckPath: /api/saude
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: SUPABASE_DB_URL
+        sync: false
+      - key: SUPABASE_DB_USER
+        sync: false
+      - key: SUPABASE_DB_PASSWORD
+        sync: false
+      - key: CORS_ORIGENS
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_REMETENTE
+        sync: false

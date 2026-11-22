@@ -1,0 +1,3 @@
+-- Seed da frente B — nutricionista (06, 26–35): ~9 clientes da Dra. Ana Souza, triagens (27), plano da semana do Breno (24, 30), prescrições (32), conversas e mensagens (33), medições (29), repasses (34)
+-- Só esta frente edita este arquivo. Use os UUIDs fixos de seed.sql para referenciar
+-- usuários, restaurantes e pratos do núcleo. Datas em 2026, cidade Recife.

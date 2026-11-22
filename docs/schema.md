@@ -1,7 +1,7 @@
 # Schema do banco (proposta da Fase 0)
 
 Migrations: `supabase/migrations/` · Seed: `supabase/seed.sql`.
-Validado em Postgres embarcado (PGlite) com stubs do schema `auth`: 34 tabelas, RLS ativa em 100%.
+Validado em Postgres embarcado (PGlite) com stubs do schema `auth`: 36 tabelas, RLS ativa em 100%. Status e tipos são `domain` de texto com CHECK (não enum nativo), para o JPA mapear com `@Enumerated(STRING)`. Migration 3 adicionou `medicao`, `contato_suporte`, preferências de notificação, entrega agendada/simulada e assinatura PAUSADA.
 
 ## Diagrama (ER simplificado)
 

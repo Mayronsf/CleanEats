@@ -20,18 +20,18 @@ cleaneats/
 
 ## 1. Supabase
 1. Crie um projeto (região São Paulo).
-2. **SQL Editor** → rode, nesta ordem:
+2. Preencha `backend/.env` e rode `npm install && npm run banco` na raiz (aplica migrations + seeds). Ou, no **SQL Editor**, rode nesta ordem:
    1. `supabase/migrations/20261122000001_schema_inicial.sql`
    2. `supabase/migrations/20261122000002_rls_realtime.sql`
-   3. `supabase/seed.sql`
+   3. `supabase/migrations/20261122000003_escopo_completo.sql` (e as migrations das frentes, em ordem)
+   4. `supabase/seed-completo.sql` (gerado por `npm run seed:sql`: núcleo + seeds das frentes)
    (Com a Supabase CLI: `supabase link --project-ref <ref>` e `supabase db push`, depois rode o seed.)
 3. Anote em **Project Settings → API**: URL do projeto e chave `anon`/publishable. Em **Connect → Session pooler**: string JDBC, usuário e senha do banco.
 
 ## 2. Backend
 ```bash
 cd backend
-cp .env.example .env          # preencha com os dados do passo 1
-# Carregue as variáveis no shell (bash):  set -a; source .env; set +a
+cp .env.example .env          # preencha com os dados do passo 1 (o Spring lê o .env sozinho)
 ./mvnw spring-boot:run        # http://localhost:8080/api/saude
 ./mvnw test                   # testes de regra (status do pedido, tiers, comissão)
 ```
@@ -46,6 +46,9 @@ npm run dev                   # http://localhost:5173
 npm test                      # Vitest + Testing Library
 npm run build
 ```
+
+### Um comando só (plano B da demo)
+`npm install` e depois `npm run demo` na raiz sobem API e web juntos. Publicação (Vercel + Render): `docs/deploy.md`.
 
 ## 4. Conferir ponta a ponta
 Abra **http://localhost:5173/dev/conexao** e entre com um usuário de demo. Os 4 passos devem ficar verdes (Supabase configurado → API no ar → login → backend leu o perfil). A vitrine do design system fica em **/design-system**.
@@ -66,6 +69,10 @@ Senha de todos: **`CleanEats@2026`**
 - `docs/inventario-telas.md` — 44 telas × rotas × fases
 - `docs/schema.md` — modelo de dados · `docs/api-endpoints.md` — API REST
 - `docs/relatorio-fase-0.md` — relatório da Fase 0
+- `docs/matriz-funcionalidades.md` — CE-1 a CE-21 e cada botão de cada tela (REAL/SIMULADA)
+- `docs/roteiro-demo.md` — roteiro da apresentação
+- `docs/frentes/` — execução em paralelo (instruções por frente)
+- `docs/deploy.md` — publicação e plano B
 
 ---
 © 2026 CleanEats — TRICODE Solutions · Recife · Brasil · v1.0 · MVP · UNIFACOL

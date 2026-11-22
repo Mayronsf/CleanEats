@@ -1,0 +1,3 @@
+-- Seed da frente C — restaurante (07, 36–44) + admin: pratos de todos os 6 restaurantes (14, 38) incluindo Açaí Club e Rota Proteica, pratos EM_ANALISE/REJEITADO (40), ingredientes e compatibilidades, horários, pedidos do dia (36, 37), repasses (42), fila do admin
+-- Só esta frente edita este arquivo. Use os UUIDs fixos de seed.sql para referenciar
+-- usuários, restaurantes e pratos do núcleo. Datas em 2026, cidade Recife.

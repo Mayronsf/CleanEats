@@ -10,23 +10,23 @@
 create extension if not exists pgcrypto;
 
 -- ---------- Enums ----------
-create type perfil_usuario        as enum ('CLIENTE', 'NUTRICIONISTA', 'RESTAURANTE', 'ADMIN');
-create type status_aprovacao      as enum ('PENDENTE', 'APROVADO', 'REJEITADO');
-create type status_prato          as enum ('RASCUNHO', 'EM_ANALISE', 'APROVADO', 'REJEITADO', 'PAUSADO');
-create type status_pedido         as enum ('NOVO', 'ACEITO', 'RECUSADO', 'PREPARANDO', 'PRONTO', 'A_CAMINHO', 'ENTREGUE', 'CANCELADO');
-create type objetivo_nutricional  as enum ('EMAGRECIMENTO', 'GANHO_MASSA', 'EQUILIBRIO');
-create type nivel_atividade       as enum ('SEDENTARIO', 'LEVE', 'MODERADO', 'INTENSO', 'ATLETA');
-create type tier_assinatura       as enum ('FREE', 'BASIC', 'PRO', 'PREMIUM');
-create type ciclo_cobranca        as enum ('MENSAL', 'ANUAL');
-create type status_assinatura     as enum ('TRIAL', 'ATIVA', 'CANCELADA', 'EXPIRADA');
-create type status_fatura         as enum ('PENDENTE', 'PAGA', 'FALHOU', 'ESTORNADA');
-create type tipo_refeicao         as enum ('CAFE_DA_MANHA', 'LANCHE_MANHA', 'ALMOCO', 'LANCHE_TARDE', 'JANTAR', 'CEIA');
-create type status_triagem        as enum ('AGUARDANDO', 'EM_ANDAMENTO', 'CONCLUIDA');
-create type status_moderacao      as enum ('PENDENTE', 'PUBLICADA', 'REJEITADA');
-create type categoria_componente  as enum ('PROTEINA', 'CARBOIDRATO', 'VEGETAL', 'ADICIONAL');
-create type tipo_notificacao      as enum ('PEDIDO', 'CARDAPIO', 'NUTRICIONISTA', 'ASSINATURA', 'SISTEMA');
-create type autor_chatbot         as enum ('USUARIO', 'BOT');
-create type status_repasse        as enum ('PREVISTO', 'PAGO');
+create domain perfil_usuario as text check (value in ('CLIENTE', 'NUTRICIONISTA', 'RESTAURANTE', 'ADMIN'));
+create domain status_aprovacao as text check (value in ('PENDENTE', 'APROVADO', 'REJEITADO'));
+create domain status_prato as text check (value in ('RASCUNHO', 'EM_ANALISE', 'APROVADO', 'REJEITADO', 'PAUSADO'));
+create domain status_pedido as text check (value in ('NOVO', 'ACEITO', 'RECUSADO', 'PREPARANDO', 'PRONTO', 'A_CAMINHO', 'ENTREGUE', 'CANCELADO'));
+create domain objetivo_nutricional as text check (value in ('EMAGRECIMENTO', 'GANHO_MASSA', 'EQUILIBRIO'));
+create domain nivel_atividade as text check (value in ('SEDENTARIO', 'LEVE', 'MODERADO', 'INTENSO', 'ATLETA'));
+create domain tier_assinatura as text check (value in ('FREE', 'BASIC', 'PRO', 'PREMIUM'));
+create domain ciclo_cobranca as text check (value in ('MENSAL', 'ANUAL'));
+create domain status_assinatura as text check (value in ('TRIAL', 'ATIVA', 'PAUSADA', 'CANCELADA', 'EXPIRADA'));
+create domain status_fatura as text check (value in ('PENDENTE', 'PAGA', 'FALHOU', 'ESTORNADA'));
+create domain tipo_refeicao as text check (value in ('CAFE_DA_MANHA', 'LANCHE_MANHA', 'ALMOCO', 'LANCHE_TARDE', 'JANTAR', 'CEIA'));
+create domain status_triagem as text check (value in ('AGUARDANDO', 'EM_ANDAMENTO', 'CONCLUIDA'));
+create domain status_moderacao as text check (value in ('PENDENTE', 'PUBLICADA', 'REJEITADA'));
+create domain categoria_componente as text check (value in ('PROTEINA', 'CARBOIDRATO', 'VEGETAL', 'ADICIONAL'));
+create domain tipo_notificacao as text check (value in ('PEDIDO', 'CARDAPIO', 'NUTRICIONISTA', 'ASSINATURA', 'SISTEMA'));
+create domain autor_chatbot as text check (value in ('USUARIO', 'BOT'));
+create domain status_repasse as text check (value in ('PREVISTO', 'PAGO'));
 
 -- ---------- Assinaturas: tiers (CE-15, preços da tela 09) ----------
 create table tier (
@@ -185,7 +185,7 @@ create table marmita (
   gorduras          numeric(6,1),
   fibras            numeric(6,1),
   sodio_mg          integer,
-  objetivos         objetivo_nutricional[] not null default '{}',   -- CE-6
+  objetivos         text[] not null default '{}' check (objetivos <@ array['EMAGRECIMENTO','GANHO_MASSA','EQUILIBRIO']),   -- CE-6
   status_prato      status_prato not null default 'RASCUNHO',
   motivo_rejeicao   text,
   avaliado_por      uuid references usuario(id),
@@ -270,11 +270,12 @@ create table assinatura (
   renovacao_em   timestamptz,
   cancelada_em   timestamptz,
   encerra_em     timestamptz,           -- depois desta data volta ao FREE, sem perder histórico
+  pausada_ate    timestamptz,
   gateway        text not null default 'SIMULADO',
   id_externo     text,
   criado_em      timestamptz not null default now()
 );
-create unique index uq_assinatura_vigente on assinatura (id_usuario) where status in ('TRIAL', 'ATIVA');
+create unique index uq_assinatura_vigente on assinatura (id_usuario) where status in ('TRIAL', 'ATIVA', 'PAUSADA');
 
 create table fatura (
   id             uuid primary key default gen_random_uuid(),

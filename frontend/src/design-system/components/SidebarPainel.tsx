@@ -44,7 +44,7 @@ export function SidebarPainel({ variante, grupos, usuario }: SidebarPainelProps)
       {aberta && <div className={s.sombra} onClick={() => setAberta(false)} aria-hidden />}
       <aside className={[s.sidebar, s[variante], aberta && s.aberta].filter(Boolean).join(' ')} aria-label={ROTULO_PAPEL[variante]}>
         <div className={s.topo}>
-          <Logo compacto para={variante === 'admin' ? '/admin/aprovacoes' : variante === 'nutri' ? '/nutri' : '/restaurante'} />
+          <Logo compacto para={variante === 'admin' ? '/admin' : variante === 'nutri' ? '/nutri' : '/restaurante'} />
           <button type="button" className={s.fechar} onClick={() => setAberta(false)} aria-label="Fechar menu"><X size={18} aria-hidden /></button>
         </div>
         <span className={s.papel}>{ROTULO_PAPEL[variante]}</span>
