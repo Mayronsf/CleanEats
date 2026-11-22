@@ -39,7 +39,7 @@ cleaneats:
     service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
   nutribot:
     api-key: ${ANTHROPIC_API_KEY:}
-    modelo: ${ANTHROPIC_MODEL:claude-opus-5-5}
+    modelo: ${ANTHROPIC_MODEL:claude-sonnet-5-5}
   email:
     resend-api-key: ${RESEND_API_KEY:}
     remetente: ${EMAIL_REMETENTE:CleanEats <onboarding@resend.dev>}

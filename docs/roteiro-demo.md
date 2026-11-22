@@ -13,7 +13,7 @@
    - **Admin** — `admin@cleaneats.test`
    Senha de todos: `CleanEats@2026`. Uma 5ª janela anônima para o cadastro novo.
 3. Celular com câmera à mão (QR Code) e a caixa de e-mail da equipe aberta (código de recuperação e prescrição).
-4. Backend aquecido: abrir `https://<api>/api/saude` 2 min antes (o Render pode demorar no 1º acesso).
+4. **Abrir a URL da API (`https://<api>.onrender.com/api/saude`) 2 minutos antes de apresentar.** O Render gratuito hiberna após 15 min sem uso e leva ~1 min para acordar. Não deixar a demo parada mais de 15 min entre os atos.
 5. **Plano B:** se a nuvem falhar, `npm run demo` no notebook (mesmo Supabase). Se a internet cair, apresentar o vídeo gravado do ensaio.
 
 ---
@@ -30,7 +30,7 @@
 | 1.7 | **09** Planos | Escolher **Pro mensal** → pagamento PIX (simulado) | Aprovado na hora; vai para `/app` já como Pro | 15 |
 | 1.8 | **10** Home da Marina | Mostrar o selo Pro e o aviso "aguardando triagem da nutri" | Dados reais da conta nova | 15 |
 | 1.9 | **02** Login | Sair; tentar senha errada → erro; "Entrar com Google" (conta Google da equipe); clicar Facebook | Erro claro; Google entra (cai em `/cadastro/perfil` se for conta nova); Facebook mostra "em breve" | 1 |
-| 1.10 | **08** Recuperar senha | Pedir código para o e-mail da equipe → digitar o código de 6 dígitos → nova senha | Contagem regressiva de reenvio; senha trocada; login com a nova | 1 |
+| 1.10 | **08** Recuperar senha | Pedir o código **para o e-mail do dono da conta Resend** (conta criada com esse e-mail no ensaio) → digitar o código de 6 dígitos → nova senha | Contagem regressiva de reenvio; senha trocada; login com a nova | 1 |
 | 1.11 | **07** Cadastro restaurante | Nova conta "Bowl & Cia" (CNPJ, endereço, cozinha, horários) | Fica PENDENTE; painel mostra "aguardando aprovação" | 3 |
 | 1.12 | **06** Cadastro nutricionista | Nova conta "Dr. Paulo Reis" (CRN, especialidades, agenda) | Fica PENDENTE | 18 |
 | 1.13 | **Admin** `/admin` | Aprovar o CNPJ da Bowl & Cia; **rejeitar** o CRN do Dr. Paulo com motivo | Status muda; o profissional vê o motivo ao entrar | 3, 18 |
@@ -110,7 +110,7 @@
 Novas: `/ficha/:id` ✔ `/admin` ✔ `/admin/avaliacoes` ✔ `/admin/restaurantes` ✔ `/nutri/prescricoes` ✔ `/nutri/acompanhamento` ✔ notificações ✔ termos/privacidade ✔ 404 ✔ · CE-1 a CE-21 ✔
 
 ## Pontos de atenção (testar no ensaio)
-- **Código de recuperação (1.10):** o SMTP padrão do Supabase só envia para e-mails da equipe do projeto e tem limite por hora. Configurar SMTP próprio (Resend) no Supabase Auth até 23/11.
+- **Código de recuperação (1.10):** e-mails de Auth saem pelo SMTP do Supabase, **não** pelo modo demo do backend (`EMAIL_REDIRECIONAR_PARA` só cobre os e-mails do backend). Com o Resend como SMTP do Supabase e **sem domínio verificado**, só chegam ao e-mail do dono da conta Resend — por isso a tela 08 é demonstrada com uma conta cadastrada nesse e-mail. Se verificarmos um domínio, qualquer e-mail funciona.
 - **Google (1.9):** configurar o provedor Google no Supabase e as URLs de redirecionamento (localhost + Vercel).
 - **Realtime (3.1, 3.2):** testar com as duas janelas em máquinas diferentes, na rede do local da apresentação.
 - **NutriBot (6.4/6.6):** chave da API no Render; respostas costumam levar 3–8 s (mostrar o "digitando…").

@@ -32,7 +32,7 @@ Rodar só uma frente localmente: backend `cd backend && ./mvnw spring-boot:run` 
 | `frontend/src/features/<frente>/**`, `frontend/src/services/<frente>.ts`, `frontend/src/hooks/<frente>/**` | a frente | tudo |
 | `supabase/migrations/20261122*` (compartilhadas) | P | nunca editar |
 | Migrations da frente | a frente | **só** com o prefixo da frente (abaixo), e só para colunas/índices/views de tabelas que são dela |
-| `supabase/seed.sql` (núcleo) | P | nunca editar |
+| `supabase/seed.sql` (núcleo: usuários de demo, **9 clientes da tela 28**, 6 restaurantes, **todos os pratos dos HTMLs**, **pedidos das telas 19 e 37**) | P | nunca editar — use os UUIDs fixos de lá |
 | `supabase/seeds/frente-<x>.sql` | a frente | tudo (rodam depois do núcleo, na mesma sessão) |
 | `backend/.../domain/` entidades **compartilhadas** (Usuario, PerfilCliente, Restaurante, Marmita, Pedido, ItemPedido, HistoricoStatusPedido, Nutricionista, PlanoAlimentar, RefeicaoPlano, Assinatura, Fatura, ConsumoDiario, Notificacao, Repasse, Enums, CalculoFinanceiro, Status*, TierAssinatura, PerfilUsuario) | P | usar; pedir mudança |
 | Entidades das tabelas da frente (ver arquivo da frente) | a frente | criar em `domain/` (arquivo novo) |
@@ -56,6 +56,9 @@ Não edite arquivo compartilhado. Pare, escreva o pedido no fim de `docs/frentes
 Motivo: tela 12 mostra …  ·  Proposta: coluna `x` em marmita + getter na entidade.
 ```
 Enquanto isso, siga com outra tela. A principal publica a mudança em `main`; a frente puxa com `git merge main`.
+
+## Até as chaves chegarem (22/11 à noite)
+Supabase, Anthropic e Resend ainda não estão configurados. Até lá, **converta as telas sem depender do banco real**: componentes, layout fiel ao HTML, estados (loading/vazio/erro) e o contrato da API (DTOs do backend + funções em `services/<frente>.ts` + hooks do TanStack Query). Os testes de componente usam dados fictícios **só nos arquivos de teste** — nunca dentro do componente. Quando as chaves chegarem, a principal aplica o banco e avisa; aí cada frente liga as telas aos dados reais.
 
 ## Ritmo e sincronização
 - **Etapa 1 (até 23/11 12h):** todas as telas da frente **navegáveis com dados reais** (GET da API + seed da frente). Nada fixo em componente. Botões ainda podem só navegar.

@@ -10,12 +10,12 @@
 ## 1. Supabase (uma vez)
 1. Criar o projeto. **Authentication → Providers**: Email ligado; **Google** ligado (Client ID/Secret do Google Cloud Console, tipo "Web application", redirect `https://<projeto>.supabase.co/auth/v1/callback`).
 2. **Authentication → URL Configuration**: Site URL = URL da Vercel; Redirect URLs = `http://localhost:5173/auth/callback`, `https://<app>.vercel.app/auth/callback`.
-3. **Authentication → SMTP**: configurar SMTP próprio (ex.: Resend SMTP) — o SMTP padrão só envia para e-mails da equipe e tem limite por hora (afeta a recuperação de senha, tela 08). Template "Reset password" com `{{ .Token }}` (código de 6 dígitos) e expiração de 15 min (Auth → Settings → OTP expiry = 900).
+3. **Authentication → SMTP**: configurar o SMTP do Resend (`smtp.resend.com`, porta 465, usuário `resend`, senha = API key) — o SMTP padrão só envia para e-mails da equipe e tem limite por hora. Sem domínio verificado no Resend, só o e-mail do dono da conta recebe (tela 08 demonstrada com esse e-mail). Template "Reset password" com `{{ .Token }}` (código de 6 dígitos) e expiração de 15 min (Auth → Settings → OTP expiry = 900).
 4. **Storage**: buckets `pratos` (público), `avatares` (público), `logos` (público), `prescricoes` (privado).
 5. Banco: preencher `backend/.env` e rodar `npm install && npm run banco` na raiz (ou colar migrations + `supabase/seed-completo.sql` no SQL Editor).
 
 ## 2. API no Render
-1. Dashboard → New → **Blueprint** → este repositório (usa `render.yaml`). Plano **Starter** (o Free hiberna após 15 min e leva ~1 min para acordar — risco na apresentação).
+1. Dashboard → New → **Blueprint** → este repositório (usa `render.yaml`). Plano **Free** (decisão do usuário): hiberna após 15 min sem uso e leva ~1 min para acordar — abrir `/api/saude` 2 min antes de apresentar.
 2. Preencher as variáveis (mesmas do `backend/.env.example`). `CORS_ORIGENS` = URL da Vercel (e `http://localhost:5173`, separados por vírgula).
 3. Conferir `https://<api>.onrender.com/api/saude`.
 

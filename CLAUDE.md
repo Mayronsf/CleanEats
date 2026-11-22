@@ -25,7 +25,7 @@ Telas 01–05, 08, 09 e as telas novas públicas; central de notificações; **t
 - `frontend/`: React 18 + Vite 6 + TypeScript + React Router 6 (`useRoutes`, um arquivo de rotas por frente em `src/app/rotas/`) + TanStack Query 5 + CSS Modules + tokens CSS. Ícones **lucide-react**. Sem MUI/Chakra/Bootstrap.
 - `backend/`: Java 21 + Spring Boot 3.5 (Web, JPA, Validation, Security, OAuth2 Resource Server, Mail, Scheduling), `com.tricode.cleaneats.{domain,repository,service,controller,dto,config,security}` com subpacotes por frente (`cliente`, `nutri`, `restaurante`, `admin`, `conta`). Maven Wrapper. Lê `backend/.env` sozinho.
 - `supabase/`: projeto na nuvem. Tipos de status são `domain` de texto com CHECK (não enum nativo) → JPA usa `@Enumerated(STRING)`.
-- PDF: **OpenPDF**. NutriBot: `anthropic-java` 3.3.0, modelo `claude-opus-5-5` (configurável), chave só no servidor. E-mail: Resend (ou SMTP) com `EMAIL_REDIRECIONAR_PARA` no modo demo.
+- PDF: **OpenPDF**. NutriBot: `anthropic-java` 3.3.0, modelo **`claude-sonnet-5-5`** por padrão (decisão do usuário), trocável por `ANTHROPIC_MODEL`; chave só no servidor. E-mail: Resend (ou SMTP) com `EMAIL_REDIRECIONAR_PARA` no modo demo.
 
 ## Convenções
 - Código, domínio e UI em **português**.
@@ -48,7 +48,9 @@ Telas 01–05, 08, 09 e as telas novas públicas; central de notificações; **t
 | NutriBot (CE-21) | Real, contexto = plano + consumo do dia + metas; nunca prescreve; limite por tier |
 | Entrega (tela 18) | Timeline real; entregador e avanço `PRONTO → A_CAMINHO → ENTREGUE` simulados por job |
 | Renovação (CE-16) | "Simular renovação" no `/admin/restaurantes` |
-| Dados de exemplo | Só nos seeds: 2026, Recife, "Sabor Natural". Nada fixo em componente. 7 pratos do núcleo marcados `[MACROS EXATOS]/[GORDURA DERIVADA]/[GORDURA ESTIMADA]` |
+| Dados de exemplo | Só nos seeds: 2026, Recife, "Sabor Natural". Nada fixo em componente. O `seed.sql` central tem todos os pratos dos HTMLs, os 9 clientes da tela 28 e os pedidos das telas 19 e 37; macros estimados marcados `-- macro a confirmar` |
+| Render | Plano gratuito; abrir a URL da API 2 min antes de apresentar |
+| E-mails de Auth (tela 08) | Saem pelo SMTP do Supabase (Resend). Sem domínio verificado: demonstrar com o e-mail do dono da conta Resend |
 | Admin | `/admin` (aprovações) — home do perfil ADMIN |
 | "Acompanhamento" (nutri) | Tela real `/nutri/acompanhamento` (componentes da 28, ordem por adesão) |
 | Mapas (13, 18) | Placeholder estático |

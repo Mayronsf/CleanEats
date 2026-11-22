@@ -5,7 +5,7 @@ services:
     runtime: docker
     rootDir: backend
     dockerfilePath: ./Dockerfile
-    plan: starter            # o plano free "dorme" após 15 min — ruim para a apresentação
+    plan: free               # hiberna após 15 min sem uso: abrir /api/saude 2 min antes de apresentar
     region: oregon
     healthCheckPath: /api/saude
     envVars:
