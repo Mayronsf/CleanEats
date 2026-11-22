@@ -37,9 +37,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(a -> a
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/saude").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/contatos-suporte").permitAll()
                 // Catálogo público (marketplace, restaurantes, ficha técnica via QR Code)
                 .requestMatchers(HttpMethod.GET, "/api/marmitas/**", "/api/restaurantes/**",
-                        "/api/fichas-tecnicas/**", "/api/tiers").permitAll()
+                        "/api/fichas-tecnicas/**", "/api/tiers", "/api/restricoes").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/nutri/**").hasRole("NUTRICIONISTA")
                 .requestMatchers("/api/painel-restaurante/**").hasRole("RESTAURANTE")

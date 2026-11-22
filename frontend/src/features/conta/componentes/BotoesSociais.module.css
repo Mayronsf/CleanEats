@@ -1,0 +1,20 @@
+.linha { display: flex; gap: 12px; margin-bottom: 28px; }
+.botao {
+  flex: 1; padding: 14px 16px;
+  border: 1.5px solid var(--line-strong); background: var(--white);
+  border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all var(--dur-fast);
+}
+.botao:hover { border-color: var(--ink); background: #FAFAFA; }
+.botao:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+.icone {
+  width: 20px; height: 20px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; color: var(--white); flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .botao { padding: 12px 14px; font-size: 13px; }
+  .completo { display: none; }
+}

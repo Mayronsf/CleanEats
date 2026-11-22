@@ -1,0 +1,11 @@
+.dialogo { border: none; border-radius: var(--radius-xl); padding: 0; width: min(520px, calc(100vw - 32px)); box-shadow: var(--shadow-pop); color: var(--ink); }
+.dialogo::backdrop { background: rgba(26, 46, 26, 0.45); }
+.form { padding: 28px; }
+.cabeca { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.cabeca h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.fechar { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--gray-100); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.erro { padding: 12px 14px; border-radius: var(--radius-md); background: var(--danger-bg); color: var(--danger-ink); font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+.rotulo { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.texto { width: 100%; padding: 14px 18px; background: var(--field-bg); border: 1.5px solid transparent; border-radius: var(--radius-field); font-size: 15px; resize: vertical; margin-bottom: 20px; }
+.texto:focus { outline: none; border-color: var(--green-primary); background: var(--white); box-shadow: var(--ring-focus); }
+.acoes { display: flex; justify-content: flex-end; gap: 12px; }

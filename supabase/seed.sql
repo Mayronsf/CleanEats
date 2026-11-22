@@ -16,8 +16,9 @@ insert into tier (id, nome, preco_mensal, preco_anual, desconto_pedido, limite_n
   ('PREMIUM', 'Premium',89.90, 862.80, 15, -1, true,  true,  30.00, 4);
 
 insert into restricao_alimentar (slug, nome) values
-  ('sem-lactose', 'Sem lactose'), ('sem-gluten', 'Sem glúten'), ('vegano', 'Vegano'),
-  ('vegetariano', 'Vegetariano'), ('sem-frutos-do-mar', 'Sem frutos do mar'), ('low-carb', 'Low carb');
+  ('sem-gluten', 'Sem glúten'), ('sem-lactose', 'Sem lactose'), ('vegetariano', 'Vegetariano'), ('vegano', 'Vegano'),
+  ('low-carb', 'Low carb'), ('sem-oleaginosas', 'Alérgico a oleaginosas'), ('sem-frutos-do-mar', 'Sem frutos do mar'),
+  ('sem-carne-suina', 'Sem carne suína');   -- mesma ordem da tela 05
 
 -- ---------- Usuários de demo (auth.users + auth.identities) ----------
 create or replace function pg_temp.criar_usuario_demo(p_id uuid, p_email text, p_nome text) returns void language plpgsql as $$
@@ -294,7 +295,9 @@ insert into marmita_compatibilidade (id_marmita, id_restricao)
  or (r.slug = 'vegano'       and m.descricao !~* '(whey|ovo|frango|queijo|iogurte)' and (m.categoria = 'Vegano' or m.nome in ('Bowl Vegano', 'Suco Verde Detox', 'Suco Natural', 'Água de Coco')))
  or (r.slug = 'vegetariano'  and m.descricao !~* '(frango|salmão|patinho|carne|tilápia|filé|peru|peixe)' and m.nome !~* '(frango|salmão|carne|steak|tilápia|bulking)')
  or (r.slug = 'sem-frutos-do-mar' and m.nome !~* '(salmão|tilápia)')
- or (r.slug = 'low-carb'     and m.carboidratos <= 15);
+ or (r.slug = 'low-carb'     and m.carboidratos <= 15)
+ or (r.slug = 'sem-oleaginosas' and m.descricao !~* '(granola|castanha|amêndoa|amendoim|nozes|tahine)')
+ or (r.slug = 'sem-carne-suina' and m.descricao !~* '(porco|suín|bacon|lombo|linguiça|presunto)');
 
 -- ---------- Pedidos (telas 19 e 37) ----------
 -- Datas RELATIVAS ao momento do seed (o "hoje" da tela vira o dia da demo). Totais iguais às telas:

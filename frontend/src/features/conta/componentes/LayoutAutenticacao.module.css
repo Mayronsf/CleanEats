@@ -1,0 +1,52 @@
+.pagina { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: var(--white); max-width: 1440px; margin: 0 auto; }
+.semVisual { grid-template-columns: 1fr; }
+.ladoForm { padding: 48px 80px; display: flex; flex-direction: column; min-width: 0; }
+.topo { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 80px; }
+.voltar {
+  text-decoration: none; color: var(--gray-700); font-size: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: var(--radius-pill); border: 1.5px solid var(--line-strong);
+  transition: border-color var(--dur-fast); white-space: nowrap;
+}
+.voltar:hover { border-color: var(--ink); }
+.conteudo { max-width: 440px; width: 100%; margin: 0 auto; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.largo { max-width: 640px; }
+
+.cabecalho { margin-bottom: 40px; }
+.rotulo {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--green-dark); margin-bottom: 24px;
+}
+.rotulo::before { content: ''; width: 28px; height: 2px; background: var(--green-primary); }
+.titulo { font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 16px; text-wrap: balance; }
+.titulo :global(.script) { margin-left: 4px; }
+.subtitulo { font-size: 16px; color: var(--gray-700); line-height: 1.6; }
+
+.ladoVisual {
+  background: var(--green-bg);
+  padding: 48px;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.folha { position: absolute; pointer-events: none; z-index: 1; }
+.folha1 { top: 60px; left: 60px; width: 70px; opacity: 0.6; }
+.folha2 { bottom: 80px; right: 100px; width: 80px; opacity: 0.5; transform: rotate(-40deg); }
+.folha3 { top: 40%; right: -30px; width: 120px; opacity: 0.4; transform: rotate(60deg); }
+
+@media (max-width: 1023px) {
+  .pagina { grid-template-columns: 1fr; }
+  .ladoForm { padding: 32px; }
+  .topo { margin-bottom: 48px; }
+  .ladoVisual { padding: 48px 32px; }
+}
+@media (max-width: 767px) {
+  .ladoForm { padding: 20px 16px 40px; }
+  .topo { margin-bottom: 32px; }
+  .voltar span { display: none; }
+  .voltar { padding: 10px; }
+  .titulo { font-size: 36px; }
+  .cabecalho { margin-bottom: 28px; }
+  .ladoVisual { padding: 40px 16px; }
+  .folha3 { display: none; }
+}

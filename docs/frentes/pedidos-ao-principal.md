@@ -20,3 +20,9 @@ Os pratos de todos os restaurantes, os 9 clientes da tela 28 e os pedidos das te
 
 ## [P] 22/11 — Seed central ampliado: FEITO
 36 pratos, 25 usuários e 50 pedidos já estão no `seed.sql` central. O mapa de UUIDs e os conflitos resolvidos estão em `docs/relatorio-seed.md`. Rode `git merge main`. Frente C: veja a regra exata do job de entrega simulada no seu arquivo (o seed depende dela).
+
+## [P] 22/11 — Mudança de dono (frente A, leia)
+- `POST /api/contatos-suporte`, a entidade `ContatoSuporte` e o componente `features/suporte/FaleConosco` agora são da **sessão principal** (usados nas telas 04, 17, 18, 21). Nas suas telas, use `<FaleConosco aberto onFechar assuntoInicial />`.
+- `restricao_alimentar`, `cliente_restricao`, a entidade `RestricaoAlimentar` e `RestricaoAlimentarRepository` (com `listarDoCliente`, `limparDoCliente`, `vincular`) agora são **compartilhados**, e o `GET /api/restricoes` é da principal. A tela 22 usa esse repositório para editar as restrições.
+- `UsuarioService.criarConta(...)` está pronto para os cadastros 06 (frente B) e 07 (frente C).
+- O seed passou a ter **8 restrições**, na ordem da tela 05 (entraram `sem-oleaginosas` e `sem-carne-suina`).
