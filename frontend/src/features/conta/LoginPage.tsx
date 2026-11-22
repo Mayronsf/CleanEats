@@ -57,7 +57,7 @@ export default function LoginPage() {
         subtitulo="Acesse seu cardápio personalizado, acompanhe seus pedidos e converse com seu nutricionista."
       />
 
-      <BotoesSociais aoGoogle={aoEntrarComGoogle} />
+      <BotoesSociais aoGoogle={aoEntrarComGoogle} verbo="Entrar" />
       <p className={s.divisor}>ou continue com email</p>
 
       <form onSubmit={aoEntrar} noValidate>

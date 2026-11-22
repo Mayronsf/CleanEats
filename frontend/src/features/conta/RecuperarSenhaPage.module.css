@@ -1,0 +1,64 @@
+.etapas { display: flex; gap: 8px; max-width: 440px; margin: -40px auto 32px; width: 100%; }
+.etapas span { flex: 1; height: 4px; background: var(--line); border-radius: var(--radius-pill); transition: background var(--dur); }
+.etapas .etapaFeita { background: var(--green-primary); }
+.selo { display: inline-flex; align-items: center; gap: 8px; background: var(--green-bg); padding: 6px 14px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--green-dark); margin-bottom: 20px; }
+.selo span { background: var(--green-primary); color: var(--white); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+.secundario { width: 100%; padding: 16px; margin-top: 12px; background: transparent; color: var(--ink); border: 1.5px solid var(--line-strong); border-radius: var(--radius-field); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: border-color var(--dur-fast); }
+.secundario:hover { border-color: var(--ink); }
+.rodapeForm { text-align: center; margin-top: 28px; font-size: 14px; color: var(--gray-700); }
+.rodapeForm a { color: var(--green-dark); font-weight: 700; text-decoration: none; }
+.enviado { background: var(--green-bg); border-radius: var(--radius-lg); padding: 20px 24px; display: flex; align-items: flex-start; gap: 14px; margin-bottom: 24px; font-size: 14px; color: var(--gray-700); line-height: 1.5; }
+.enviado strong { color: var(--green-dark); display: block; margin-bottom: 4px; font-size: 15px; }
+.enviadoIcone { width: 44px; height: 44px; background: var(--white); color: var(--green-dark); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.codigo { border: none; margin-bottom: 8px; }
+.codigoRotulo { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.codigoRotulo span { color: var(--fat); }
+.digitos { display: flex; gap: 10px; justify-content: space-between; }
+.digito { flex: 1; max-width: 64px; min-width: 0; aspect-ratio: 1; text-align: center; background: var(--field-bg); border: 2px solid transparent; border-radius: var(--radius-field); font-size: 28px; font-weight: 800; color: var(--ink); transition: all var(--dur-fast); }
+.digito:focus { outline: none; border-color: var(--green-primary); background: var(--white); box-shadow: var(--ring-focus); }
+.preenchido { background: var(--white); border-color: var(--green-primary); }
+.digitoErro { border-color: var(--fat); }
+.erroCampo { margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--danger-ink); }
+.reenvio { text-align: center; font-size: 13px; color: var(--gray-700); margin: 16px 0 24px; }
+.timer { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.reenviar { background: none; border: none; color: var(--green-dark); font-weight: 700; cursor: pointer; font-size: 13px; padding: 0; }
+.reenviar:hover { text-decoration: underline; }
+.confere { display: inline-flex; align-items: center; gap: 6px; color: #2F7F59; font-weight: 600; }
+.erroGeral { padding: 14px 16px; border-radius: var(--radius-md); background: var(--danger-bg); color: var(--danger-ink); font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+
+.visual { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 460px; margin: 0 auto; width: 100%; }
+.cadeado { position: relative; width: 320px; height: 320px; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; }
+.anel1 { position: absolute; inset: 0; border: 2px dashed var(--green-primary); border-radius: 50%; opacity: 0.4; animation: girar 40s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.anel2 { position: absolute; inset: 40px; background: var(--green-bg-deep); border-radius: 50%; }
+.cadeadoIcone { width: 160px; height: 160px; background: var(--white); color: var(--green-dark); border-radius: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); position: relative; z-index: 2; }
+.mini { position: absolute; background: var(--white); border-radius: var(--radius-field); padding: 12px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1); z-index: 3; text-align: left; }
+.miniIcone { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mini1 { top: 30px; left: -30px; }
+.mini1 .miniIcone { background: var(--orange-bg); color: #A8571C; }
+.mini2 { bottom: 50px; right: -20px; }
+.mini2 .miniIcone { background: #E0F2DD; color: #2F7F59; }
+.miniTexto { font-size: 12px; font-weight: 700; line-height: 1.3; }
+.miniTexto small { display: block; font-size: 10px; font-weight: 500; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+.chamada h2 { font-size: 36px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+.chamada p { font-size: 16px; color: var(--gray-700); line-height: 1.55; margin-bottom: 32px; }
+.seguranca { list-style: none; display: flex; flex-direction: column; gap: 12px; width: 100%; }
+.seguranca li { background: var(--white); border-radius: var(--radius-field); padding: 14px 18px; display: flex; align-items: center; gap: 12px; text-align: left; font-size: 12px; color: var(--gray-700); line-height: 1.4; }
+.seguranca strong { display: block; font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.segIcone { width: 36px; height: 36px; background: var(--green-bg); color: var(--green-dark); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+@media (max-width: 1023px) {
+  .etapas { margin-top: -16px; }
+  .cadeado { width: 260px; height: 260px; }
+  .cadeadoIcone { width: 130px; height: 130px; border-radius: 32px; }
+}
+@media (max-width: 767px) {
+  .etapas { margin-top: 0; margin-bottom: 24px; }
+  .digitos { gap: 6px; }
+  .digito { max-width: none; font-size: 22px; border-radius: var(--radius-sm); }
+  .cadeado { width: 220px; height: 220px; margin-bottom: 32px; }
+  .cadeadoIcone { width: 110px; height: 110px; border-radius: 28px; }
+  .mini1 { top: 10px; left: -10px; }
+  .mini2 { bottom: 20px; right: -10px; }
+  .chamada h2 { font-size: 26px; }
+}

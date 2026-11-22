@@ -12,3 +12,6 @@ divergir das telas (acessibilidade/responsivo) ou em que a Impeccable sugeriu al
 | 5 | Navbar do cliente | Item "Restaurantes" só aparece na tela 13 | Navbar com os 5 itens comuns; "Restaurantes" no menu mobile e via marketplace | Consistência entre telas | Confirmar |
 | 6 | Largura | `body { width: 1440px }` fixo em todas as telas | Layout fluido com máximo de 1440px | Responsividade | Aplicado |
 | 7 | Anual "-20%" (tela 09) × "30%" (prompt) | Tela mostra -20% | Seguimos a tela 09 (confirmado pelo usuário) | — | Decidido |
+| 8 | Aceite dos termos (tela 03) | Checkbox já vem marcado | Começa **desmarcado**; sem o aceite o cadastro não avança | LGPD exige consentimento explícito | Aplicado — confirmar |
+| 9 | Botão Apple (tela 03) | Google, Facebook e Apple | Só Google e Facebook | Login com Apple removido do escopo (decisão de 22/11) | Aplicado |
+| 10 | Depoimento e "Mais de 500 pessoas" (telas 02/03) | Texto de marketing com cliente "Camila R." | Mantido como está na tela | A Impeccable desaconselha depoimento/número sem fonte real; o time decide se mantém na apresentação | Mantido (decisão do time) |

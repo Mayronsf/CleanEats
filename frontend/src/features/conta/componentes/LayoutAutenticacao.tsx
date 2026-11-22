@@ -8,21 +8,30 @@ import s from './LayoutAutenticacao.module.css';
  * Casca das telas de autenticação (02, 03, 04, 05, 08): formulário à esquerda e painel visual verde à direita.
  * O conteúdo do painel muda por tela (passado em `visual`).
  */
-export function LayoutAutenticacao({ children, visual, voltar = { para: '/', rotulo: 'Voltar ao início' }, largo = false }: {
+export function LayoutAutenticacao({ children, visual, voltar = { para: '/', rotulo: 'Voltar ao início' }, largo = false, antesDoConteudo }: {
   children: ReactNode;
   visual?: ReactNode;
-  voltar?: { para: string; rotulo: string };
+  /** para = navega; aoClicar = ação local (ex.: voltar um estado na tela 08) */
+  voltar?: { para?: string; aoClicar?: () => void; rotulo: string };
   largo?: boolean;
+  antesDoConteudo?: ReactNode;
 }) {
   return (
     <div className={`${s.pagina} ${visual ? '' : s.semVisual}`}>
       <div className={s.ladoForm}>
         <div className={s.topo}>
           <Logo />
-          <Link to={voltar.para} className={s.voltar}>
-            <ArrowLeft size={16} aria-hidden /> <span>{voltar.rotulo}</span>
-          </Link>
+          {voltar.aoClicar ? (
+            <button type="button" onClick={voltar.aoClicar} className={s.voltar}>
+              <ArrowLeft size={16} aria-hidden /> <span>{voltar.rotulo}</span>
+            </button>
+          ) : (
+            <Link to={voltar.para ?? '/'} className={s.voltar}>
+              <ArrowLeft size={16} aria-hidden /> <span>{voltar.rotulo}</span>
+            </Link>
+          )}
         </div>
+        {antesDoConteudo}
         <main className={`${s.conteudo} ${largo ? s.largo : ''}`}>{children}</main>
       </div>
       {visual && <aside className={s.ladoVisual}>{visual}</aside>}

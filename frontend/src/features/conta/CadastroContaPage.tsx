@@ -79,7 +79,7 @@ export default function CadastroContaPage() {
         </div>
       ) : (
         <>
-          <BotoesSociais aoGoogle={aoGoogle} verbo="Cadastrar" />
+          <BotoesSociais aoGoogle={aoGoogle} />
           <p className={s.divisor}>ou continue com email</p>
           <form onSubmit={aoContinuar} noValidate>
             {erros.geral && <p className={s.erroGeral} role="alert">{erros.geral}{erros.geral.includes('login') && <> <Link to="/login">Ir para o login</Link></>}</p>}
@@ -141,7 +141,7 @@ function VisualCadastro() {
           </div>
           <div>
             <p><strong>+500 pessoas</strong> escolheram CleanEats</p>
-            <p className={s.estrelas}><Star size={14} fill="currentColor" aria-hidden /> 4.9/5</p>
+            <p className={s.estrelas} aria-label="Nota 4,9 de 5">{[1, 2, 3, 4, 5].map((n) => <Star key={n} size={14} fill="currentColor" aria-hidden />)} <span aria-hidden>4.9/5</span></p>
           </div>
         </div>
       </div>
