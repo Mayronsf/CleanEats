@@ -1,8 +1,22 @@
 import type { RouteObject } from 'react-router-dom';
+import { lazy } from 'react';
 import { Activity, BookOpen, ClipboardList, FileText, LayoutGrid, MessageCircle, User, Users, Wallet } from 'lucide-react';
 import type { GrupoMenu } from '../../design-system';
 import { LayoutPainel } from '../layouts/LayoutPainel';
-import { emConstrucao } from '../EmConstrucao';
+
+const CadastroNutriPage = lazy(() => import('../../features/nutri/cadastro/CadastroNutriPage'));
+const DashboardNutriPage = lazy(() => import('../../features/nutri/dashboard/DashboardNutriPage'));
+const TriagensPage = lazy(() => import('../../features/nutri/triagens/TriagensPage'));
+const ClientesPage = lazy(() => import('../../features/nutri/clientes/ClientesPage'));
+const AcompanhamentoPage = lazy(() => import('../../features/nutri/clientes/AcompanhamentoPage'));
+const ClientePerfilPage = lazy(() => import('../../features/nutri/clientes/ClientePerfilPage'));
+const EditorPlanoPage = lazy(() => import('../../features/nutri/plano/EditorPlanoPage'));
+const CatalogoNutriPage = lazy(() => import('../../features/nutri/catalogo/CatalogoNutriPage'));
+const PrescricaoNovaPage = lazy(() => import('../../features/nutri/prescricoes/PrescricaoNovaPage'));
+const PrescricoesPage = lazy(() => import('../../features/nutri/prescricoes/PrescricoesPage'));
+const MensagensPage = lazy(() => import('../../features/nutri/mensagens/MensagensPage'));
+const FinanceiroNutriPage = lazy(() => import('../../features/nutri/financeiro/FinanceiroNutriPage'));
+const PerfilNutriPage = lazy(() => import('../../features/nutri/perfil/PerfilNutriPage'));
 
 /**
  * Rotas da nutricionista (/nutri) — DONA: FRENTE B (telas 06, 26–35 + /nutri/prescricoes e /nutri/acompanhamento).
@@ -25,23 +39,23 @@ export const menuNutri: GrupoMenu[] = [
 ];
 
 export const rotasNutri: RouteObject[] = [
-  { path: '/cadastro/nutricionista', element: emConstrucao('06', '06-cadastro-nutricionista') },
+  { path: '/cadastro/nutricionista', element: <CadastroNutriPage /> },
   {
     path: '/nutri',
     element: <LayoutPainel variante="nutri" grupos={menuNutri} subtitulo="Nutricionista" />,
     children: [
-      { index: true, element: emConstrucao('26', '26-nutri-home (com menos infos)') },
-      { path: 'triagens', element: emConstrucao('27', '27-nutri-triagens') },
-      { path: 'clientes', element: emConstrucao('28', '28-nutri-clientes') },
-      { path: 'clientes/:id', element: emConstrucao('29', '29-nutri-cliente-perfil') },
-      { path: 'clientes/:id/plano', element: emConstrucao('30', '30-nutri-editor-plano') },
-      { path: 'catalogo', element: emConstrucao('31', '31-nutri-catalogo') },
-      { path: 'prescricoes/nova', element: emConstrucao('32', '32-nutri-prescricao') },
-      { path: 'prescricoes', element: emConstrucao('nova', 'histórico de prescrições (componentes da tela 32)') },
-      { path: 'acompanhamento', element: emConstrucao('nova', 'acompanhamento por adesão (componentes da tela 28)') },
-      { path: 'mensagens', element: emConstrucao('33', '33-nutri-chat') },
-      { path: 'financeiro', element: emConstrucao('34', '34-nutri-financeiro') },
-      { path: 'perfil', element: emConstrucao('35', '35-nutri-perfil-profissional') },
+      { index: true, element: <DashboardNutriPage /> },
+      { path: 'triagens', element: <TriagensPage /> },
+      { path: 'clientes', element: <ClientesPage /> },
+      { path: 'clientes/:id', element: <ClientePerfilPage /> },
+      { path: 'clientes/:id/plano', element: <EditorPlanoPage /> },
+      { path: 'catalogo', element: <CatalogoNutriPage /> },
+      { path: 'prescricoes/nova', element: <PrescricaoNovaPage /> },
+      { path: 'prescricoes', element: <PrescricoesPage /> },
+      { path: 'acompanhamento', element: <AcompanhamentoPage /> },
+      { path: 'mensagens', element: <MensagensPage /> },
+      { path: 'financeiro', element: <FinanceiroNutriPage /> },
+      { path: 'perfil', element: <PerfilNutriPage /> },
     ],
   },
 ];
