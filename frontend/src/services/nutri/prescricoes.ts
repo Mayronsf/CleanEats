@@ -6,8 +6,8 @@ export interface ClientePrescricao {
   calorias: number | null; proteinas: number | null; carboidratos: number | null; gorduras: number | null; fibras: number | null; aguaMl: number | null; premium: boolean;
 }
 export interface RefeicaoPrescricao { dia: string; tipo: string; prato: string; observacao: string | null }
-export interface PreviaPrescricao extends ClientePrescricao {
-  planoAtivo: boolean; nomeNutri: string; crn: string; refeicoes: RefeicaoPrescricao[];
+export interface PreviaPrescricao extends Omit<ClientePrescricao, 'id' | 'nome'> {
+  idCliente: string; nomeCliente: string; planoAtivo: boolean; nomeNutri: string; crn: string; refeicoes: RefeicaoPrescricao[];
 }
 export interface PrescricaoHistorico { id: string; nomeCliente: string; tier: string; emitidaEm: string; hashDocumento: string; enviadaEmail: boolean }
 export interface EmissaoPrescricao { id: string; pdfUrl: string; hashDocumento: string; emailEnviado: boolean; mensagem: string }

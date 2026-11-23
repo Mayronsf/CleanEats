@@ -34,7 +34,7 @@ export default function PrescricaoNovaPage() {
     </header>
     {erro ? <ErroCarregamento mensagem={erro instanceof ErroApi ? erro.message : undefined} onTentarNovamente={() => { void clientes.refetch(); void previa.refetch(); }} /> : !clientes.data ? <Skeleton altura={400} raio={18} /> : clientes.data.length === 0 ? <EmptyState icone={<FileText size={26} aria-hidden />} titulo="Nenhum cliente vinculado" descricao="Os clientes vinculados à sua conta aparecerão aqui." /> : <>
       <section className={`${s.painel} ${s.cliente}`}>
-        <div><div className={s.rotulo}>Cliente</div><div className={s.clienteNome}>{p?.nome ?? 'Selecione um cliente'}</div>{p && <span className={`${s.tier} ${p.premium ? s.premium : ''}`}>{p.tier}</span>}</div>
+        <div><div className={s.rotulo}>Cliente</div><div className={s.clienteNome}>{p?.nomeCliente ?? 'Selecione um cliente'}</div>{p && <span className={`${s.tier} ${p.premium ? s.premium : ''}`}>{p.tier}</span>}</div>
         <div className={s.acoes}><label htmlFor="cliente-prescricao">Trocar cliente</label><select id="cliente-prescricao" value={idCliente} onChange={(e) => setParams(e.target.value ? { cliente: e.target.value } : {})}>
           {clientes.data.map(c => <option key={c.id} value={c.id}>{c.nome} · {c.tier}</option>)}
         </select>{idCliente && <Link className={s.secundario} to={`/nutri/clientes/${idCliente}`}><Eye size={15} aria-hidden /> Ver perfil</Link>}</div>
@@ -42,20 +42,20 @@ export default function PrescricaoNovaPage() {
       {!p ? <Skeleton altura={440} raio={18} /> : <div className={s.grade}>
         <div className={s.campos}>
           <section className={s.painel}><h2>Diagnóstico e objetivo</h2><p className={s.nota}>Conduta clínica e meta da prescrição</p>
-            <div className={s.campo}><label htmlFor="objetivo">Objetivo nutricional</label><input id="objetivo" value={p.objetivo ?? 'Não informado'} readOnly /></div>
+            <div className={s.campo}><label htmlFor="objetivo">Objetivo nutricional</label><input id="objetivo" value={rotuloObjetivo(p.objetivo)} readOnly /></div>
           </section>
           <section className={s.painel}><h2>Metas nutricionais diárias</h2><p className={s.nota}>Valores usados no plano alimentar</p>
             <div className={s.metas}>{meta('Calorias',p.calorias,' kcal')}{meta('Proteínas',p.proteinas,' g')}{meta('Carboidratos',p.carboidratos,' g')}{meta('Gorduras',p.gorduras,' g')}{meta('Fibras',p.fibras,' g')}{meta('Hidratação',p.aguaMl,' ml')}</div>
           </section>
           <section className={s.painel}><h2>Plano alimentar ativo</h2><p className={s.nota}>Refeições e pratos incluídos no documento</p>
-            {!p.planoAtivo ? <div className={s.aviso}>Monte o plano antes de prescrever. Este cliente ainda não tem um plano alimentar ativo.</div> : p.refeicoes.length === 0 ? <p className={s.nota}>O plano ativo ainda não tem refeições cadastradas.</p> : <div className={s.lista}>{p.refeicoes.map((r,i)=><div className={s.refeicao} key={`${r.dia}-${r.tipo}-${i}`}><div><b>{r.dia} · {r.tipo.replaceAll('_',' ').toLowerCase()}</b><br/><span>{r.prato}</span></div>{r.observacao && <small>{r.observacao}</small>}</div>)}</div>}
+            {!p.planoAtivo ? <div className={s.aviso}>Monte o plano antes de prescrever. Este cliente ainda não tem um plano alimentar ativo.</div> : p.refeicoes.length === 0 ? <p className={s.nota}>O plano ativo ainda não tem refeições cadastradas.</p> : <div className={s.lista}>{p.refeicoes.map((r,i)=><div className={s.refeicao} key={`${r.dia}-${r.tipo}-${i}`}><div><b>{r.dia} · {r.tipo}</b><br/><span>{r.prato}</span></div>{r.observacao && <small>{r.observacao}</small>}</div>)}</div>}
           </section>
           <section className={s.painel}><h2>Recomendações ao paciente</h2><p className={s.nota}>Orientações que aparecem na prescrição final</p>
             <div className={s.campo}><label htmlFor="observacoes">Observações adicionais</label><textarea id="observacoes" maxLength={4000} value={observacoes} onChange={(e)=>setObservacoes(e.target.value)} placeholder="Inclua orientações para este paciente…"/><small className={s.nota}>{observacoes.length}/4.000 caracteres</small></div>
           </section>
         </div>
         <aside className={s.painel} aria-label="Pré-visualização da prescrição"><strong>Pré-visualização</strong><p className={s.nota}>Atualizada com os dados do cliente e plano</p>
-          <div className={s.painel}><h2>Prescrição Nutricional</h2><p className={s.nota}>Paciente</p><b>{p.nome}</b><p>{p.pesoKg ? `${valor(p.pesoKg,' kg')} · ` : ''}{p.alturaCm ? valor(p.alturaCm,' cm') : ''}</p>
+          <div className={s.painel}><h2>Prescrição Nutricional</h2><p className={s.nota}>Paciente</p><b>{p.nomeCliente}</b><p>{p.pesoKg ? `${valor(p.pesoKg,' kg')} · ` : ''}{p.alturaCm ? valor(p.alturaCm,' cm') : ''}</p>
             <hr/><p className={s.nota}>Metas diárias</p><div className={s.metas}>{meta('Calorias',p.calorias,' kcal')}{meta('Proteína',p.proteinas,' g')}{meta('Carbo',p.carboidratos,' g')}{meta('Gordura',p.gorduras,' g')}</div>
             <hr/><p className={s.nota}>Plano ativo · {p.refeicoes.length} refeições</p><p>{p.refeicoes.slice(0,3).map(r=>r.prato).join(' · ') || 'Sem refeições cadastradas'}</p>
             {observacoes && <><hr/><p className={s.nota}>Recomendações</p><p>{observacoes}</p></>}
@@ -71,4 +71,9 @@ export default function PrescricaoNovaPage() {
     </>}
     <Link to="/nutri" className={s.secundario}><ArrowLeft size={15} aria-hidden/> Voltar ao painel</Link>
   </main>;
+}
+
+function rotuloObjetivo(objetivo: string | null | undefined) {
+  const rotulos: Record<string, string> = { EMAGRECIMENTO: 'Emagrecimento', GANHO_MASSA: 'Ganho de massa', EQUILIBRIO: 'Equilíbrio' };
+  return objetivo ? rotulos[objetivo] ?? objetivo : 'Não informado';
 }

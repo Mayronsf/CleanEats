@@ -63,13 +63,15 @@ public class PainelNutriService {
                 """).param("n", n.id()).query((rs,i)->new long[]{rs.getLong("pedidas"),rs.getLong("planejadas")}).single();
         String adesaoValor = adesao[1] == 0 ? "—" : BigDecimal.valueOf(adesao[0] * 100).divide(BigDecimal.valueOf(adesao[1]), 0, RoundingMode.HALF_UP) + "%";
         var recentesTriagens = jdbc.sql("""
-                select t.id,u.nome,t.criado_em,t.status,u.avatar_url from triagem t join usuario u on u.id=t.id_cliente
+                select t.id,u.nome,t.criado_em,case t.status when 'AGUARDANDO' then 'Aguardando triagem' when 'EM_ANDAMENTO' then 'Em andamento' else 'Concluída' end status,u.avatar_url from triagem t join usuario u on u.id=t.id_cliente
                 where t.id_nutricionista=:n order by t.criado_em desc limit 5
                 """).param("n",n.id()).query((rs,i)->new LinhaDashboard(rs.getObject("id",UUID.class),rs.getString("nome"),rs.getString("status"),rs.getObject("criado_em",OffsetDateTime.class),"TRIAGEM",rs.getString("avatar_url"))).list();
         var mensagens = jdbc.sql("""
-                select m.id,u.nome,m.texto,m.criado_em,u.avatar_url from mensagem m join conversa c on c.id=m.id_conversa
-                join usuario u on u.id=m.id_autor where c.id_nutricionista=:n and m.id_autor<>:u
-                order by m.criado_em desc limit 5
+                select * from (
+                  select distinct on (c.id) c.id_cliente id,u.nome,m.texto,m.criado_em,u.avatar_url from mensagem m join conversa c on c.id=m.id_conversa
+                  join usuario u on u.id=m.id_autor where c.id_nutricionista=:n and m.id_autor<>:u
+                  order by c.id, m.criado_em desc
+                ) ultimas order by criado_em desc limit 5
                 """).param("n",n.id()).param("u",n.idUsuario()).query((rs,i)->new LinhaDashboard(rs.getObject("id",UUID.class),rs.getString("nome"),rs.getString("texto"),rs.getObject("criado_em",OffsetDateTime.class),"MENSAGEM",rs.getString("avatar_url"))).list();
         var clientes = jdbc.sql("""
                 select u.id,u.nome,u.avatar_url,coalesce(a.tier,'FREE') tier from perfil_cliente pc join usuario u on u.id=pc.id_usuario
@@ -97,13 +99,15 @@ public class PainelNutriService {
         var bruto=assinantes.stream().map(Assinante::mensalidade).reduce(BigDecimal.ZERO,BigDecimal::add).setScale(2,RoundingMode.HALF_EVEN);
         var liquido=assinantes.stream().map(a->CalculoFinanceiro.calcularRepasseNutricionista(a.mensalidade())).reduce(BigDecimal.ZERO,BigDecimal::add).setScale(2,RoundingMode.HALF_EVEN);
         var meses=new ArrayList<MesFinanceiro>();
-        for(int i=5;i>=0;i--){ YearMonth ym=YearMonth.now().minusMonths(i); var inicio=ym.atDay(1); var fim=ym.plusMonths(1).atDay(1);
+        // Receita do mês = mensalidades das assinaturas Pro/Premium vigentes no mês (mesma base dos cards).
+        for(int i=5;i>=0;i--){ YearMonth ym=YearMonth.now(java.time.ZoneId.of("America/Recife")).minusMonths(i); var inicio=ym.atDay(1); var fim=ym.plusMonths(1).atDay(1);
             var total=jdbc.sql("""
-                    select coalesce(sum(case when s.ciclo='ANUAL' then f.valor/12 else f.valor end),0)
-                    from fatura f join assinatura s on s.id=f.id_assinatura join tier t on t.id=s.id_tier
-                    join perfil_cliente pc on pc.id_usuario=s.id_usuario
-                    where pc.id_nutricionista=:n and s.id_tier in ('PRO','PREMIUM') and f.status='PAGA'
-                      and f.paga_em >= :inicio and f.paga_em < :fim
+                    select coalesce(sum(case when s.ciclo='ANUAL' then s.valor/12 else s.valor end),0)
+                    from assinatura s join perfil_cliente pc on pc.id_usuario=s.id_usuario
+                    where pc.id_nutricionista=:n and s.id_tier in ('PRO','PREMIUM') and s.status<>'TRIAL'
+                      and s.inicio_em < :fim
+                      and (s.cancelada_em is null or s.cancelada_em >= :inicio)
+                      and (s.encerra_em is null or s.encerra_em >= :inicio)
                     """).param("n",n.id()).param("inicio",inicio.atStartOfDay().atOffset(java.time.ZoneOffset.UTC))
                     .param("fim",fim.atStartOfDay().atOffset(java.time.ZoneOffset.UTC)).query(BigDecimal.class).single();
             meses.add(new MesFinanceiro(ym.toString(),total,CalculoFinanceiro.calcularRepasseNutricionista(total)));
