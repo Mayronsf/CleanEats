@@ -68,9 +68,10 @@ export default function CadastroClientePage() {
         aceiteTermosEm: rascunho.aceiteTermosEm ?? new Date().toISOString(),
       });
       limparRascunho();
-      await queryClient.invalidateQueries({ queryKey: ['usuario-atual'] });
       toast('Conta criada! Agora escolha seu plano.');
+      // navega ANTES de atualizar o usuário: com o perfil carregado, a guarda desta tela mandaria para /app
       navegar('/planos?onboarding=1', { replace: true });
+      void queryClient.invalidateQueries({ queryKey: ['usuario-atual'] });
     } catch (err) {
       setErros({ geral: err instanceof ErroApi ? err.message : 'Não foi possível concluir o cadastro. Tente de novo.' });
     } finally {

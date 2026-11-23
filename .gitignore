@@ -29,3 +29,6 @@ Thumbs.db
 *.log
 supabase/seed-completo.sql
 node_modules/
+e2e-relatorio/
+test-results/
+e2e-capturas/
