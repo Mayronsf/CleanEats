@@ -74,7 +74,7 @@ Telas 01–05, 08, 09 e as telas novas públicas; central de notificações; **t
 ```bash
 npm run demo                 # raiz: API + web (plano B)
 npm run banco | banco:resetar  # raiz: migrations + seeds no Supabase
-cd frontend && npm run dev | npm test | npm run build
+cd frontend && npm run dev | npm test | npm run build | npm run e2e
 cd backend && ./mvnw spring-boot:run | ./mvnw test
 ```
 
@@ -83,4 +83,5 @@ cd backend && ./mvnw spring-boot:run | ./mvnw test
 - Sessão principal: telas 01, 02, 03, 04, 05, 08 e 09 prontas; /ficha/:id, /termos, /privacidade, /auth/callback, 404 e central de notificações prontas. APIs: /api/cadastro/cliente, /api/restricoes, /api/cadastro/metas-iniciais, /api/tiers, /api/vitrine, /api/fichas-tecnicas/{id}, /api/notificacoes, /api/contatos-suporte.
 - Nesta máquina a porta 8080 é usada pelo Steam: a principal roda na 8090; frentes A 8081, B 8082, C 8083.
 - Pendências fora do código (painel do Supabase): provedor Google, SMTP Resend, template de recuperação com {{ .Token }} e expiração de 15 min, URLs de redirecionamento.
+- E2E Playwright (frontend/e2e): 11 testes verdes contra o Supabase real (público, ficha, login, notificações, cadastro).
 - Próximo: integração das frentes em main às 12h de 23/11.

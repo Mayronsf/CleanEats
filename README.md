@@ -53,6 +53,13 @@ npm run build
 ## 4. Conferir ponta a ponta
 Abra **http://localhost:5173/dev/conexao** e entre com um usuário de demo. Os 4 passos devem ficar verdes (Supabase configurado → API no ar → login → backend leu o perfil). A vitrine do design system fica em **/design-system**.
 
+### Testes E2E do roteiro (Playwright)
+Com o backend rodando (porta de `VITE_API_URL`, CORS liberado para `http://localhost:5180`):
+```bash
+cd frontend && npm run e2e     # sobe o Vite na 5180 e roda e2e/*.spec.ts no Chrome instalado
+```
+Os testes usam o Supabase real; o de cadastro cria um usuário já confirmado e o apaga no fim.
+
 ## Usuários de demonstração
 Senha de todos: **`CleanEats@2026`**
 
