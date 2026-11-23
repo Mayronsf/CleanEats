@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Menu, MoreHorizontal, X, type LucideIcon } from 'lucide-react';
 import { Logo } from './Logo';
@@ -29,9 +29,11 @@ export interface SidebarPainelProps {
   variante: VariantePainel;
   grupos: GrupoMenu[];
   usuario: { nome: string; subtitulo: string; avatarUrl?: string };
+  /** Ação ao lado do usuário (ex.: sino de notificações, CE-13) */
+  acao?: ReactNode;
 }
 
-export function SidebarPainel({ variante, grupos, usuario }: SidebarPainelProps) {
+export function SidebarPainel({ variante, grupos, usuario, acao }: SidebarPainelProps) {
   const [aberta, setAberta] = useState(false);
   const local = useLocation();
   useEffect(() => setAberta(false), [local.pathname]);
@@ -83,7 +85,7 @@ export function SidebarPainel({ variante, grupos, usuario }: SidebarPainelProps)
               <span className={s.usuarioNome}>{usuario.nome}</span>
               <span className={s.usuarioPapel}>{usuario.subtitulo}</span>
             </span>
-            <MoreHorizontal size={18} aria-hidden className={s.mais} />
+            {acao ?? <MoreHorizontal size={18} aria-hidden className={s.mais} />}
           </div>
         </div>
       </aside>

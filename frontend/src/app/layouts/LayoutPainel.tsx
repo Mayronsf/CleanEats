@@ -3,6 +3,7 @@ import { SidebarPainel, type GrupoMenu, type VariantePainel } from '../../design
 import { useAuth } from '../../hooks/useAuth';
 import type { PerfilUsuario } from '../../services/api';
 import { RotaProtegida } from '../rotas/RotaProtegida';
+import { CentralNotificacoes } from '../../features/notificacoes/CentralNotificacoes';
 
 const PERFIL: Record<VariantePainel, PerfilUsuario> = { nutri: 'NUTRICIONISTA', restaurante: 'RESTAURANTE', admin: 'ADMIN' };
 const TEMA: Record<VariantePainel, string> = { nutri: 'tema-nutri', restaurante: 'tema-restaurante', admin: '' };
@@ -17,6 +18,7 @@ export function LayoutPainel({ variante, grupos, subtitulo }: { variante: Varian
           variante={variante}
           grupos={grupos}
           usuario={{ nome: usuario?.nome ?? '', subtitulo, avatarUrl: usuario?.avatarUrl ?? undefined }}
+          acao={<CentralNotificacoes variante="painel" />}
         />
         <main style={{ flex: 1, minWidth: 0, padding: 32 }}>
           <Outlet />

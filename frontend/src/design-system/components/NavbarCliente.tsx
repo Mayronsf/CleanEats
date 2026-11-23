@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Bell, ClipboardList, Home, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { Logo } from './Logo';
@@ -25,9 +25,11 @@ export interface NavbarClienteProps {
   itensCarrinho?: number;
   temNotificacao?: boolean;
   onBuscar?: (termo: string) => void;
+  /** Sino com a central de notificações (CE-13), injetado pelo layout */
+  notificacoes?: ReactNode;
 }
 
-export function NavbarCliente({ nomeUsuario, itensCarrinho = 0, temNotificacao = false, onBuscar }: NavbarClienteProps) {
+export function NavbarCliente({ nomeUsuario, itensCarrinho = 0, temNotificacao = false, onBuscar, notificacoes }: NavbarClienteProps) {
   const [menuAberto, setMenuAberto] = useState(false);
   const classeLink = ({ isActive }: { isActive: boolean }) => (isActive ? `${s.link} ${s.ativo}` : s.link);
 
@@ -56,10 +58,12 @@ export function NavbarCliente({ nomeUsuario, itensCarrinho = 0, temNotificacao =
             <ShoppingBag size={18} aria-hidden />
             {itensCarrinho > 0 && <span className={s.contador}>{itensCarrinho}</span>}
           </Link>
-          <Link to="/app/perfil#notificacoes" className={s.iconeBtn} aria-label={temNotificacao ? 'Notificações (novas)' : 'Notificações'}>
-            <Bell size={18} aria-hidden />
-            {temNotificacao && <span className={s.ponto} />}
-          </Link>
+          {notificacoes ?? (
+            <Link to="/app/perfil#notificacoes" className={s.iconeBtn} aria-label={temNotificacao ? 'Notificações (novas)' : 'Notificações'}>
+              <Bell size={18} aria-hidden />
+              {temNotificacao && <span className={s.ponto} />}
+            </Link>
+          )}
           <Link to="/app/perfil" className={s.avatar} aria-label="Meu perfil">{iniciais(nomeUsuario)}</Link>
           <button type="button" className={s.hamburguer} onClick={() => setMenuAberto(true)} aria-label="Abrir menu" aria-expanded={menuAberto}>
             <Menu size={22} aria-hidden />

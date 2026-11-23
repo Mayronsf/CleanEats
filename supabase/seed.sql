@@ -474,3 +474,17 @@ begin
 end $$;
 
 alter table pedido enable trigger trg_pedido_status;
+
+-- ---------- Notificações de exemplo (CE-13) — central de notificações da sessão principal ----------
+insert into notificacao (id_usuario, tipo, titulo, corpo, link, lida_em, criado_em)
+select '00000000-0000-4000-8000-000000000001', 'PEDIDO', 'Seu pedido está a caminho', 'CE-4823 saiu do Sabor Natural com o Carlos Eduardo. Chegada em ~8 min.', '/app/pedidos/' || p.id, null, now() - interval '8 min'
+from pedido p where p.codigo = 'CE-4823';
+insert into notificacao (id_usuario, tipo, titulo, corpo, link, lida_em, criado_em) values
+  ('00000000-0000-4000-8000-000000000001', 'NUTRICIONISTA', 'A Dra. Ana Souza atualizou seu plano', 'Seu plano da semana tem jantar novo: Salmão com Quinoa.', '/app/meu-plano', null, now() - interval '3 hours'),
+  ('00000000-0000-4000-8000-000000000001', 'CARDAPIO', 'Novo no cardápio: Bowl Proteico Frango', 'O Sabor Natural lançou um bowl com 40 g de proteína.', '/app/marmitas/00000000-0000-4000-b000-000000000015', now() - interval '1 day', now() - interval '1 day'),
+  ('00000000-0000-4000-8000-000000000001', 'ASSINATURA', 'Plano Pro renovado', 'Sua assinatura Pro foi renovada. Benefícios ativos.', '/app/assinatura', now() - interval '17 days', now() - interval '17 days'),
+  ('00000000-0000-4000-8000-000000000003', 'PEDIDO', 'Novo pedido: CE-1042', 'Maria Braga · Bowl Proteico Frango + Suco Verde Detox · R$ 54,80', '/restaurante/pedidos', null, now() - interval '5 min'),
+  ('00000000-0000-4000-8000-000000000003', 'PEDIDO', 'Novo pedido: CE-1041', 'Carlos Jota · Marmita Fit Salmão (sem lactose) · R$ 32,90', '/restaurante/pedidos', null, now() - interval '12 min'),
+  ('00000000-0000-4000-8000-000000000003', 'CARDAPIO', 'Prato rejeitado na curadoria', 'Sopa Detox Premium: informação nutricional incompleta.', '/restaurante/aprovacao', now() - interval '2 days', now() - interval '2 days'),
+  ('00000000-0000-4000-8000-000000000002', 'NUTRICIONISTA', 'Nova mensagem do Breno Filho', 'Breno perguntou sobre o pré-treino de amanhã.', '/nutri/mensagens', null, now() - interval '40 min'),
+  ('00000000-0000-4000-8000-000000000004', 'SISTEMA', 'Prato aguardando curadoria', 'Wrap Integral Frango (Sabor Natural) foi enviado para análise.', '/admin', null, now() - interval '1 hour');
