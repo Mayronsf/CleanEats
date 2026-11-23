@@ -10,6 +10,10 @@ const DashboardRestaurantePage = lazy(() => import('../../features/restaurante/d
 const CardapioPage = lazy(() => import('../../features/restaurante/cardapio/CardapioPage'));
 const PratoFormPage = lazy(() => import('../../features/restaurante/cardapio/PratoFormPage'));
 const AprovacaoRestaurantePage = lazy(() => import('../../features/restaurante/aprovacao/AprovacaoPage'));
+const AprovacoesAdminPage = lazy(() => import('../../features/admin/AprovacoesPage'));
+const AvaliacoesAdminPage = lazy(() => import('../../features/admin/AvaliacoesAdminPage'));
+const SuporteAdminPage = lazy(() => import('../../features/admin/SuporteAdminPage'));
+const PlataformaAdminPage = lazy(() => import('../../features/admin/PlataformaAdminPage'));
 const PedidosRestaurantePage = lazy(() => import('../../features/restaurante/pedidos/PedidosPage'));
 
 /**
@@ -50,11 +54,11 @@ export const rotasRestaurante: RouteObject[] = [
     path: '/admin',
     element: <LayoutPainel variante="admin" grupos={menuAdmin} subtitulo="Equipe CleanEats" />,
     children: [
-      { index: true, element: emConstrucao('admin', 'aprovações de CRN, CNPJ e pratos (sem tela no Figma)') },
-      { path: 'aprovacoes', element: emConstrucao('admin', 'aprovações (alias de /admin)') },
-      { path: 'avaliacoes', element: emConstrucao('admin', 'moderação de avaliações (CE-11)') },
-      { path: 'suporte', element: emConstrucao('admin', 'fila de "Fale conosco"') },
-      { path: 'restaurantes', element: emConstrucao('admin', 'comissão por restaurante + simular renovação (CE-16)') },
+      { index: true, element: <AprovacoesAdminPage /> },
+      { path: 'aprovacoes', element: <AprovacoesAdminPage /> },
+      { path: 'avaliacoes', element: <AvaliacoesAdminPage /> },
+      { path: 'suporte', element: <SuporteAdminPage /> },
+      { path: 'restaurantes', element: <PlataformaAdminPage /> },
     ],
   },
 ];

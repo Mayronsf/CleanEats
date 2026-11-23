@@ -137,3 +137,13 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET · POST · PUT | `/api/painel-restaurante/pratos[/{id}]` | Ficha completa (macros coerentes ±25%), ingredientes, alérgenos, compatibilidades, objetivos, tags. Ficha completa → EM_ANALISE; mudar a ficha de um aprovado volta para análise | 3 |
 | POST | `/api/painel-restaurante/pratos/{id}/pausa` · `/reenvio` | Pausar/reativar aprovado · reenviar rejeitado | 3 |
 | POST | `/api/painel-restaurante/pratos/foto` | Upload (multipart `arquivo`) no bucket `pratos` | 3 |
+
+## Admin — frente C
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/admin/aprovacoes` | Fila: pratos EM_ANALISE (com checagem de macros), nutricionistas e restaurantes PENDENTES (CNPJ validado) | 3, 18 |
+| POST | `/api/admin/{pratos|nutricionistas|restaurantes}/{id}/avaliacao` | { aprovado, motivo } — notifica o dono; prato aprovado avisa quem favoritou o restaurante | 3, 13, 18 |
+| GET · POST | `/api/admin/avaliacoes?status=` · `/avaliacoes/{id}/moderacao` | Moderação; publicar recalcula a nota do prato e do restaurante | 11 |
+| GET · PATCH | `/api/admin/contatos?abertos=` · `/contatos/{id}` | Fila do Fale conosco; marcar respondido/reabrir | — |
+| GET · PUT | `/api/admin/plataforma` · `/restaurantes/{id}/comissao` | Assinaturas e comissão por restaurante (0–30%) | 17 |
+| POST | `/api/admin/assinaturas/simular-renovacao` | { ate } renova ATIVAS vencidas (fatura PAGA), expira CANCELADAS (volta ao Free), retoma PAUSADAS | 16 |
