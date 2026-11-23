@@ -1,18 +1,8 @@
 package com.tricode.cleaneats.service.restaurante;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 
-import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -317,46 +307,7 @@ public class GestaoRestauranteService {
     }
 
     private static byte[] pdf(String restaurante, String titulo, LocalDate ini, LocalDate fim, Tabela t) {
-        var saida = new ByteArrayOutputStream();
-        var doc = new Document(PageSize.A4, 36, 36, 40, 40);
-        PdfWriter.getInstance(doc, saida);
-        doc.open();
-        var coral = new Color(224, 122, 95);
-        var fTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, new Color(26, 46, 26));
-        var fSub = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.DARK_GRAY);
-        var fCab = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
-        var fCel = FontFactory.getFont(FontFactory.HELVETICA, 9, Color.BLACK);
-        var fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        doc.add(new Paragraph("CleanEats · " + restaurante, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, coral)));
-        doc.add(new Paragraph(titulo, fTitulo));
-        doc.add(new Paragraph("Período: " + ini.format(fmt) + " a " + fim.format(fmt) + " · gerado em " + LocalDate.now(FUSO).format(fmt), fSub));
-        doc.add(new Paragraph(String.join("   ·   ", t.resumo()), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, Color.BLACK)));
-        doc.add(new Paragraph(" "));
-        var tabela = new PdfPTable(t.cabecalho().size());
-        tabela.setWidthPercentage(100);
-        for (var c : t.cabecalho()) {
-            var celula = new PdfPCell(new Phrase(c, fCab));
-            celula.setBackgroundColor(coral); celula.setPadding(5); celula.setBorderColor(Color.WHITE);
-            tabela.addCell(celula);
-        }
-        boolean zebra = false;
-        for (var l : t.linhas()) {
-            for (var v : l) {
-                var celula = new PdfPCell(new Phrase(v, fCel));
-                celula.setPadding(4); celula.setBorderColor(new Color(230, 230, 230));
-                if (zebra) celula.setBackgroundColor(new Color(250, 245, 242));
-                tabela.addCell(celula);
-            }
-            zebra = !zebra;
-        }
-        if (t.linhas().isEmpty()) {
-            var vazio = new PdfPCell(new Phrase("Sem dados no período.", fCel));
-            vazio.setColspan(t.cabecalho().size()); vazio.setPadding(8);
-            tabela.addCell(vazio);
-        }
-        doc.add(tabela);
-        doc.close();
-        return saida.toByteArray();
+        return RelatorioRestaurantePdf.gerar(restaurante, titulo, ini, fim, t.resumo(), t.cabecalho(), t.linhas());
     }
 
     private static String br(BigDecimal v) {

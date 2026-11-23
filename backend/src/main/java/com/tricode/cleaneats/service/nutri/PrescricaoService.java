@@ -84,10 +84,13 @@ public class PrescricaoService {
         if(observacoes!=null && observacoes.length()>4000) throw new IllegalArgumentException("As observações podem ter no máximo 4.000 caracteres");
         var planoId=jdbc.sql("select id from plano_alimentar where id_usuario=:c and ativo").param("c",idCliente).query(UUID.class).single();
         var imagem=baixarAssinatura(n.assinaturaDigitalUrl());
-        String metas=String.format("Calorias: %s kcal; proteínas: %s g; carboidratos: %s g; gorduras: %s g; fibras: %s g; água: %s ml.",v(previa.calorias()),v(previa.proteinas()),v(previa.carboidratos()),v(previa.gorduras()),v(previa.fibras()),v(previa.aguaMl()));
-        String refeicoes=previa.refeicoes().stream().map(r->r.dia()+" · "+r.tipo()+": "+r.prato()+(r.observacao()==null?"":" — "+r.observacao())).reduce("",(a,b)->a+b+"\n");
-        if(observacoes!=null&&!observacoes.isBlank()) refeicoes+="\nObservações: "+observacoes.trim();
-        var pdf=PrescricaoPdf.gerar(previa.nomeCliente(),n.nome(),n.crn(),metas,refeicoes,imagem); var hash=PrescricaoPdf.sha256(pdf);
+        var itensPdf=previa.refeicoes().stream().map(r->new PrescricaoPdf.ItemRefeicao(r.dia(),r.tipo(),r.prato(),r.observacao())).toList();
+        var pdf=PrescricaoPdf.gerar(new PrescricaoPdf.Dados(
+                previa.nomeCliente(), previa.email(), previa.objetivo(), previa.pesoKg(), previa.alturaCm(),
+                n.nome(), n.crn(),
+                previa.calorias(), previa.proteinas(), previa.carboidratos(), previa.gorduras(), previa.fibras(), previa.aguaMl(),
+                itensPdf, observacoes, imagem));
+        var hash=PrescricaoPdf.sha256(pdf);
         exigirStorage(); var caminho="nutricionistas/"+n.id()+"/"+UUID.randomUUID()+".pdf";
         http.post().uri("/storage/v1/object/prescricoes/"+caminho).header("x-upsert","false").header("cache-control","no-store").contentType(org.springframework.http.MediaType.APPLICATION_PDF).body(pdf).retrieve().toBodilessEntity();
         var id=UUID.randomUUID(); jdbc.sql("insert into prescricao(id,id_plano_alimentar,id_nutricionista,id_cliente,pdf_url,hash_documento) values (:id,:p,:n,:c,:url,:h)")
