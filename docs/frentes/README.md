@@ -96,3 +96,12 @@ O Supabase do projeto já tem as migrations e o seed central aplicados. Login de
 
 ## Mudança de 23/11 (madrugada)
 As frentes não tinham começado. A **sessão principal assumiu a frente A (telas 10–25)** e trabalha direto em `main`, seguindo `frente-a-cliente.md`. Se uma sessão da frente A for aberta, ela deve primeiro rodar `git merge main` e combinar com o usuário quais telas ainda estão livres (ver a matriz: linhas ☑ já feitas). As frentes B e C seguem disponíveis.
+
+## Mudança de 23/11 (manhã) — APRESENTAÇÃO HOJE, SEM CORTE
+A apresentação foi antecipada para **hoje, 23/11**. Nenhuma tela ou funcionalidade sai do escopo. Regras do dia:
+- **Etapas 1 e 2 juntas:** cada tela já sai com dados reais **e** com as ações da matriz funcionando. Commit por tela.
+- **Banco:** a principal está ocupada com a frente A, então cada frente aplica **só os próprios arquivos** com `npm run banco:sql supabase/migrations/<sua migration>.sql` ou `npm run banco:sql supabase/seeds/frente-<x>.sql` (o seed tem que ser idempotente: `on conflict do nothing` / `where not exists`). Nunca `banco:resetar`, nunca apagar dados de outra frente.
+- **Arquivo compartilhado** (entidade compartilhada, `SecurityConfig`, design system): se for bloqueante e pequeno, edite e descreva a mudança no commit e em `pedidos-ao-principal.md` (status `FEITO PELA FRENTE`) para a principal revisar no merge. Sem refatorar nada da principal.
+- **Integração:** a cada 2 telas, `git merge main` no seu branch; a principal faz merge dos branches das frentes em `main` periodicamente. Build e `tsc` verdes antes de avisar.
+- **Front local:** `npm --prefix frontend run dev -- --port 5182` (B) / `--port 5183` (C) para não brigar com a principal (5180).
+- Use o roteiro (`docs/roteiro-demo.md`) para decidir a ordem: primeiro as telas que aparecem nos atos.
