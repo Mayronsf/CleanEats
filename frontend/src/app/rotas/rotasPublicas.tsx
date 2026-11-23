@@ -14,6 +14,8 @@ const CadastroClientePage = lazy(() => import('../../features/conta/CadastroClie
 const RecuperarSenhaPage = lazy(() => import('../../features/conta/RecuperarSenhaPage'));
 const PlanosPage = lazy(() => import('../../features/planos/PlanosPage'));
 const FichaPublicaPage = lazy(() => import('../../features/ficha/FichaPublicaPage'));
+const TermosPage = lazy(() => import('../../features/legal/TermosPage'));
+const PrivacidadePage = lazy(() => import('../../features/legal/PrivacidadePage'));
 
 export const rotasPublicas: RouteObject[] = [
   { path: '/', element: emConstrucao('01', '01-splash') },
@@ -24,7 +26,7 @@ export const rotasPublicas: RouteObject[] = [
   { path: '/recuperar-senha', element: <RecuperarSenhaPage /> },
   { path: '/planos', element: <PlanosPage /> },
   { path: '/ficha/:id', element: <FichaPublicaPage /> },
-  { path: '/termos', element: emConstrucao('nova', 'termos de uso') },
-  { path: '/privacidade', element: emConstrucao('nova', 'política de privacidade') },
+  { path: '/termos', element: <TermosPage /> },
+  { path: '/privacidade', element: <PrivacidadePage /> },
   { path: '/auth/callback', element: <CallbackAuthPage /> },
 ];
