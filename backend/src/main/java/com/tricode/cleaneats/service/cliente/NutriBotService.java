@@ -71,11 +71,17 @@ public class NutriBotService {
     private final String chave;
     private final String modelo;
     private volatile AnthropicClient cliente;
+    /** Provedor alternativo (camada gratuita do Google), ligado com NUTRIBOT_PROVEDOR=gemini. */
+    private final NutriBotGemini gemini;
+    private final boolean usarGemini;
 
     public NutriBotService(JdbcClient jdbc, AcompanhamentoService acompanhamento, ObjectMapper json,
                            @Value("${cleaneats.nutribot.api-key:}") String chave,
-                           @Value("${cleaneats.nutribot.modelo:claude-sonnet-5-5}") String modelo) {
+                           @Value("${cleaneats.nutribot.modelo:claude-sonnet-5-5}") String modelo,
+                           NutriBotGemini gemini,
+                           @Value("${NUTRIBOT_PROVEDOR:anthropic}") String provedor) {
         this.jdbc = jdbc; this.acompanhamento = acompanhamento; this.json = json; this.chave = chave; this.modelo = modelo;
+        this.gemini = gemini; this.usarGemini = "gemini".equalsIgnoreCase(provedor.trim());
     }
 
     public EstadoDto estado(UUID idUsuario) {
@@ -171,7 +177,9 @@ public class NutriBotService {
         if (texto.length() > 1000) throw new IllegalArgumentException("A pergunta pode ter no máximo 1.000 caracteres");
         var limite = limite(idUsuario);
         if (!limite.disponivel()) throw new IllegalArgumentException(limite.motivo());
-        var api = cliente();
+        var api = usarGemini ? null : cliente();
+        if (usarGemini && !gemini.configurado())
+            throw new ServicoExternoException("NutriBot indisponível: a chave da IA não está configurada no servidor.");
 
         boolean novaConversa = idConversa == null;
         UUID conversa = novaConversa
@@ -185,6 +193,22 @@ public class NutriBotService {
                 insert into mensagem_chatbot (id_conversa_chatbot, autor, texto, contexto) values (:c, 'USUARIO', :t, cast(:ctx as jsonb)) returning id""")
                 .param("c", conversa).param("t", texto).param("ctx", snapshot).query(UUID.class).single();
 
+        var resposta = new StringBuilder();
+        String motivoParada = null;
+        if (usarGemini) {
+            var anteriores = historico.subList(Math.max(0, historico.size() - 20), historico.size()).stream()
+                    .map(m -> Map.entry(m.autor(), m.texto())).toList();
+            try {
+                var r = gemini.responder(INSTRUCOES + "\n\n" + contextoParaPrompt(contexto), anteriores, texto,
+                        t -> { resposta.append(t); aoTexto.accept(t); });
+                if (r.bloqueada()) motivoParada = "refusal";
+            } catch (RuntimeException e) {
+                log.warn("NutriBot (Gemini) falhou: {}", e.getMessage());
+                apagarPergunta(idPergunta, conversa, novaConversa);
+                aoErro.accept("NutriBot indisponível agora, tente de novo em instantes.");
+                return;
+            }
+        } else {
         var params = MessageCreateParams.builder()
                 .model(modelo)
                 .maxTokens(4096L)
@@ -197,8 +221,6 @@ public class NutriBotService {
         }
         params.addUserMessage(texto);
 
-        var resposta = new StringBuilder();
-        String motivoParada = null;
         try (StreamResponse<BetaRawMessageStreamEvent> stream = api.beta().messages().createStreaming(params.build())) {
             var it = stream.stream().iterator();
             while (it.hasNext()) {
@@ -213,6 +235,7 @@ public class NutriBotService {
             apagarPergunta(idPergunta, conversa, novaConversa);
             aoErro.accept("NutriBot indisponível agora, tente de novo em instantes.");
             return;
+        }
         }
         if ("refusal".equalsIgnoreCase(motivoParada)) {
             var aviso = "Não consigo ajudar com isso por aqui. Para orientação específica, fale com sua nutricionista pelo botão \"Conversar com a nutri\".";
