@@ -78,6 +78,9 @@ cd frontend && npm run dev | npm test | npm run build
 cd backend && ./mvnw spring-boot:run | ./mvnw test
 ```
 
-## Estado
-- Fase 0 concluída (22/11). Base compartilhada para as frentes pronta (22/11): rotas por frente com placeholders, layouts, guarda por perfil, entidades/repositórios, `NotificacaoService`, `useRealtime`, migrations com escopo completo, seeds por frente, scripts de demo/banco, deploy.
-- Próximo nesta sessão: telas 01–05, 08, 09; login Google; central de notificações; `/ficha/:id`; termos/privacidade; integração às 12h de 23/11.
+## Estado (22/11, 23h)
+- Banco no Supabase (projeto awktnlswurcxkehpzoch, pooler aws-1-sa-east-1) com migrations e seed central; MapeamentoBancoIT verde.
+- Sessão principal: telas 01, 02, 03, 04, 05, 08 e 09 prontas; /ficha/:id, /termos, /privacidade, /auth/callback, 404 e central de notificações prontas. APIs: /api/cadastro/cliente, /api/restricoes, /api/cadastro/metas-iniciais, /api/tiers, /api/vitrine, /api/fichas-tecnicas/{id}, /api/notificacoes, /api/contatos-suporte.
+- Nesta máquina a porta 8080 é usada pelo Steam: a principal roda na 8090; frentes A 8081, B 8082, C 8083.
+- Pendências fora do código (painel do Supabase): provedor Google, SMTP Resend, template de recuperação com {{ .Token }} e expiração de 15 min, URLs de redirecionamento.
+- Próximo: integração das frentes em main às 12h de 23/11.

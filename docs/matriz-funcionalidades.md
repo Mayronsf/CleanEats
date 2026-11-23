@@ -63,79 +63,79 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Planos | REAL | Navega para `/planos` | ☐ |
-| Nutricionistas | REAL | Navega para `/` | ☐ |
-| Blog | REAL | Sem blog no escopo: âncora para a seção de conteúdo da landing (ou remover) | ☐ |
-| Criar conta grátis | REAL | Navega para `/cadastro` | ☐ |
-| Entrar | REAL | Navega para `/login` | ☐ |
-| Começar agora | REAL | Navega para `/cadastro` | ☐ |
-| Ver marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Ver todos | REAL | Navega para `/app/marketplace` | ☐ |
-| Explorar cardápio | REAL | Navega para `/app/marketplace` | ☐ |
-| Sou nutricionista | REAL | Navega para `/nutri` | ☐ |
-| Sou restaurante | REAL | Navega para `/restaurante` | ☐ |
-| f (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☐ |
-| in (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☐ |
-| ig (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☐ |
-| tw (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☐ |
-| + | REAL | Atualiza carrinho (estado local persistido) e recalcula prévia | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Planos | REAL | Navega para `/planos` | ☑ |
+| Nutricionistas | REAL | Navega para `/` | ☑ |
+| Blog | REAL | Sem blog no escopo: âncora para a seção de conteúdo da landing (ou remover) | ☑ |
+| Criar conta grátis | REAL | Navega para `/cadastro` | ☑ |
+| Entrar | REAL | Navega para `/login` | ☑ |
+| Começar agora | REAL | Navega para `/cadastro` | ☑ |
+| Ver marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Ver todos | REAL | Navega para `/app/marketplace` | ☑ |
+| Explorar cardápio | REAL | Navega para `/app/marketplace` | ☑ |
+| Sou nutricionista | REAL | Navega para `/nutri` | ☑ |
+| Sou restaurante | REAL | Navega para `/restaurante` | ☑ |
+| f (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☑ |
+| in (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☑ |
+| ig (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☑ |
+| tw (rede social) | REAL | Link externo para o perfil da TRICODE — sem URL oficial, o ícone é removido | ☑ |
+| + | REAL | Atualiza carrinho (estado local persistido) e recalcula prévia | ☑ |
 
 ### 02 · 02-login — `/login` — frente P
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| G Entrar com Google | REAL | supabase.auth.signInWithOAuth({provider:"google"}) → /auth/callback → home do perfil | ☐ |
-| f Facebook | SIMULADA | Toast "Login com Facebook em breve" | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar ao início | REAL | Navega para `/` | ☐ |
-| Esqueci a senha | REAL | Navega para `/recuperar-senha` | ☐ |
-| Entrar | REAL | Navega para `/app` | ☐ |
-| Criar conta grátis | REAL | Navega para `/cadastro` | ☐ |
+| G Entrar com Google | REAL | supabase.auth.signInWithOAuth({provider:"google"}) → /auth/callback → home do perfil | ☑ |
+| f Facebook | SIMULADA | Toast "Login com Facebook em breve" | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar ao início | REAL | Navega para `/` | ☑ |
+| Esqueci a senha | REAL | Navega para `/recuperar-senha` | ☑ |
+| Entrar | REAL | Navega para `/app` | ☑ |
+| Criar conta grátis | REAL | Navega para `/cadastro` | ☑ |
 
 ### 03 · 03-cadastro-etapa1 — `/cadastro` — frente P
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| G Google | REAL | supabase.auth.signInWithOAuth({provider:"google"}) → /auth/callback → home do perfil | ☐ |
-| f Facebook | SIMULADA | Toast "Login com Facebook em breve" | ☐ |
+| G Google | REAL | supabase.auth.signInWithOAuth({provider:"google"}) → /auth/callback → home do perfil | ☑ |
+| f Facebook | SIMULADA | Toast "Login com Facebook em breve" | ☑ |
 | Apple | REMOVIDO | Botão retirado da tela (decisão do usuário 22/11) | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar ao início | REAL | Navega para `/` | ☐ |
-| termos de uso | REAL | Navega para `/termos` (tela nova) | ☐ |
-| política de privacidade | REAL | Navega para `/privacidade` (tela nova) | ☐ |
-| Continuar | REAL | Navega para `/cadastro/perfil` | ☐ |
-| Fazer login | REAL | Navega para `/login` | ☐ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar ao início | REAL | Navega para `/` | ☑ |
+| termos de uso | REAL | Navega para `/termos` (tela nova) | ☑ |
+| política de privacidade | REAL | Navega para `/privacidade` (tela nova) | ☑ |
+| Continuar | REAL | Navega para `/cadastro/perfil` | ☑ |
+| Fazer login | REAL | Navega para `/login` | ☑ |
 
 ### 04 · 04-cadastro-perfil — `/cadastro/perfil` — frente P
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Selecionado | REAL | Escolhe o perfil (guardado no rascunho do cadastro) | ☐ |
-| Escolher este perfil | REAL | Escolhe o perfil (guardado no rascunho do cadastro) | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar | REAL | Navega para `/cadastro` | ☐ |
-| Continuar como Cliente | REAL | Navega para `/cadastro/cliente` | ☐ |
-| Falar com suporte | REAL | Abre "Fale conosco": POST /api/contatos-suporte (admin vê em /admin) | ☐ |
+| Selecionado | REAL | Escolhe o perfil (guardado no rascunho do cadastro) | ☑ |
+| Escolher este perfil | REAL | Escolhe o perfil (guardado no rascunho do cadastro) | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar | REAL | Navega para `/cadastro` | ☑ |
+| Continuar como Cliente | REAL | Navega para `/cadastro/cliente` | ☑ |
+| Falar com suporte | REAL | Abre "Fale conosco": POST /api/contatos-suporte (admin vê em /admin) | ☑ |
 
 ### 05 · 05-cadastro-cliente — `/cadastro/cliente` — frente P
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Sem glúten | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem lactose | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Vegetariano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Vegano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Low carb | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Alérgico a oleaginosas | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem frutos do mar | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem carne suína | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar | REAL | Navega para `/cadastro/perfil` | ☐ |
-| Ver planos disponíveis | REAL | Navega para `/planos` | ☐ |
+| Sem glúten | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem lactose | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Vegetariano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Vegano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Low carb | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Alérgico a oleaginosas | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem frutos do mar | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem carne suína | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar | REAL | Navega para `/cadastro/perfil` | ☑ |
+| Ver planos disponíveis | REAL | Navega para `/planos` | ☑ |
 
 ### 06 · 06-cadastro-nutricionista — `/cadastro/nutricionista` — frente B
 
@@ -163,30 +163,30 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar ao login | REAL | Navega para `/login` | ☐ |
-| Enviar código | REAL | Link: #state2 | ☐ |
-| Já lembrei, voltar ao login | REAL | Navega para `/login` | ☐ |
-| Criar conta grátis | REAL | Navega para `/cadastro` | ☐ |
-| Trocar email | REAL | Navega para `/recuperar-senha` | ☐ |
-| Verificar código | REAL | Link: #state3 | ☐ |
-| Trocar de email | REAL | Navega para `/recuperar-senha` | ☐ |
-| Voltar | REAL | Link: #state2 | ☐ |
-| Salvar nova senha | REAL | Navega para `/login` | ☐ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar ao login | REAL | Navega para `/login` | ☑ |
+| Enviar código | REAL | Link: #state2 | ☑ |
+| Já lembrei, voltar ao login | REAL | Navega para `/login` | ☑ |
+| Criar conta grátis | REAL | Navega para `/cadastro` | ☑ |
+| Trocar email | REAL | Navega para `/recuperar-senha` | ☑ |
+| Verificar código | REAL | Link: #state3 | ☑ |
+| Trocar de email | REAL | Navega para `/recuperar-senha` | ☑ |
+| Voltar | REAL | Link: #state2 | ☑ |
+| Salvar nova senha | REAL | Navega para `/login` | ☑ |
 
 ### 09 · 09-selecao-plano — `/planos` — frente P
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Mensal | REAL | Alterna ciclo e recalcula preços (GET /api/tiers) | ☐ |
-| Anual -20% | REAL | Alterna ciclo e recalcula preços (GET /api/tiers) | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Já tenho conta | REAL | Navega para `/login` | ☐ |
-| Pular por agora | REAL | Navega para `/app` | ☐ |
-| Continuar grátis | REAL | Navega para `/app` | ☐ |
-| Assinar Basic | REAL | Navega para `/app` | ☐ |
-| Começar com Pro | REAL | Navega para `/app` | ☐ |
-| Quero ser Premium | REAL | Navega para `/app` | ☐ |
+| Mensal | REAL | Alterna ciclo e recalcula preços (GET /api/tiers) | ☑ |
+| Anual -20% | REAL | Alterna ciclo e recalcula preços (GET /api/tiers) | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Já tenho conta | REAL | Navega para `/login` | ☑ |
+| Pular por agora | REAL | Navega para `/app` | ☑ |
+| Continuar grátis | REAL | Navega para `/app` | ☑ |
+| Assinar Basic | REAL | Navega para `/app` | ☑ |
+| Começar com Pro | REAL | Navega para `/app` | ☑ |
+| Quero ser Premium | REAL | Navega para `/app` | ☑ |
 
 ### 10 · 10-cliente-home — `/app` — frente A
 
