@@ -155,3 +155,29 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET | `/api/painel-restaurante/financeiro?mes=AAAA-MM` | Bruto, comissão congelada, líquido, já pago, 6 meses, repasses, chave PIX | 17 |
 | GET | `/api/painel-restaurante/financeiro/csv?mes=` | CSV dos pedidos do mês (bruto/comissão/líquido) | 17 |
 | GET | `/api/painel-restaurante/relatorios` · `/relatorios/{TIPO}?inicio&fim&formato=PDF|CSV&registrar` | Histórico e geração (OpenPDF) de vendas, financeiro, avaliações, clientes, cardápio e operacional | 17 |
+
+## Cadastro e perfil do restaurante (telas 07 e 44) — frente C
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/cadastro/restaurante/cozinhas` | Lista de tipos de cozinha disponíveis no cadastro | 2, 3 |
+| POST | `/api/cadastro/restaurante/logo` | Upload da logo (multipart `arquivo`) no bucket `restaurantes` | 2, 3 |
+| POST | `/api/cadastro/restaurante` | Cadastro etapa 3: valida CNPJ, cria conta e restaurante `PENDENTE`, avisa admins | 2, 3 |
+| GET · PUT | `/api/painel-restaurante/perfil` | Consulta/atualiza dados públicos, endereço, cozinhas, horários, entrega e PIX (troca de CNPJ ou reenvio de rejeitado volta para `PENDENTE`) | 3 |
+| POST | `/api/painel-restaurante/perfil/imagem` | Upload de logo/capa (multipart `arquivo`) no bucket `restaurantes` | 3 |
+
+## Nutricionista (telas 06, 26–35, prescrições e acompanhamento) — frente B
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| POST | `/api/cadastro/nutricionista` | Cadastro etapa 3: valida CRN (`CRN-<região> <UF> <número>/<letra>`), cria perfil `PENDENTE` | 2, 18 |
+| GET | `/api/nutri/dashboard` | KPIs do dashboard, agenda/triagens e clientes em atenção | — |
+| GET | `/api/nutri/triagens?status=&ordenacao=` | Fila de triagens | 19 |
+| POST | `/api/nutri/triagens/{id}/iniciar` · `/{id}/concluir` | Inicia triagem (`EM_ANDAMENTO`) e conclui gravando metas em `perfil_cliente` e notificando cliente | 19 |
+| GET | `/api/nutri/clientes?busca=&tier=&objetivo=&ordem=&pagina=&tamanho=` | Lista clientes vinculados com adesão nos últimos 7 dias (usada em 28 e `/nutri/acompanhamento`) | — |
+| GET | `/api/nutri/clientes/{id}` · `/{id}/pedidos` · POST `/{id}/medicoes` | Perfil do cliente, histórico de pedidos e registro de medições | — |
+| GET · PUT | `/api/nutri/clientes/{id}/plano` | Editor semanal do plano alimentar com pratos aprovados e observação (notifica o cliente) | 19 |
+| GET | `/api/nutri/catalogo?busca=&restaurante=&categoria=&proteina=&restricao=&pagina=` | Catálogo de pratos `APROVADO` de restaurantes aprovados | 19 |
+| GET | `/api/nutri/prescricoes/clientes-elegiveis` · `/previa?cliente=` | Clientes Premium elegíveis e prévia da prescrição | 20 |
+| GET · POST | `/api/nutri/prescricoes` · GET `/{id}/pdf` | Histórico, emissão de PDF (OpenPDF + Storage + SHA-256 + e-mail Resend) e URL assinada | 20 |
+| GET | `/api/nutri/conversas` · GET/POST `/{id}/mensagens` · POST `/cliente/{idCliente}` | Chat com clientes (Realtime + notificação) | — |
+| GET | `/api/nutri/financeiro` · `/financeiro/csv` | Receita das mensalidades Pro/Premium vigentes e repasse de 60% + exportação CSV | — |
+| GET · PUT | `/api/nutri/perfil` · POST `/perfil/assinatura` | Perfil profissional, disponibilidade e upload da assinatura digital | 18 |

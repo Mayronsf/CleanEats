@@ -3,7 +3,6 @@ import { MessageSquare, Percent, ShieldCheck, Star } from 'lucide-react';
 import type { GrupoMenu } from '../../design-system';
 import { LayoutPainel } from '../layouts/LayoutPainel';
 import { lazy } from 'react';
-import { emConstrucao } from '../EmConstrucao';
 import { LayoutRestaurante } from '../../features/restaurante/LayoutRestaurante';
 
 const DashboardRestaurantePage = lazy(() => import('../../features/restaurante/dashboard/DashboardPage'));
@@ -18,6 +17,8 @@ const AnalyticsPage = lazy(() => import('../../features/restaurante/gestao/Analy
 const FinanceiroRestaurantePage = lazy(() => import('../../features/restaurante/gestao/FinanceiroPage'));
 const RelatoriosPage = lazy(() => import('../../features/restaurante/gestao/RelatoriosPage'));
 const PedidosRestaurantePage = lazy(() => import('../../features/restaurante/pedidos/PedidosPage'));
+const CadastroRestaurantePage = lazy(() => import('../../features/restaurante/perfil/CadastroRestaurantePage'));
+const PerfilRestaurantePage = lazy(() => import('../../features/restaurante/perfil/PerfilRestaurantePage'));
 
 /**
  * Rotas do restaurante (/restaurante) e do admin (/admin) — DONA: FRENTE C (telas 07, 36–44 + admin).
@@ -36,7 +37,7 @@ export const menuAdmin: GrupoMenu[] = [
 ];
 
 export const rotasRestaurante: RouteObject[] = [
-  { path: '/cadastro/restaurante', element: emConstrucao('07', '07-cadastro-restaurante') },
+  { path: '/cadastro/restaurante', element: <CadastroRestaurantePage /> },
   {
     path: '/restaurante',
     element: <LayoutRestaurante />,
@@ -50,7 +51,7 @@ export const rotasRestaurante: RouteObject[] = [
       { path: 'analytics', element: <AnalyticsPage /> },
       { path: 'financeiro', element: <FinanceiroRestaurantePage /> },
       { path: 'relatorios', element: <RelatoriosPage /> },
-      { path: 'perfil', element: emConstrucao('44', '44-resto-perfil') },
+      { path: 'perfil', element: <PerfilRestaurantePage /> },
     ],
   },
   {

@@ -80,6 +80,86 @@ export const buscarAnalytics = (dias: number) => chamarApi<AnalyticsRestaurante>
 export const buscarFinanceiro = (mes?: string) => chamarApi<FinanceiroRestaurante>(`/painel-restaurante/financeiro${mes ? `?mes=${mes}` : ''}`);
 export const buscarRelatorios = () => chamarApi<RelatorioGerado[]>('/painel-restaurante/relatorios');
 
+// ---------- Cadastro (07) e Perfil (44) ----------
+export interface HorarioRestaurante { dia: number; aberto: boolean; abre: string; fecha: string }
+export interface PerfilRestauranteForm {
+  nome: string; razaoSocial: string | null; cnpj: string; telefone: string | null; slogan: string | null; descricao: string | null;
+  cep: string; logradouro: string; numero: string; complemento: string | null; bairro: string; cidade: string; uf: string;
+  tiposCozinha: string[]; horarios: HorarioRestaurante[];
+  tempoEntregaMin: number | null; tempoEntregaMax: number | null; taxaEntrega: number | null; pedidoMinimo: number | null;
+  chavePix: string | null; tipoChavePix: string | null; titularPix: string | null;
+  logoUrl: string | null; capaUrl: string | null;
+}
+export interface PerfilRestauranteDto {
+  id: string; email: string; statusAprovacao: 'PENDENTE' | 'APROVADO' | 'REJEITADO'; motivoRejeicao: string | null;
+  notaMedia: number | null; totalAvaliacoes: number; criadoEm: string; dados: PerfilRestauranteForm;
+}
+export interface CadastroRestauranteReq { nomeResponsavel: string; aceiteTermosEm: string; restaurante: PerfilRestauranteForm }
+
+export const buscarPerfilRestaurante = () => chamarApi<PerfilRestauranteDto>('/painel-restaurante/perfil');
+export const salvarPerfilRestaurante = (form: PerfilRestauranteForm) =>
+  chamarApi<PerfilRestauranteDto>('/painel-restaurante/perfil', { method: 'PUT', body: JSON.stringify(form) });
+export const enviarImagemPerfilRestaurante = (arquivo: File) => {
+  const corpo = new FormData();
+  corpo.append('arquivo', arquivo);
+  return chamarApi<{ url: string }>('/painel-restaurante/perfil/imagem', { method: 'POST', body: corpo });
+};
+export const cadastrarRestaurante = (req: CadastroRestauranteReq) =>
+  chamarApi<PerfilRestauranteDto>('/cadastro/restaurante', { method: 'POST', body: JSON.stringify(req) });
+export const enviarLogoCadastroRestaurante = (arquivo: File) => {
+  const corpo = new FormData();
+  corpo.append('arquivo', arquivo);
+  return chamarApi<{ url: string }>('/cadastro/restaurante/logo', { method: 'POST', body: corpo });
+};
+export const buscarCozinhasCadastro = () => chamarApi<string[]>('/cadastro/restaurante/cozinhas');
+
+export const COZINHAS_PADRAO = [
+  'Fitness', 'Saudável', 'Vegano', 'Vegetariano', 'Low Carb', 'Sem Glúten',
+  'Pescetariano', 'Bowls', 'Integral', 'Marmitas', 'Sucos', 'Açaí',
+];
+
+export const ESTADOS_BR: { uf: string; nome: string }[] = [
+  { uf: 'AC', nome: 'Acre' }, { uf: 'AL', nome: 'Alagoas' }, { uf: 'AP', nome: 'Amapá' }, { uf: 'AM', nome: 'Amazonas' },
+  { uf: 'BA', nome: 'Bahia' }, { uf: 'CE', nome: 'Ceará' }, { uf: 'DF', nome: 'Distrito Federal' }, { uf: 'ES', nome: 'Espírito Santo' },
+  { uf: 'GO', nome: 'Goiás' }, { uf: 'MA', nome: 'Maranhão' }, { uf: 'MT', nome: 'Mato Grosso' }, { uf: 'MS', nome: 'Mato Grosso do Sul' },
+  { uf: 'MG', nome: 'Minas Gerais' }, { uf: 'PA', nome: 'Pará' }, { uf: 'PB', nome: 'Paraíba' }, { uf: 'PR', nome: 'Paraná' },
+  { uf: 'PE', nome: 'Pernambuco' }, { uf: 'PI', nome: 'Piauí' }, { uf: 'RJ', nome: 'Rio de Janeiro' }, { uf: 'RN', nome: 'Rio Grande do Norte' },
+  { uf: 'RS', nome: 'Rio Grande do Sul' }, { uf: 'RO', nome: 'Rondônia' }, { uf: 'RR', nome: 'Roraima' }, { uf: 'SC', nome: 'Santa Catarina' },
+  { uf: 'SP', nome: 'São Paulo' }, { uf: 'SE', nome: 'Sergipe' }, { uf: 'TO', nome: 'Tocantins' },
+];
+
+export function formatarCnpj(valor: string): string {
+  const d = valor.replace(/\D/g, '').slice(0, 14);
+  return d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+}
+
+export function formatarCep(valor: string): string {
+  const d = valor.replace(/\D/g, '').slice(0, 8);
+  return d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d;
+}
+
+export function formatarTelefone(valor: string): string {
+  const d = valor.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+export function cnpjValido(valor: string): boolean {
+  const d = valor.replace(/\D/g, '');
+  if (d.length !== 14 || /^(\d)\1{13}$/.test(d)) return false;
+  const calc = (pesos: number[]) => {
+    const soma = pesos.reduce((acc, p, i) => acc + Number(d[i]) * p, 0);
+    const resto = soma % 11;
+    return resto < 2 ? 0 : 11 - resto;
+  };
+  const d1 = calc([5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  const d2 = calc([6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  return Number(d[12]) === d1 && Number(d[13]) === d2;
+}
+
 /** Baixa um arquivo autenticado (PDF/CSV) e dispara o download no navegador. */
 export async function baixarArquivo(caminho: string, nomePadrao: string) {
   const { data } = await supabase.auth.getSession();

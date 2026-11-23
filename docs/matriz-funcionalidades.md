@@ -141,23 +141,25 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| + Nutrição Clínica | REAL | Marca especialidade | ☐ |
-| + Nutrição Funcional | REAL | Marca especialidade | ☐ |
-| + Reeducação Alimentar | REAL | Marca especialidade | ☐ |
-| + Nutrição Materno-Infantil | REAL | Marca especialidade | ☐ |
-| + Nutrição Vegana | REAL | Marca especialidade | ☐ |
-| + Transtornos Alimentares | REAL | Marca especialidade | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar | REAL | Navega para `/cadastro/perfil` | ☐ |
-| Enviar para aprovação | REAL | Navega para `/` | ☐ |
+| + Nutrição Clínica | REAL | Marca especialidade | ☑ |
+| + Nutrição Funcional | REAL | Marca especialidade | ☑ |
+| + Reeducação Alimentar | REAL | Marca especialidade | ☑ |
+| + Nutrição Materno-Infantil | REAL | Marca especialidade | ☑ |
+| + Nutrição Vegana | REAL | Marca especialidade | ☑ |
+| + Transtornos Alimentares | REAL | Marca especialidade | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar | REAL | Navega para `/cadastro/perfil` | ☑ |
+| Enviar para aprovação | REAL | POST /api/cadastro/nutricionista → `/nutri` | ☑ |
 
 ### 07 · 07-cadastro-restaurante — `/cadastro/restaurante` — frente C
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Voltar | REAL | Navega para `/cadastro/perfil` | ☐ |
-| Enviar para aprovação | REAL | Navega para `/` | ☐ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Voltar | REAL | Navega para `/cadastro/perfil` | ☑ |
+| Enviar logo | REAL | POST /api/cadastro/restaurante/logo (Storage `restaurantes`) | ☑ |
+| Tipos de cozinha / Horários | REAL | Seleciona cozinhas e horários por dia da semana | ☑ |
+| Enviar para aprovação | REAL | POST /api/cadastro/restaurante → `/restaurante` (`PENDENTE`) | ☑ |
 
 ### 08 · 08-recuperar-senha — `/recuperar-senha` — frente P
 
@@ -667,171 +669,171 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Atender triagens | REAL | Navega para `/nutri/triagens` | ☐ |
-| Ver semana | REAL | Navega para `/app/meu-plano` | ☐ |
-| 08:00 Concluído Triagem Pedro Silva Ganho de massa · Plano Pro Plan… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| 09:30 Concluído Follow-up Mariana Costa Adesão 95% · Plano Premium … | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| 11:00 Agora Triagem Breno Filho Ganho de massa · 23a · Pro Iniciar | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| 14:30 14:30 Revisão Lucas Andrade Pediu ajuste de macros Ver | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| 16:00 16:00 Triagem Camila Rocha Emagrecimento · Plano Pro Ver | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| 17:30 17:30 Follow-up Rafael Mendes Adesão 76% Ver | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| Ver todos | REAL | Navega para `/nutri/clientes` | ☐ |
-| RM Rafael Mendes Adesão 42% | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| JS Juliana Sá Sem pedido há 3 dias | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| TC Thales Cunha Macros em 70% | REAL | Navega para `/nutri/clientes/:id` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Atender triagens | REAL | Navega para `/nutri/triagens` | ☑ |
+| Ver semana | REAL | Navega para `/app/meu-plano` | ☑ |
+| 08:00 Concluído Triagem Pedro Silva Ganho de massa · Plano Pro Plan… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| 09:30 Concluído Follow-up Mariana Costa Adesão 95% · Plano Premium … | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| 11:00 Agora Triagem Breno Filho Ganho de massa · 23a · Pro Iniciar | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| 14:30 14:30 Revisão Lucas Andrade Pediu ajuste de macros Ver | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| 16:00 16:00 Triagem Camila Rocha Emagrecimento · Plano Pro Ver | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| 17:30 17:30 Follow-up Rafael Mendes Adesão 76% Ver | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| Ver todos | REAL | Navega para `/nutri/clientes` | ☑ |
+| RM Rafael Mendes Adesão 42% | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| JS Juliana Sá Sem pedido há 3 dias | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| TC Thales Cunha Macros em 70% | REAL | Navega para `/nutri/clientes/:id` | ☑ |
 
 ### 27 · 27-nutri-triagens — `/nutri/triagens` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Pendentes 3 | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Em andamento 2 | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Concluídas 18 | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| 1 | REAL | Paginação / navegação de período | ☐ |
-| Iniciar triagem | REAL | Navega para `/nutri/clientes/:id` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Pendentes 3 | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Em andamento 2 | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Concluídas 18 | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| 1 | REAL | Paginação / navegação de período | ☑ |
+| Iniciar triagem | REAL | Navega para `/nutri/clientes/:id` | ☑ |
 
 ### 28 · 28-nutri-clientes — `/nutri/clientes` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Grade | REAL | Ordenação/visualização (parâmetro na consulta) | ☐ |
-| Lista | REAL | Ordenação/visualização (parâmetro na consulta) | ☐ |
-| 1 | REAL | Paginação / navegação de período | ☐ |
-| 2 | REAL | Paginação / navegação de período | ☐ |
-| 3 | REAL | Paginação / navegação de período | ☐ |
-| BF Breno Filho Pro 23 anos · 78kg · 1,78m · Ganho de massa Adesão s… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| MC Mariana Costa Premium 31 anos · 62kg · 1,68m · Equilíbrio Adesão… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| PS Pedro Silva Pro 28 anos · 85kg · 1,80m · Ganho de massa Adesão s… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| JS Juliana Sá Premium 34 anos · 70kg · 1,65m · Emagrecimento Adesão… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| LA Lucas Andrade Pro 26 anos · 75kg · 1,76m · Ganho de massa Adesão… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| RM Rafael Mendes Pro 30 anos · 88kg · 1,82m · Emagrecimento Adesão … | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| TC Thales Cunha Pro 27 anos · 72kg · 1,75m · Equilíbrio Adesão sema… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| FB Fernanda Barros Basic 25 anos · 58kg · 1,62m · Emagrecimento Ade… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| GN Gabriela Nunes Pro 32 anos · 65kg · 1,70m · Equilíbrio Adesão se… | REAL | Navega para `/nutri/clientes/:id` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Grade | REAL | Ordenação/visualização (parâmetro na consulta) | ☑ |
+| Lista | REAL | Ordenação/visualização (parâmetro na consulta) | ☑ |
+| 1 | REAL | Paginação / navegação de período | ☑ |
+| 2 | REAL | Paginação / navegação de período | ☑ |
+| 3 | REAL | Paginação / navegação de período | ☑ |
+| BF Breno Filho Pro 23 anos · 78kg · 1,78m · Ganho de massa Adesão s… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| MC Mariana Costa Premium 31 anos · 62kg · 1,68m · Equilíbrio Adesão… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| PS Pedro Silva Pro 28 anos · 85kg · 1,80m · Ganho de massa Adesão s… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| JS Juliana Sá Premium 34 anos · 70kg · 1,65m · Emagrecimento Adesão… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| LA Lucas Andrade Pro 26 anos · 75kg · 1,76m · Ganho de massa Adesão… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| RM Rafael Mendes Pro 30 anos · 88kg · 1,82m · Emagrecimento Adesão … | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| TC Thales Cunha Pro 27 anos · 72kg · 1,75m · Equilíbrio Adesão sema… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| FB Fernanda Barros Basic 25 anos · 58kg · 1,62m · Emagrecimento Ade… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| GN Gabriela Nunes Pro 32 anos · 65kg · 1,70m · Equilíbrio Adesão se… | REAL | Navega para `/nutri/clientes/:id` | ☑ |
 
 ### 29 · 29-nutri-cliente-perfil — `/nutri/clientes/:id` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| (ícone) | REAL | Navega para `/nutri/clientes` | ☐ |
-| Meus clientes | REAL | Navega para `/nutri/clientes` | ☐ |
-| Editar plano | REAL | Navega para `/nutri/clientes/:id/plano` | ☐ |
-| Enviar mensagem | REAL | Navega para `/nutri/mensagens` | ☐ |
-| Visão geral | REAL | Aba do perfil do cliente (nutri) | ☐ |
-| Plano alimentar | REAL | Navega para `/nutri/clientes/:id/plano` | ☐ |
-| Pedidos | REAL | Aba de pedidos do cliente (nutri) | ☐ |
-| Prescrições | REAL | Navega para `/nutri/prescricoes/nova` | ☐ |
-| Mensagens | REAL | Navega para `/nutri/mensagens` | ☐ |
-| Ver histórico | REAL | Abre histórico (medições/pedidos) do cliente | ☐ |
-| Ver todos | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Registrar nova medição | REAL | POST /api/nutri/clientes/{id}/medicoes (peso, % gordura, cintura) | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| (ícone) | REAL | Navega para `/nutri/clientes` | ☑ |
+| Meus clientes | REAL | Navega para `/nutri/clientes` | ☑ |
+| Editar plano | REAL | Navega para `/nutri/clientes/:id/plano` | ☑ |
+| Enviar mensagem | REAL | Navega para `/nutri/mensagens` | ☑ |
+| Visão geral | REAL | Aba do perfil do cliente (nutri) | ☑ |
+| Plano alimentar | REAL | Navega para `/nutri/clientes/:id/plano` | ☑ |
+| Pedidos | REAL | Aba de pedidos do cliente (nutri) | ☑ |
+| Prescrições | REAL | Navega para `/nutri/prescricoes/nova` | ☑ |
+| Mensagens | REAL | Navega para `/nutri/mensagens` | ☑ |
+| Ver histórico | REAL | Abre histórico (medições/pedidos) do cliente | ☑ |
+| Ver todos | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Registrar nova medição | REAL | POST /api/nutri/clientes/{id}/medicoes (peso, % gordura, cintura) | ☑ |
 
 ### 30 · 30-nutri-editor-plano — `/nutri/clientes/:id/plano` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Adicionar refeição extra | REAL | Adiciona refeição ao plano (PUT plano-alimentar) | ☐ |
-| (ícone) | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| Clientes | REAL | Navega para `/nutri/clientes` | ☐ |
-| Breno Filho | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| Descartar | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| Salvar e enviar | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| Seg 12 4/4 | REAL | Seleciona dia do plano | ☐ |
-| Ter 13 4/4 | REAL | Seleciona dia do plano | ☐ |
-| Qua 14 4/4 | REAL | Seleciona dia do plano | ☐ |
-| Qui 15 2/4 | REAL | Seleciona dia do plano | ☐ |
-| Sex 16 0/4 | REAL | Seleciona dia do plano | ☐ |
-| Sáb 17 0/4 | REAL | Seleciona dia do plano | ☐ |
-| Dom 18 livre | REAL | Seleciona dia do plano | ☐ |
-| Seg | REAL | Seleciona dia do plano | ☐ |
-| 12 | REAL | Paginação / navegação de período | ☐ |
-| Ter | REAL | Seleciona dia do plano | ☐ |
-| 13 | REAL | Paginação / navegação de período | ☐ |
-| Qua | REAL | Seleciona dia do plano | ☐ |
-| 14 | REAL | Paginação / navegação de período | ☐ |
-| Qui | REAL | Seleciona dia do plano | ☐ |
-| 15 | REAL | Paginação / navegação de período | ☐ |
-| 2/4 | REAL | Seleciona dia do plano | ☐ |
-| Sex | REAL | Seleciona dia do plano | ☐ |
-| 16 | REAL | Paginação / navegação de período | ☐ |
-| 0/4 | REAL | Seleciona dia do plano | ☐ |
-| Sáb | REAL | Seleciona dia do plano | ☐ |
-| 17 | REAL | Paginação / navegação de período | ☐ |
-| Dom | REAL | Seleciona dia do plano | ☐ |
-| 18 | REAL | Paginação / navegação de período | ☐ |
-| livre | REAL | Refeição livre do plano (sem prato) | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Adicionar refeição extra | REAL | Adiciona refeição ao plano (PUT plano-alimentar) | ☑ |
+| (ícone) | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| Clientes | REAL | Navega para `/nutri/clientes` | ☑ |
+| Breno Filho | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| Descartar | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| Salvar e enviar | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| Seg 12 4/4 | REAL | Seleciona dia do plano | ☑ |
+| Ter 13 4/4 | REAL | Seleciona dia do plano | ☑ |
+| Qua 14 4/4 | REAL | Seleciona dia do plano | ☑ |
+| Qui 15 2/4 | REAL | Seleciona dia do plano | ☑ |
+| Sex 16 0/4 | REAL | Seleciona dia do plano | ☑ |
+| Sáb 17 0/4 | REAL | Seleciona dia do plano | ☑ |
+| Dom 18 livre | REAL | Seleciona dia do plano | ☑ |
+| Seg | REAL | Seleciona dia do plano | ☑ |
+| 12 | REAL | Paginação / navegação de período | ☑ |
+| Ter | REAL | Seleciona dia do plano | ☑ |
+| 13 | REAL | Paginação / navegação de período | ☑ |
+| Qua | REAL | Seleciona dia do plano | ☑ |
+| 14 | REAL | Paginação / navegação de período | ☑ |
+| Qui | REAL | Seleciona dia do plano | ☑ |
+| 15 | REAL | Paginação / navegação de período | ☑ |
+| 2/4 | REAL | Seleciona dia do plano | ☑ |
+| Sex | REAL | Seleciona dia do plano | ☑ |
+| 16 | REAL | Paginação / navegação de período | ☑ |
+| 0/4 | REAL | Seleciona dia do plano | ☑ |
+| Sáb | REAL | Seleciona dia do plano | ☑ |
+| 17 | REAL | Paginação / navegação de período | ☑ |
+| Dom | REAL | Seleciona dia do plano | ☑ |
+| 18 | REAL | Paginação / navegação de período | ☑ |
+| livre | REAL | Refeição livre do plano (sem prato) | ☑ |
 
 ### 31 · 31-nutri-catalogo — `/nutri/catalogo` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Todos os restaurantes | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Categoria | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Proteína: qualquer | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Restrições | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Grade | REAL | Ordenação/visualização (parâmetro na consulta) | ☐ |
-| Lista | REAL | Ordenação/visualização (parâmetro na consulta) | ☐ |
-| ‹ | REAL | Paginação / navegação de período | ☐ |
-| 1 | REAL | Paginação / navegação de período | ☐ |
-| 2 | REAL | Paginação / navegação de período | ☐ |
-| 3 | REAL | Paginação / navegação de período | ☐ |
-| 4 | REAL | Paginação / navegação de período | ☐ |
-| › | REAL | Paginação / navegação de período | ☐ |
-| Aprovado SN Sabor Natural Frango Grelhado Fitness 420 kcal 38 prot … | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Aprovado MT Mar & Terra Salmão com Quinoa 480 kcal 35 prot 28 carb … | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado VV Verde Vida Bowl Vegano com Grão-de-bico 380 kcal 18 pro… | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Aprovado SN Sabor Natural Steak com Batata Doce 560 kcal 42 prot 38… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado AC Açaí Club Açaí Proteico 350 kcal 25 prot 42 carb 6 gord | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado FF FitFood Wrap Integral de Frango 390 kcal 28 prot 36 car… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado FF FitFood Tapioca com Ovo e Banana 320 kcal 18 prot 42 ca… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado RP Rota Proteica Carne Magra com Arroz Integral 510 kcal 4… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado RP Rota Proteica Marmita Bulking 800g 720 kcal 55 prot 68 … | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado VV Verde Vida Salada Caesar com Frango 340 kcal 32 prot 12… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado MT Mar & Terra Tilápia Grelhada com Legumes 370 kcal 36 pr… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado FF FitFood Omelete de Claras com Espinafre 280 kcal 32 pro… | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Todos os restaurantes | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Categoria | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Proteína: qualquer | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Restrições | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Grade | REAL | Ordenação/visualização (parâmetro na consulta) | ☑ |
+| Lista | REAL | Ordenação/visualização (parâmetro na consulta) | ☑ |
+| ‹ | REAL | Paginação / navegação de período | ☑ |
+| 1 | REAL | Paginação / navegação de período | ☑ |
+| 2 | REAL | Paginação / navegação de período | ☑ |
+| 3 | REAL | Paginação / navegação de período | ☑ |
+| 4 | REAL | Paginação / navegação de período | ☑ |
+| › | REAL | Paginação / navegação de período | ☑ |
+| Aprovado SN Sabor Natural Frango Grelhado Fitness 420 kcal 38 prot … | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Aprovado MT Mar & Terra Salmão com Quinoa 480 kcal 35 prot 28 carb … | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado VV Verde Vida Bowl Vegano com Grão-de-bico 380 kcal 18 pro… | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Aprovado SN Sabor Natural Steak com Batata Doce 560 kcal 42 prot 38… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado AC Açaí Club Açaí Proteico 350 kcal 25 prot 42 carb 6 gord | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado FF FitFood Wrap Integral de Frango 390 kcal 28 prot 36 car… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado FF FitFood Tapioca com Ovo e Banana 320 kcal 18 prot 42 ca… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado RP Rota Proteica Carne Magra com Arroz Integral 510 kcal 4… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado RP Rota Proteica Marmita Bulking 800g 720 kcal 55 prot 68 … | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado VV Verde Vida Salada Caesar com Frango 340 kcal 32 prot 12… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado MT Mar & Terra Tilápia Grelhada com Legumes 370 kcal 36 pr… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado FF FitFood Omelete de Claras com Espinafre 280 kcal 32 pro… | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
 
 ### 32 · 32-nutri-prescricao — `/nutri/prescricoes/nova` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Trocar cliente | REAL | Seleciona outro cliente no editor | ☐ |
-| Ver perfil | REAL | Navega para `/nutri/clientes/:id` | ☐ |
-| Sem lactose | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem glúten | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Vegetariano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Vegano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Baixo sódio | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Diabético | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| input checkbox | REAL | Campo do formulário salvo com o recurso | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Trocar cliente | REAL | Seleciona outro cliente no editor | ☑ |
+| Ver perfil | REAL | Navega para `/nutri/clientes/:id` | ☑ |
+| Sem lactose | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem glúten | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Vegetariano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Vegano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Baixo sódio | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Diabético | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| input checkbox | REAL | Campo do formulário salvo com o recurso | ☑ |
 
 ### 33 · 33-nutri-chat — `/nutri/mensagens` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 34 · 34-nutri-financeiro — `/nutri/financeiro` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Exportar | REAL | Download CSV/PDF gerado no backend | ☐ |
-| Ver todas | REAL | Navega para a listagem completa da seção | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Exportar | REAL | Download CSV/PDF gerado no backend | ☑ |
+| Ver todas | REAL | Navega para a listagem completa da seção | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 35 · 35-nutri-perfil-profissional — `/nutri/perfil` — frente B
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Salvar alterações | REAL | PUT/POST no recurso da tela (validação Bean Validation) | ☐ |
+| Salvar alterações | REAL | PUT/POST no recurso da tela (validação Bean Validation) | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 36 · 36-resto-dashboard — `/restaurante` — frente C
@@ -914,5 +916,8 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Salvar alterações | REAL | PUT/POST no recurso da tela (validação Bean Validation) | ☐ |
-| _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
+| Alterar logo / Enviar foto de capa | REAL | POST /api/painel-restaurante/perfil/imagem (Storage `restaurantes`) | ☑ |
+| Categorias e tipos de cozinha | REAL | Adiciona/remove categorias do restaurante | ☑ |
+| Horário de funcionamento (Seg–Dom) | REAL | Alterna Aberto/Fechado e altera abertura/fechamento | ☑ |
+| Entrega e chave PIX | REAL | Atualiza prazos, taxa, pedido mínimo e dados PIX | ☑ |
+| Salvar alterações | REAL | PUT /api/painel-restaurante/perfil | ☑ |
