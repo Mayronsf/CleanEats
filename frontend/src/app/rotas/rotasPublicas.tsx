@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
-import { emConstrucao } from '../EmConstrucao';
 
 /**
  * Rotas públicas, autenticação e telas novas — DONA: sessão principal.
@@ -15,10 +14,11 @@ const RecuperarSenhaPage = lazy(() => import('../../features/conta/RecuperarSenh
 const PlanosPage = lazy(() => import('../../features/planos/PlanosPage'));
 const FichaPublicaPage = lazy(() => import('../../features/ficha/FichaPublicaPage'));
 const TermosPage = lazy(() => import('../../features/legal/TermosPage'));
+const LandingPage = lazy(() => import('../../features/landing/LandingPage'));
 const PrivacidadePage = lazy(() => import('../../features/legal/PrivacidadePage'));
 
 export const rotasPublicas: RouteObject[] = [
-  { path: '/', element: emConstrucao('01', '01-splash') },
+  { path: '/', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
   { path: '/cadastro', element: <CadastroContaPage /> },
   { path: '/cadastro/perfil', element: <EscolhaPerfilPage /> },
