@@ -50,11 +50,19 @@
 .recursos { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 .recurso { display: flex; gap: 10px; font-size: 13px; line-height: 1.45; color: var(--gray-700); }
 .premium .recurso { color: rgba(255, 255, 255, 0.88); }
-.sim { color: var(--green-primary); flex-shrink: 0; margin-top: 1px; }
-.premium .sim { color: var(--gold); }
+.sim, .nao { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.sim { background: var(--green-primary); color: var(--white); }
+.premium .sim { background: var(--gold); color: var(--ink); }
+.nao { background: var(--gray-100); color: var(--gray-500); }
 .ausente { color: var(--gray-500); }
-.ausente svg { flex-shrink: 0; margin-top: 1px; }
-.botao { margin-top: auto; }
+.ausente s { text-decoration-color: var(--gray-300); }
+.referencia { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.premium .referencia { color: rgba(255, 255, 255, 0.55); }
+.botao { margin-top: auto; border-radius: var(--radius-pill) !important; }
+.botao-FREE, .botao-BASIC { border: 2px solid var(--ink) !important; background: var(--white) !important; color: var(--ink) !important; }
+.botao-FREE:hover:not(:disabled), .botao-BASIC:hover:not(:disabled) { background: var(--ink) !important; color: var(--white) !important; }
+.botao-PREMIUM { background: var(--gold) !important; color: var(--ink) !important; border: none !important; }
+.botao-PREMIUM:hover:not(:disabled) { background: #B8984F !important; }
 
 @media (max-width: 1023px) {
   .recomendado, .recomendado:hover { transform: none; }

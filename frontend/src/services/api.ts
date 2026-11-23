@@ -10,6 +10,8 @@ export interface UsuarioAtual {
   email: string;
   perfil: PerfilUsuario;
   avatarUrl: string | null;
+  /** Plano vigente (CE-15) */
+  tier: 'FREE' | 'BASIC' | 'PRO' | 'PREMIUM';
 }
 
 /** Erro padronizado da API (ErroDto do backend). */

@@ -1,4 +1,4 @@
-import { Check, Crown, Leaf, Sparkles, X, Zap } from 'lucide-react';
+import { ArrowRight, Check, Crown, Leaf, Sparkles, X, Zap } from 'lucide-react';
 import { Botao } from './Botao';
 import s from './PlanoTierCard.module.css';
 
@@ -50,23 +50,27 @@ export function PlanoTierCard({ plano, ciclo, atual = false, carregando = false,
               ? `R$ ${plano.precoAnual.toFixed(2).replace('.', ',')}/ano · cobrado anualmente`
               : `ou R$ ${(plano.precoAnual / 12).toFixed(2).replace('.', ',')}/mês no anual`}
         </p>
+        {!gratis && ciclo === 'ANUAL' && (
+          <p className={s.referencia}><s>R$ {plano.precoMensal.toFixed(2).replace('.', ',')}/mês no mensal</s></p>
+        )}
       </div>
       <p className={s.secao}>{plano.tituloInclui}</p>
       <ul className={s.recursos}>
-        {plano.inclui.map((r) => <li key={r} className={s.recurso}><Check size={16} aria-hidden className={s.sim} />{r}</li>)}
+        {plano.inclui.map((r) => <li key={r} className={s.recurso}><span className={s.sim} aria-hidden><Check size={12} strokeWidth={3} /></span>{r}</li>)}
       </ul>
       {plano.naoInclui.length > 0 && (
         <>
           <p className={s.secao}>Não inclui</p>
           <ul className={s.recursos}>
-            {plano.naoInclui.map((r) => <li key={r} className={`${s.recurso} ${s.ausente}`}><X size={16} aria-hidden />{r}</li>)}
+            {plano.naoInclui.map((r) => <li key={r} className={`${s.recurso} ${s.ausente}`}><span className={s.nao} aria-hidden><X size={11} strokeWidth={3} /></span><s>{r}</s></li>)}
           </ul>
         </>
       )}
       <Botao
-        className={s.botao}
-        variante={plano.codigo === 'PRO' ? 'primario' : plano.codigo === 'PREMIUM' ? 'escuro' : 'secundario'}
+        className={`${s.botao} ${s[`botao-${plano.codigo}`]}`}
+        variante={plano.codigo === 'PRO' ? 'primario' : 'secundario'}
         larguraTotal carregando={carregando} disabled={atual} onClick={onAssinar}
+        iconeDireita={!atual && (plano.codigo === 'PRO' || plano.codigo === 'PREMIUM') ? <ArrowRight size={16} aria-hidden /> : undefined}
       >
         {atual ? 'Seu plano atual' : plano.cta}
       </Botao>
