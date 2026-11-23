@@ -74,3 +74,60 @@ export const buscarConsumo = (data?: string) => chamarApi<Consumo>(`/consumo-dia
 /** null = a nutricionista ainda não montou o plano (204). */
 export const buscarPlano = async () => (await chamarApi<PlanoAlimentar | undefined>('/plano-alimentar')) ?? null;
 export const buscarResumo = () => chamarApi<ResumoCliente>('/cliente/resumo');
+
+// ---------- Checkout (tela 16) ----------
+export interface ItemPedidoReq { idMarmita: string; quantidade: number; observacao?: string; personalizacao?: Record<string, unknown> }
+export interface PedidoReq {
+  itens: ItemPedidoReq[]; cupom?: string; idEndereco?: string; formaPagamento?: 'PIX' | 'CREDITO' | 'DINHEIRO';
+  agendadoPara?: string; observacao?: string;
+}
+export interface Previa {
+  idRestaurante: string; restaurante: string; quantidadeItens: number; subtotal: number; tier: string; percentualTier: number;
+  descontoTier: number; cupom: { codigo: string; descricao: string | null; percentual: number | null; valor: number } | null;
+  erroCupom: string | null; taxaEntrega: number; entregaGratis: boolean; total: number; pedidoMinimo: number; abaixoDoMinimo: boolean;
+  calorias: number; proteinas: number; carboidratos: number; gorduras: number; tempoEntregaMin: number; tempoEntregaMax: number;
+  itens: { idMarmita: string; nome: string; quantidade: number; precoUnitario: number; total: number }[];
+}
+export const previaPedido = (req: PedidoReq) => chamarApi<Previa>('/pedidos/previa', { method: 'POST', body: JSON.stringify(req) });
+export const confirmarPedido = (req: PedidoReq) => chamarApi<{ id: string; codigo: string }>('/pedidos', { method: 'POST', body: JSON.stringify(req) });
+
+// ---------- Endereços (telas 16 e 22) ----------
+export interface Endereco {
+  id: string; apelido: string; cep: string; logradouro: string; numero: string; complemento: string | null;
+  bairro: string; cidade: string; uf: string; principal: boolean;
+}
+export type EnderecoNovo = Omit<Endereco, 'id'>;
+export const listarEnderecos = () => chamarApi<Endereco[]>('/enderecos');
+export const criarEndereco = (e: EnderecoNovo) => chamarApi<Endereco>('/enderecos', { method: 'POST', body: JSON.stringify(e) });
+export const atualizarEndereco = (id: string, e: EnderecoNovo) => chamarApi<Endereco>(`/enderecos/${id}`, { method: 'PUT', body: JSON.stringify(e) });
+export const excluirEndereco = (id: string) => chamarApi<void>(`/enderecos/${id}`, { method: 'DELETE' });
+export const formatarCep = (cep: string) => cep.replace(/\D/g, '').replace(/^(\d{5})(\d{0,3}).*/, (_, a: string, b: string) => (b ? `${a}-${b}` : a));
+
+// ---------- Pedidos (telas 17, 18, 19) ----------
+export type StatusPedido = 'NOVO' | 'ACEITO' | 'RECUSADO' | 'PREPARANDO' | 'PRONTO' | 'A_CAMINHO' | 'ENTREGUE' | 'CANCELADO';
+export interface PedidoDetalhe {
+  id: string; codigo: string; status: StatusPedido; criadoEm: string; agendadoPara: string | null; previsaoEntregaEm: string | null;
+  entregueEm: string | null; entregadorNome: string | null; formaPagamento: 'PIX' | 'CREDITO' | 'DINHEIRO'; subtotal: number; desconto: number;
+  taxaEntrega: number; total: number; cupom: string | null; observacao: string | null; motivoRecusa: string | null; avaliado: boolean;
+  podeCancelar: boolean; calorias: number; proteinas: number; carboidratos: number; gorduras: number;
+  restaurante: { id: string; nome: string; sigla: string; telefone: string | null; tempoEntregaMin: number; tempoEntregaMax: number };
+  endereco: { apelido: string; logradouro: string; numero: string; complemento: string | null; bairro: string; cidade: string; uf: string } | null;
+  itens: { idMarmita: string | null; nome: string; quantidade: number; precoUnitario: number; calorias: number; proteinas: number; carboidratos: number; gorduras: number; imagemUrl: string | null; observacao: string | null }[];
+  historico: { status: StatusPedido; em: string }[];
+}
+export interface PedidoResumo {
+  id: string; codigo: string; status: StatusPedido; criadoEm: string; idRestaurante: string; restaurante: string; sigla: string;
+  itens: string; quantidadeItens: number; calorias: number; proteinas: number; carboidratos: number; total: number; avaliado: boolean; notaDada: number | null; motivo: string | null;
+  imagens: string[];
+}
+export interface ResumoHistorico {
+  total: number; esteMes: number; gastoTotal: number; gastoMes: number; kcalTotal: number; notaMedia: number | null; avaliacoesDadas: number;
+  andamento: number; entregues: number; cancelados: number; meses: { mes: string; pedidos: number; total: number }[];
+}
+export const FORMA_PAGAMENTO = { PIX: 'Pix', CREDITO: 'Cartão de crédito', DINHEIRO: 'Dinheiro' } as const;
+export const buscarPedido = (id: string) => chamarApi<PedidoDetalhe>(`/pedidos/${id}`);
+export const cancelarPedido = (id: string, motivo?: string) => chamarApi<PedidoDetalhe>(`/pedidos/${id}/cancelamento`, { method: 'POST', body: JSON.stringify({ motivo }) });
+export const pedirNovamente = (id: string) => chamarApi<{ itens: { prato: Prato; quantidade: number; observacao: string | null }[]; indisponiveis: string[] }>(`/pedidos/${id}/pedir-novamente`, { method: 'POST' });
+export const listarHistorico = (f: { status?: string; periodo?: string; ordenar?: string; pagina?: number; tamanho?: number }) =>
+  chamarApi<PaginaDto<PedidoResumo>>(`/historico-pedidos${query({ ...f })}`);
+export const buscarResumoHistorico = () => chamarApi<ResumoHistorico>('/historico-pedidos/resumo');

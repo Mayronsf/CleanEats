@@ -48,6 +48,9 @@ public class ItemPedido {
 
     public BigDecimal getValorTotal() { return precoUnitario.multiply(BigDecimal.valueOf(quantidade)); }
 
+    /** Observação do cliente para o item (ex.: "porção média + ovo cozido", vinda do plano), guardada em personalizacao. */
+    public void anotar(String personalizacaoJson) { this.personalizacao = personalizacaoJson; }
+
     public UUID getId() { return id; }
     public Pedido getPedido() { return pedido; }
     void setPedido(Pedido p) { this.pedido = p; }

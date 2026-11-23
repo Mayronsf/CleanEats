@@ -1,0 +1,18 @@
+.dialogo { border: none; border-radius: var(--radius-xl); padding: 0; width: min(560px, calc(100vw - 32px)); box-shadow: var(--shadow-pop); color: var(--ink); }
+.dialogo::backdrop { background: rgba(26, 46, 26, 0.45); }
+.cabeca { display: flex; justify-content: space-between; align-items: center; padding: 24px 28px 0; }
+.cabeca h2 { font-size: 20px; font-weight: 800; }
+.fechar { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.fechar:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+.corpo { padding: 20px 28px 4px; display: flex; flex-direction: column; gap: 14px; }
+.apelidos { display: flex; gap: 8px; }
+.apelido { padding: 8px 16px; border-radius: var(--radius-pill); border: 1.5px solid var(--line-strong); background: var(--white); font-weight: 700; font-size: 13px; cursor: pointer; }
+.apelido:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+.apelidoAtivo { background: var(--green-bg); border-color: var(--green-primary); color: var(--green-dark); }
+.linha { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 140px); gap: 12px; }
+.linha3 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 72px); gap: 12px; }
+.principal { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.principal input { width: 18px; height: 18px; accent-color: var(--green-primary); }
+.erro { background: var(--danger-bg); color: var(--danger-ink); padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+.acoes { display: flex; justify-content: flex-end; gap: 12px; padding: 20px 28px 24px; }
+@media (max-width: 520px) { .linha3 { grid-template-columns: minmax(0, 1fr) minmax(0, 72px); } .linha3 > :first-child { grid-column: 1 / -1; } }

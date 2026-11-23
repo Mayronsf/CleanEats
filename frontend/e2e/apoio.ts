@@ -50,6 +50,13 @@ export async function apagarUsuario(id: string) {
   });
 }
 
+/** Apaga um pedido criado pelo teste (itens, histórico e avaliações caem junto). Só para limpar a demo. */
+export async function apagarPedido(id: string) {
+  await fetch(`${SUPABASE_URL}/rest/v1/pedido?id=eq.${id}`, {
+    method: 'DELETE', headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}` },
+  });
+}
+
 /** Token de acesso real (para conferir o backend sem passar pela interface). */
 export async function token(email: string, senha = SENHA_DEMO): Promise<string> {
   const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {

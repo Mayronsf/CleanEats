@@ -215,7 +215,7 @@ public class CatalogoService {
         var avaliacoes = jdbc.sql("""
                 select a.id, u.nome, u.avatar_url, a.nota, a.comentario, a.tags, a.data_avaliacao, p.codigo
                 from avaliacao a join usuario u on u.id = a.id_usuario join pedido p on p.id = a.id_pedido
-                where a.id_marmita = :id and a.status_moderacao = 'PUBLICADA'
+                where a.id_marmita = :id and a.status_moderacao = 'PUBLICADA' and a.comentario is not null
                 order by a.data_avaliacao desc limit 6""").param("id", id)
                 .query((rs, n) -> new AvaliacaoPublicaDto(rs.getObject("id", UUID.class), abreviar(rs.getString("nome")), rs.getString("avatar_url"),
                         rs.getInt("nota"), rs.getString("comentario"), textos(rs.getArray("tags")),

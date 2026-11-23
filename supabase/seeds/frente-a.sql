@@ -56,3 +56,30 @@ begin
             now() - (a.dias || ' days')::interval + interval '2 hours');
   end loop;
 end $$;
+
+-- ---------- Cupons (tela 16). NUTRI15 = 10% como no rótulo da tela ("Cupom NUTRI15 (−10%)") ----------
+insert into cupom (codigo, descricao, percentual, valor_fixo, valido_ate, uso_maximo, ativo) values
+  ('NUTRI15', 'Cupom da sua nutricionista', 10, null, '2026-12-31', null, true),
+  ('BEMVINDO10', 'R$ 10 no primeiro pedido', null, 10.00, '2026-12-31', 500, true),
+  ('VERAO2025', 'Campanha encerrada', 15, null, '2025-03-31', null, true)
+on conflict (codigo) do nothing;
+update pedido set id_cupom = (select id from cupom where codigo = 'NUTRI15') where codigo = 'CE-4823' and id_cupom is null;
+
+-- Telefones dos restaurantes (telas 17 e 18)
+update restaurante set telefone = '(81) 3344-5566' where id = '00000000-0000-4000-a000-000000000001' and telefone is null;
+update restaurante set telefone = '(81) 3221-0987' where id = '00000000-0000-4000-a000-000000000002' and telefone is null;
+update restaurante set telefone = '(81) 3465-1200' where id = '00000000-0000-4000-a000-000000000003' and telefone is null;
+update restaurante set telefone = '(81) 3031-4455' where id = '00000000-0000-4000-a000-000000000004' and telefone is null;
+update restaurante set telefone = '(81) 3088-7766' where id = '00000000-0000-4000-a000-000000000005' and telefone is null;
+update restaurante set telefone = '(81) 3092-3344' where id = '00000000-0000-4000-a000-000000000006' and telefone is null;
+
+-- ---------- Avaliações do Breno (tela 19: "avaliado" com estrelas; 4,8 de média) ----------
+-- Pedidos entregues com mais de 4 dias, menos o CE-4701 (a tela mostra "não avaliado"). Publicadas.
+insert into avaliacao (id_pedido, id_marmita, id_usuario, nota, nota_sabor, nota_porcao, nota_embalagem, nota_entrega, comentario, tags, status_moderacao, data_avaliacao)
+select p.id, (select i.id_marmita from item_pedido i where i.id_pedido = p.id and i.id_marmita is not null order by i.nome limit 1),
+       p.id_usuario, case when row_number() over (order by p.criado_em) % 5 = 0 then 4 else 5 end, 5, 5, 5, 5,
+       null, array['Saboroso'], 'PUBLICADA', p.criado_em + interval '2 hours'
+from pedido p
+where p.id_usuario = '00000000-0000-4000-8000-000000000001' and p.status = 'ENTREGUE'
+  and p.criado_em < now() - interval '4 days' and p.codigo <> 'CE-4701'
+  and not exists (select 1 from avaliacao a where a.id_pedido = p.id);
