@@ -22,3 +22,24 @@ insert into item_pedido (id_pedido, id_marmita, nome, quantidade, preco_unitario
 select p.id, m.id, m.nome, 1, m.preco, m.calorias, m.proteinas, m.carboidratos, m.gorduras
 from pedido p join marmita m on m.id = case p.codigo when 'CE-4830' then '00000000-0000-4000-b000-000000000007'::uuid else '00000000-0000-4000-b000-000000000001'::uuid end
 where p.codigo in ('CE-4830', 'CE-4831');
+-- 4) Tela 37: pedidos do Sabor Natural (CE-1035 a CE-1042) voltam para "agora", com os status e idades da tela
+--    (5 a 60 min). Desfaz o que um ensaio tiver mudado. O histórico de status é refeito (as telas 18 e 37 leem dele).
+create temp table alvo_37 (codigo text, minutos int, status text, passos text[], offsets int[]) on commit drop;
+insert into alvo_37 values
+  ('CE-1042',  5, 'NOVO',       array['NOVO'], array[0]),
+  ('CE-1041', 12, 'NOVO',       array['NOVO'], array[0]),
+  ('CE-1040', 18, 'PREPARANDO', array['NOVO','ACEITO','PREPARANDO'], array[0,1,4]),
+  ('CE-1039', 25, 'PREPARANDO', array['NOVO','ACEITO','PREPARANDO'], array[0,2,6]),
+  ('CE-1038', 32, 'PREPARANDO', array['NOVO','ACEITO','PREPARANDO'], array[0,2,9]),
+  ('CE-1037', 40, 'PRONTO',     array['NOVO','ACEITO','PREPARANDO','PRONTO'], array[0,2,6,22]),
+  ('CE-1036', 45, 'PRONTO',     array['NOVO','ACEITO','PREPARANDO','PRONTO'], array[0,1,5,24]),
+  ('CE-1035', 60, 'ENTREGUE',   array['NOVO','ACEITO','PREPARANDO','PRONTO','A_CAMINHO','ENTREGUE'], array[0,1,6,18,21,38]);
+update pedido p set status = a.status, motivo_recusa = null, previsao_entrega_em = null,
+       criado_em = now() - a.minutos * interval '1 min', confirmado_em = now() - a.minutos * interval '1 min', atualizado_em = now(),
+       entregue_em = case when a.status = 'ENTREGUE' then now() - (a.minutos - 38) * interval '1 min' end,
+       entregador_nome = case when a.status = 'ENTREGUE' then 'Ricardo (entregador simulado)' end
+from alvo_37 a where p.codigo = a.codigo;
+delete from historico_status_pedido h using pedido p, alvo_37 a where h.id_pedido = p.id and p.codigo = a.codigo;
+insert into historico_status_pedido (id_pedido, status, em)
+select p.id, s.passo, now() - a.minutos * interval '1 min' + s.offset_min * interval '1 min'
+from alvo_37 a join pedido p on p.codigo = a.codigo cross join lateral unnest(a.passos, a.offsets) as s(passo, offset_min);

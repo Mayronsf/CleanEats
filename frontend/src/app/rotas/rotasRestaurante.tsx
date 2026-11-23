@@ -1,28 +1,18 @@
 import type { RouteObject } from 'react-router-dom';
-import {
-  ClipboardCheck, DollarSign, FileText, LayoutGrid, LineChart, MessageSquare, Percent, Settings, ShieldCheck, ShoppingBag, Star, UtensilsCrossed,
-} from 'lucide-react';
+import { MessageSquare, Percent, ShieldCheck, Star } from 'lucide-react';
 import type { GrupoMenu } from '../../design-system';
 import { LayoutPainel } from '../layouts/LayoutPainel';
+import { lazy } from 'react';
 import { emConstrucao } from '../EmConstrucao';
+import { LayoutRestaurante } from '../../features/restaurante/LayoutRestaurante';
+
+const DashboardRestaurantePage = lazy(() => import('../../features/restaurante/dashboard/DashboardPage'));
+const PedidosRestaurantePage = lazy(() => import('../../features/restaurante/pedidos/PedidosPage'));
 
 /**
  * Rotas do restaurante (/restaurante) e do admin (/admin) — DONA: FRENTE C (telas 07, 36–44 + admin).
  */
-export const menuRestaurante: GrupoMenu[] = [
-  { titulo: 'Operação', itens: [
-    { para: '/restaurante', rotulo: 'Dashboard', icone: LayoutGrid, fim: true },
-    { para: '/restaurante/pedidos', rotulo: 'Pedidos', icone: ShoppingBag },
-    { para: '/restaurante/cardapio', rotulo: 'Cardápio', icone: UtensilsCrossed },
-    { para: '/restaurante/aprovacao', rotulo: 'Aprovação', icone: ClipboardCheck },
-  ] },
-  { titulo: 'Gestão', itens: [
-    { para: '/restaurante/analytics', rotulo: 'Analytics', icone: LineChart },
-    { para: '/restaurante/financeiro', rotulo: 'Financeiro', icone: DollarSign },
-    { para: '/restaurante/relatorios', rotulo: 'Relatórios', icone: FileText },
-    { para: '/restaurante/perfil', rotulo: 'Perfil', icone: Settings },
-  ] },
-];
+export { menuRestaurante } from '../../features/restaurante/menu';
 
 export const menuAdmin: GrupoMenu[] = [
   { titulo: 'Curadoria', itens: [
@@ -39,10 +29,10 @@ export const rotasRestaurante: RouteObject[] = [
   { path: '/cadastro/restaurante', element: emConstrucao('07', '07-cadastro-restaurante') },
   {
     path: '/restaurante',
-    element: <LayoutPainel variante="restaurante" grupos={menuRestaurante} subtitulo="Restaurante · Recife" />,
+    element: <LayoutRestaurante />,
     children: [
-      { index: true, element: emConstrucao('36', '36-resto-dashboard') },
-      { path: 'pedidos', element: emConstrucao('37', '37-resto-pedidos') },
+      { index: true, element: <DashboardRestaurantePage /> },
+      { path: 'pedidos', element: <PedidosRestaurantePage /> },
       { path: 'cardapio', element: emConstrucao('38', '38-resto-cardapio') },
       { path: 'cardapio/novo', element: emConstrucao('39', '39-resto-criar-prato') },
       { path: 'cardapio/:id/editar', element: emConstrucao('39', '39-resto-criar-prato') },

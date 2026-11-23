@@ -838,29 +838,29 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Ver pedidos | REAL | Navega para `/restaurante/pedidos` | ☐ |
-| Ver todos | REAL | Navega para `/restaurante/pedidos` | ☐ |
-| Novo prato | REAL | Navega para `/restaurante/cardapio/novo` | ☐ |
-| Ver cardápio | REAL | Navega para `/restaurante/cardapio` | ☐ |
-| Analytics | REAL | Navega para `/restaurante/analytics` | ☐ |
-| Financeiro | REAL | Navega para `/restaurante/financeiro` | ☐ |
-| Relatórios | REAL | Navega para `/restaurante/relatorios` | ☐ |
-| Perfil | REAL | Navega para `/restaurante/perfil` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Ver pedidos | REAL | Navega para `/restaurante/pedidos` | ☑ |
+| Ver todos | REAL | Navega para `/restaurante/pedidos` | ☑ |
+| Novo prato | REAL | Navega para `/restaurante/cardapio/novo` | ☑ |
+| Ver cardápio | REAL | Navega para `/restaurante/cardapio` | ☑ |
+| Analytics | REAL | Navega para `/restaurante/analytics` | ☑ |
+| Financeiro | REAL | Navega para `/restaurante/financeiro` | ☑ |
+| Relatórios | REAL | Navega para `/restaurante/relatorios` | ☑ |
+| Perfil | REAL | Navega para `/restaurante/perfil` | ☑ |
 
 ### 37 · 37-resto-pedidos — `/restaurante/pedidos` — frente C
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Recusar | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☐ |
-| Aceitar | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☐ |
-| Marcar pronto | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☐ |
-| Confirmar retirada | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☐ |
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Novos | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Preparando | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Pronto | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Entregue | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
+| Recusar | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☑ |
+| Aceitar | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☑ |
+| Marcar pronto | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☑ |
+| Confirmar retirada | REAL | PATCH /api/painel-restaurante/pedidos/{id}/status (Realtime → tela 18) | ☑ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Novos | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Preparando | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Pronto | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Entregue | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
 
 ### 38 · 38-resto-cardapio — `/restaurante/cardapio` — frente C
 

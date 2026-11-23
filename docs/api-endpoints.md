@@ -121,3 +121,11 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET · DELETE | `/api/nutribot/conversas/{id}` | Mensagens de uma conversa / apagar | 21 |
 | GET | `/api/conversas/nutri` | Conversa do cliente com a nutri vinculada (marca as da nutri como lidas) | 19 |
 | POST | `/api/conversas/nutri/mensagens` | Cliente manda mensagem à nutri (notifica a nutri; a tela 33 responde) | 19 |
+
+## Painel do restaurante (telas 36 e 37) e entrega simulada — frente C
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/painel-restaurante/resumo` | Restaurante, pedidos em andamento, novos (15 min), métricas do mês vs anterior, 4 recentes | 14 |
+| GET | `/api/painel-restaurante/pedidos?aba=` | Fila do dia + abertos; abas TODOS/NOVOS/PREPARANDO/PRONTOS/ENTREGUES/ENCERRADOS com contagens | 14 |
+| PATCH | `/api/painel-restaurante/pedidos/{id}/status` | { acao: ACEITAR (→ACEITO→PREPARANDO) · RECUSAR (motivo, estorna consumo) · PRONTO · RETIRADA (→A_CAMINHO com entregador simulado) } + notificação ao cliente | 14 |
+| job | `EntregaSimuladaJob` (5 s) | PRONTO há 20 s–10 min → A_CAMINHO; A_CAMINHO com previsão vencida → ENTREGUE; notifica o cliente | 14 |

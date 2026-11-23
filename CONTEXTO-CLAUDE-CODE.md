@@ -23,20 +23,21 @@ cd frontend && npx vite --port 5180           # web
 ```
 Logins de demo (senha `CleanEats@2026`): `cliente@cleaneats.test` (Breno, Pro), `nutri@cleaneats.test` (Dra. Ana Souza), `restaurante@cleaneats.test` (Sabor Natural), `admin@cleaneats.test`.
 
-**Banco compartilhado (Supabase na nuvem):** nunca rode `npm run banco:resetar`. Aplique só arquivos novos e idempotentes: `npm run banco:sql <arquivo.sql>`. Antes de ensaiar/apresentar: `npm run banco:hoje` (traz o plano e o consumo da demo para hoje) e depois `npm run banco:sql supabase/restaurar-demo.sql` (desfaz assinaturas/avaliações feitas em ensaio).
+**Banco compartilhado (Supabase na nuvem):** nunca rode `npm run banco:resetar`. Aplique só arquivos novos e idempotentes: `npm run banco:sql <arquivo.sql>`. Antes de ensaiar/apresentar: `npm run banco:hoje` (traz o plano, o consumo e os 8 pedidos da tela 37 da demo para hoje, com os status originais) e depois `npm run banco:sql supabase/restaurar-demo.sql` (desfaz assinaturas/avaliações feitas em ensaio).
 
 ## 3. Estado (23/11, manhã)
 ### Pronto (dados reais + ações da matriz, testado no navegador)
 | Área | Telas |
 |---|---|
 | Público/conta | 01 landing · 02 login (Google real) · 03–05 cadastro · 08 recuperar senha · 09 seleção de plano · `/ficha/:id` · `/termos` · `/privacidade` · 404 · `/auth/callback` · central de notificações (sino) |
+| Restaurante (frente C, em andamento) | **36 dashboard** · **37 pedidos** (aceitar/recusar/pronto/retirada, tempo real) · **job da entrega simulada** |
 | Cliente (frente A) | 10 home · 11 marketplace · **15 monte sua marmita** · 12 detalhe do prato (QR real) · 13 restaurantes · 14 perfil do restaurante · 16 carrinho/checkout · 17 confirmado · 18 acompanhamento (Realtime) · 19 histórico · **20 avaliar** · **21 perfil** · **22 editar perfil** · **23 assinatura** · **24 meu plano** · **25 NutriBot** (frente A completa) |
 
 ### Falta (ordem sugerida = ordem do roteiro)
 | Frente | Telas | Arquivo com as regras |
 |---|---|---|
 | **B — Nutricionista** · **LIVRE: é a frente para quem está chegando agora (branch `frente-b-nutri`)** | 06 cadastro da nutri · 26 home · 27 triagens · 28 clientes · 29 perfil do cliente · 30 editor de plano · 31 catálogo · 32 prescrição (PDF + e-mail) · 33 chat · 34 financeiro · 35 perfil · `/nutri/prescricoes` · `/nutri/acompanhamento` | `docs/frentes/frente-b-nutri.md` |
-| **C — Restaurante + Admin** · **a sessão principal está fazendo agora, direto em `main`** | 07 cadastro do restaurante · 36 dashboard · 37 pedidos (muda status → cliente vê na 18) · 38 cardápio · 39 criar prato · 40 aprovação · 41 analytics · 42 financeiro · 43 relatórios (CSV) · 44 perfil · `/admin` (aprovar CRN/CNPJ/pratos) · `/admin/avaliacoes` (moderação) · `/admin/suporte` · `/admin/restaurantes` (comissão + simular renovação) · **job da entrega simulada** (PRONTO → A_CAMINHO → ENTREGUE) | `docs/frentes/frente-c-restaurante.md` |
+| **C — Restaurante + Admin** · **a sessão principal está fazendo agora, direto em `main`** | 07 cadastro do restaurante · 38 cardápio · 39 criar prato · 40 aprovação · 41 analytics · 42 financeiro · 43 relatórios (CSV) · 44 perfil · `/admin` (aprovar CRN/CNPJ/pratos) · `/admin/avaliacoes` (moderação) · `/admin/suporte` · `/admin/restaurantes` (comissão + simular renovação)  | `docs/frentes/frente-c-restaurante.md` |
 
 As rotas que faltam já existem e mostram "em construção": troque `emConstrucao(...)` pelo componente em `frontend/src/app/rotas/rotas<Frente>.tsx`.
 
