@@ -486,3 +486,25 @@ insert into notificacao (id_usuario, tipo, titulo, corpo, link, lida_em, criado_
   ('00000000-0000-4000-8000-000000000003', 'CARDAPIO', 'Prato rejeitado na curadoria', 'Sopa Detox Premium: informação nutricional incompleta.', '/restaurante/aprovacao', now() - interval '2 days', now() - interval '2 days'),
   ('00000000-0000-4000-8000-000000000002', 'NUTRICIONISTA', 'Nova mensagem do Breno Filho', 'Breno perguntou sobre o pré-treino de amanhã.', '/nutri/mensagens', null, now() - interval '40 min'),
   ('00000000-0000-4000-8000-000000000004', 'SISTEMA', 'Prato aguardando curadoria', 'Wrap Integral Frango (Sabor Natural) foi enviado para análise.', '/admin', null, now() - interval '1 hour');
+
+-- ---------- Plano semanal do Breno (tela 24; a nutri edita no Ato 5 do roteiro) ----------
+-- Semana atual (segunda a domingo). dia_semana: 0 = domingo. Domingo livre, como na tela.
+insert into plano_alimentar (id, id_usuario, id_nutricionista, semana_inicio, ativo, observacoes,
+                             meta_calorias, meta_proteinas, meta_carboidratos, meta_gorduras, meta_fibras, meta_agua_ml, atualizado_em)
+values ('00000000-0000-4000-d000-000000000001', '00000000-0000-4000-8000-000000000001', '00000000-0000-4000-9000-000000000001',
+        date_trunc('week', (now() at time zone 'America/Recife')::date)::date, true,
+        'Plano montado com base no seu objetivo de ganho de massa. Todos os pratos estão disponíveis nos restaurantes parceiros — peça com 1 clique.',
+        2200, 140, 240, 70, 30, 2500, now() - interval '2 days');
+
+insert into refeicao_plano (id_plano_alimentar, dia_semana, tipo_refeicao, horario, id_marmita, observacao)
+select '00000000-0000-4000-d000-000000000001', d.dia, r.tipo, r.horario::time,
+       ('00000000-0000-4000-b000-0000000000' || lpad(case r.tipo
+          when 'CAFE_DA_MANHA' then d.cafe when 'ALMOCO' then d.almoco when 'LANCHE_TARDE' then d.lanche else d.jantar end::text, 2, '0'))::uuid,
+       case when d.dia = 3 then case r.tipo
+          when 'CAFE_DA_MANHA' then 'Use tapioca integral. Banana inteira pra energia matinal.'
+          when 'ALMOCO' then 'Pedir porção média + ovo cozido. Brócolis no vapor obrigatório.'
+          when 'LANCHE_TARDE' then '300ml com 1 scoop de whey baunilha + granola sem açúcar. Pré-treino ideal.'
+          else 'Ômega-3 pro pós-treino. Acompanhar com aspargos e fatias de abacate.' end end
+from (values (1, 7, 1, 33, 3), (2, 32, 4, 6, 29), (3, 7, 1, 33, 3), (4, 32, 15, 33, 16),
+             (5, 7, 12, 6, 3), (6, 32, 25, 33, 29)) as d(dia, cafe, almoco, lanche, jantar)
+cross join (values ('CAFE_DA_MANHA', '07:00'), ('ALMOCO', '12:30'), ('LANCHE_TARDE', '15:30'), ('JANTAR', '19:30')) as r(tipo, horario);

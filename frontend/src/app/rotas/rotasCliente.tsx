@@ -1,6 +1,9 @@
+import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 import { LayoutCliente } from '../layouts/LayoutCliente';
 import { emConstrucao } from '../EmConstrucao';
+
+const HomeClientePage = lazy(() => import('../../features/cliente/home/HomeClientePage'));
 
 /**
  * Rotas do cliente (/app) — DONA: FRENTE A (telas 10–25).
@@ -11,7 +14,7 @@ export const rotasCliente: RouteObject[] = [
     path: '/app',
     element: <LayoutCliente />,
     children: [
-      { index: true, element: emConstrucao('10', '10-cliente-home') },
+      { index: true, element: <HomeClientePage /> },
       { path: 'marketplace', element: emConstrucao('11', '11-cliente-marketplace') },
       { path: 'marmitas/:id', element: emConstrucao('12', '12-cliente-detalhe-marmita') },
       { path: 'restaurantes', element: emConstrucao('13', '13-cliente-restaurantes') },

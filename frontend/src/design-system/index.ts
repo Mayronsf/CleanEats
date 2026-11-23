@@ -12,3 +12,4 @@ export { TimelineStatusPedido, type StatusPedido, type EventoStatus } from './co
 export { ChatbotPanel, ChatThread, type Mensagem } from './components/Chat';
 export { TabelaDados, type Coluna } from './components/TabelaDados';
 export { EmptyState, ErroCarregamento, Skeleton, SkeletonCardPrato, ToastProvider, useToast, UploadImagem } from './components/Feedback';
+export { Confirmacao } from './components/Confirmacao';

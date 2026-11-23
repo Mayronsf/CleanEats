@@ -1,0 +1,6 @@
+.dialogo { border: none; border-radius: var(--radius-xl); padding: 0; width: min(460px, calc(100vw - 32px)); box-shadow: var(--shadow-pop); color: var(--ink); }
+.dialogo::backdrop { background: rgba(26, 46, 26, 0.45); }
+.corpo { padding: 28px 28px 8px; }
+.titulo { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 8px; }
+.texto { font-size: 14px; line-height: 1.55; color: var(--gray-700); }
+.acoes { display: flex; justify-content: flex-end; gap: 12px; padding: 20px 28px 24px; flex-wrap: wrap; }

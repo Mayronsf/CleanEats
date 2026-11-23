@@ -7,7 +7,9 @@
     "banco": "node scripts/aplicar-banco.mjs",
     "banco:resetar": "node scripts/aplicar-banco.mjs --resetar",
     "seed:sql": "node scripts/aplicar-banco.mjs --so-gerar",
-    "testes": "npm --prefix frontend test && cd backend && node ../scripts/mvnw.mjs test"
+    "testes": "npm --prefix frontend test && cd backend && node ../scripts/mvnw.mjs test",
+    "banco:hoje": "node scripts/executar-sql.mjs supabase/hoje.sql",
+    "banco:sql": "node scripts/executar-sql.mjs"
   },
   "devDependencies": {
     "pg": "^8.13.1"

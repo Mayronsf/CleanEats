@@ -15,6 +15,12 @@ public final class UsuarioLogado {
         throw new IllegalStateException("Nenhum usuário autenticado");
     }
 
+    /** Id do usuário se houver token; null em rotas públicas acessadas sem login. */
+    public static UUID idOpcional() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth instanceof JwtAuthenticationToken jwt ? UUID.fromString(jwt.getToken().getSubject()) : null;
+    }
+
     public static String email() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth instanceof JwtAuthenticationToken jwt) return jwt.getToken().getClaimAsString("email");

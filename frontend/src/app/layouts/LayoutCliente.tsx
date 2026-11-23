@@ -3,6 +3,7 @@ import { NavbarCliente } from '../../design-system';
 import { useAuth } from '../../hooks/useAuth';
 import { RotaProtegida } from '../rotas/RotaProtegida';
 import { CentralNotificacoes } from '../../features/notificacoes/CentralNotificacoes';
+import { CarrinhoProvider, useCarrinho } from '../../hooks/cliente/useCarrinho';
 
 /**
  * Layout do cliente (/app): navbar superior; no celular, tabbar inferior.
@@ -11,10 +12,23 @@ import { CentralNotificacoes } from '../../features/notificacoes/CentralNotifica
  */
 export function LayoutCliente() {
   const { usuario } = useAuth();
-  const navegar = useNavigate();
   return (
     <RotaProtegida perfil="CLIENTE">
+      <CarrinhoProvider idUsuario={usuario?.id}>
+        <ConteudoCliente />
+      </CarrinhoProvider>
+    </RotaProtegida>
+  );
+}
+
+function ConteudoCliente() {
+  const { usuario } = useAuth();
+  const navegar = useNavigate();
+  const carrinho = useCarrinho();
+  return (
+    <>
       <NavbarCliente
+        itensCarrinho={carrinho.totalItens}
         nomeUsuario={usuario?.nome ?? ''}
         onBuscar={(termo) => navegar(`/app/marketplace?busca=${encodeURIComponent(termo)}`)}
         notificacoes={<CentralNotificacoes variante="navbar" />}
@@ -22,6 +36,6 @@ export function LayoutCliente() {
       <main style={{ background: 'var(--gray-50)', minHeight: 'calc(100vh - 92px)', paddingBottom: 96 }}>
         <Outlet />
       </main>
-    </RotaProtegida>
+    </>
   );
 }
