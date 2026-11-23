@@ -50,6 +50,9 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET | `/api/assinatura` | Plano atual, renovação, faturas | 15, 16 |
 | POST | `/api/assinatura` | Assinar / upgrade / downgrade (pagamento simulado) | 15, 16 |
 | POST | `/api/assinatura/cancelamento` | Cancela e devolve a data de encerramento | 16 |
+| POST | `/api/assinatura/reativacao` | Desfaz o cancelamento antes do fim do período | 16 |
+| POST | `/api/assinatura/pausa` · `/api/assinatura/retomada` | Pausa 30 dias (adia a cobrança) / retoma devolvendo os dias não usados | 16 |
+| PATCH | `/api/assinatura/forma-pagamento` | PIX ou CARTAO (simulado) | 15 |
 | GET/POST | `/api/nutribot/mensagens` | Conversa com contexto (plano, consumo, metas); limite por tier | 8, 21 |
 | GET/POST | `/api/conversas/{id}/mensagens` | Chat com a nutri | — |
 

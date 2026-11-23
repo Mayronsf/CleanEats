@@ -148,3 +148,26 @@ export const listarRestaurantes = (f: { cozinha?: string; busca?: string; ordena
 export const buscarResumoRestaurantes = () => chamarApi<{ total: number; tiposCozinha: number; notaMedia: number | null; cozinhas: { nome: string; total: number }[] }>('/restaurantes/resumo');
 export const buscarRestaurante = (id: string) => chamarApi<RestauranteDetalhe>(`/restaurantes/${id}`);
 export const registrarAgua = (ml: number) => chamarApi<Consumo>('/consumo-diario/agua', { method: 'POST', body: JSON.stringify({ ml }) });
+
+// ---------- Minha assinatura (tela 23) ----------
+export type StatusAssinatura = 'FREE' | 'TRIAL' | 'ATIVA' | 'PAUSADA' | 'CANCELADA' | 'EXPIRADA';
+export interface FaturaAssinatura {
+  id: string; referencia: string; valor: number; status: 'PENDENTE' | 'PAGA' | 'FALHOU' | 'ESTORNADA';
+  vencimento: string; pagaEm: string | null; tier: CodigoTierCliente; ciclo: 'MENSAL' | 'ANUAL'; formaPagamento: 'PIX' | 'CARTAO';
+}
+export type CodigoTierCliente = 'FREE' | 'BASIC' | 'PRO' | 'PREMIUM';
+export interface MinhaAssinatura {
+  tier: CodigoTierCliente; status: StatusAssinatura; ciclo: 'MENSAL' | 'ANUAL' | null; valor: number;
+  formaPagamento: 'PIX' | 'CARTAO' | null; membroDesde: string | null; inicioEm: string | null; renovacaoEm: string | null;
+  encerraEm: string | null; pausadaAte: string | null; totalEconomizado: number;
+  uso: { nutribotMes: number; limiteNutribotDia: number; mensagensNutriSemana: number; descontoMes: number; percentualDesconto: number; semanaPlano: string | null };
+  faturas: FaturaAssinatura[]; nutricionista: { nome: string; crn: string } | null;
+}
+export const buscarAssinatura = () => chamarApi<MinhaAssinatura>('/assinatura');
+const acaoAssinatura = (caminho: string) => () => chamarApi<MinhaAssinatura>(`/assinatura/${caminho}`, { method: 'POST' });
+export const cancelarAssinatura = acaoAssinatura('cancelamento');
+export const reativarAssinatura = acaoAssinatura('reativacao');
+export const pausarAssinatura = acaoAssinatura('pausa');
+export const retomarAssinatura = acaoAssinatura('retomada');
+export const trocarFormaPagamento = (formaPagamento: 'PIX' | 'CARTAO') =>
+  chamarApi<MinhaAssinatura>('/assinatura/forma-pagamento', { method: 'PATCH', body: JSON.stringify({ formaPagamento }) });

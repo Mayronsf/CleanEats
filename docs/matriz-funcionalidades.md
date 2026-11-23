@@ -561,38 +561,38 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Cancelar plano | REAL | POST /api/assinatura/cancelamento → mostra data de encerramento | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/app` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Meu plano | REAL | Navega para `/app/meu-plano` | ☐ |
-| Pedidos | REAL | Navega para `/app/pedidos` | ☐ |
-| NutriBot | REAL | Navega para `/app/nutribot` | ☐ |
-| Meu perfil | REAL | Navega para `/app/perfil` | ☐ |
-| (ícone) | REAL | Navega para `/app/perfil` | ☐ |
-| Fazer upgrade pro Premium | REAL | Navega para `/planos` | ☐ |
-| Gerenciar assinatura | REAL | Navega para `/app/assinatura` | ☐ |
-| Comparar planos | REAL | Navega para `/planos` | ☐ |
-| Baixar todas | REAL | Download CSV/PDF gerado no backend | ☐ |
-| 05 Jun 2026 Próxima cobrança · Plano Pro mensal ⏳ Em 22 dias R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| 05 Mai 2026 Plano Pro · Visa •••• 4523 Pago R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| 05 Abr 2026 Plano Pro · Visa •••• 4523 Pago R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| 05 Mar 2026 Plano Pro · Visa •••• 4523 Pago R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| 05 Fev 2026 Plano Basic · trial gratuito Grátis R$ 0 ,00 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Trocar | REAL | Troca o item/prato da refeição (abre o seletor com pratos aprovados) | ☐ |
-| Pausar plano | REAL | POST /api/assinatura/pausa (status PAUSADA até a data escolhida) | ☐ |
-| Ver detalhes | REAL | Abre detalhe/acompanhamento do pedido | ☐ |
-| Free R$ 0/mês Downgrade | REAL | Navega para `/planos` | ☐ |
-| Basic R$ 23,90/mês Downgrade | REAL | Navega para `/planos` | ☐ |
-| Pro Atual R$ 47,90/mês Atual | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Premium R$ 71,90/mês Upgrade | REAL | Navega para `/planos` | ☐ |
-| Buscar | REAL | Navega para `/app/marketplace` | ☐ |
-| Perfil | REAL | Navega para `/app/perfil` | ☐ |
-| 5 dias restantes | REAL | Informativo do trial/ciclo (sem ação; vira texto, não botão) | ☐ |
-| Downgrade | REAL | POST /api/assinatura (pagamento simulado gera fatura PAGA) | ☐ |
-| Atual | REAL | Informativo do tier atual (desabilitado) | ☐ |
-| Upgrade | REAL | POST /api/assinatura (pagamento simulado gera fatura PAGA) | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Cancelar plano | REAL | POST /api/assinatura/cancelamento → mostra data de encerramento | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/app` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Meu plano | REAL | Navega para `/app/meu-plano` | ☑ |
+| Pedidos | REAL | Navega para `/app/pedidos` | ☑ |
+| NutriBot | REAL | Navega para `/app/nutribot` | ☑ |
+| Meu perfil | REAL | Navega para `/app/perfil` | ☑ |
+| (ícone) | REAL | Navega para `/app/perfil` | ☑ |
+| Fazer upgrade pro Premium | REAL | Navega para `/planos` | ☑ |
+| Gerenciar assinatura | REAL | Navega para `/app/assinatura` | ☑ |
+| Comparar planos | REAL | Navega para `/planos` | ☑ |
+| Baixar todas | REAL | Download CSV/PDF gerado no backend | ☑ |
+| 05 Jun 2026 Próxima cobrança · Plano Pro mensal ⏳ Em 22 dias R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| 05 Mai 2026 Plano Pro · Visa •••• 4523 Pago R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| 05 Abr 2026 Plano Pro · Visa •••• 4523 Pago R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| 05 Mar 2026 Plano Pro · Visa •••• 4523 Pago R$ 47 ,90 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| 05 Fev 2026 Plano Basic · trial gratuito Grátis R$ 0 ,00 | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Trocar | REAL | Troca o item/prato da refeição (abre o seletor com pratos aprovados) | ☑ |
+| Pausar plano | REAL | POST /api/assinatura/pausa (status PAUSADA até a data escolhida) | ☑ |
+| Ver detalhes | REAL | Abre detalhe/acompanhamento do pedido | ☑ |
+| Free R$ 0/mês Downgrade | REAL | Navega para `/planos` | ☑ |
+| Basic R$ 23,90/mês Downgrade | REAL | Navega para `/planos` | ☑ |
+| Pro Atual R$ 47,90/mês Atual | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Premium R$ 71,90/mês Upgrade | REAL | Navega para `/planos` | ☑ |
+| Buscar | REAL | Navega para `/app/marketplace` | ☑ |
+| Perfil | REAL | Navega para `/app/perfil` | ☑ |
+| 5 dias restantes | REAL | Informativo do trial/ciclo (sem ação; vira texto, não botão) | ☑ |
+| Downgrade | REAL | POST /api/assinatura (pagamento simulado gera fatura PAGA) | ☑ |
+| Atual | REAL | Informativo do tier atual (desabilitado) | ☑ |
+| Upgrade | REAL | POST /api/assinatura (pagamento simulado gera fatura PAGA) | ☑ |
 
 ### 24 · 24-cliente-plano-alimentar — `/app/meu-plano` — frente A
 

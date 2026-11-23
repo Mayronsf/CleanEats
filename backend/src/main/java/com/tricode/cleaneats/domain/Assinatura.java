@@ -27,6 +27,7 @@ public class Assinatura {
     @Column(name = "pausada_ate") private OffsetDateTime pausadaAte;
     @Column(nullable = false) private String gateway = "SIMULADO";
     @Column(name = "id_externo") private String idExterno;
+    @Column(name = "forma_pagamento", nullable = false) private String formaPagamento = "CARTAO";
 
     protected Assinatura() {}
 
@@ -59,8 +60,38 @@ public class Assinatura {
 
     public void expirar() { this.status = StatusAssinatura.EXPIRADA; }
 
+    /** Desfaz o cancelamento antes da data de encerramento (CE-16). */
+    public void reativar(OffsetDateTime agora) {
+        if (status != StatusAssinatura.CANCELADA) throw new IllegalArgumentException("A assinatura não está cancelada");
+        if (expirou(agora)) throw new IllegalArgumentException("O período pago já terminou: assine de novo");
+        this.status = StatusAssinatura.ATIVA;
+        this.canceladaEm = null;
+        this.encerraEm = null;
+    }
+
+    /** Volta da pausa. Retomando antes do fim, devolve os dias não usados (a renovação fica adiada só pelo tempo pausado). */
+    public void retomar(OffsetDateTime agora) {
+        if (status != StatusAssinatura.PAUSADA) throw new IllegalArgumentException("A assinatura não está pausada");
+        if (pausadaAte != null && agora.isBefore(pausadaAte) && renovacaoEm != null) {
+            renovacaoEm = renovacaoEm.minus(java.time.Duration.between(agora, pausadaAte));
+        }
+        this.status = StatusAssinatura.ATIVA;
+        this.pausadaAte = null;
+    }
+
+    /** Troca de plano: a assinatura antiga deixa de valer na hora. */
+    public void substituir() { this.status = StatusAssinatura.EXPIRADA; this.encerraEm = OffsetDateTime.now(); }
+
+    public String getFormaPagamento() { return formaPagamento; }
+    public void setFormaPagamento(String v) {
+        if (!"PIX".equals(v) && !"CARTAO".equals(v)) throw new IllegalArgumentException("Forma de pagamento inválida");
+        this.formaPagamento = v;
+    }
+
     public void pausar(OffsetDateTime ate) {
         if (status != StatusAssinatura.ATIVA) throw new IllegalArgumentException("Só assinaturas ativas podem ser pausadas");
+        var agora = OffsetDateTime.now();
+        if (renovacaoEm != null && ate.isAfter(agora)) renovacaoEm = renovacaoEm.plus(java.time.Duration.between(agora, ate));
         this.status = StatusAssinatura.PAUSADA;
         this.pausadaAte = ate;
     }
