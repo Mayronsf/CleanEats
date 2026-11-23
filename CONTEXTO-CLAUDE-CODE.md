@@ -35,8 +35,8 @@ Logins de demo (senha `CleanEats@2026`): `cliente@cleaneats.test` (Breno, Pro), 
 ### Falta (ordem sugerida = ordem do roteiro)
 | Frente | Telas | Arquivo com as regras |
 |---|---|---|
-| **B — Nutricionista** | 06 cadastro da nutri · 26 home · 27 triagens · 28 clientes · 29 perfil do cliente · 30 editor de plano · 31 catálogo · 32 prescrição (PDF + e-mail) · 33 chat · 34 financeiro · 35 perfil · `/nutri/prescricoes` · `/nutri/acompanhamento` | `docs/frentes/frente-b-nutri.md` |
-| **C — Restaurante + Admin** | 07 cadastro do restaurante · 36 dashboard · 37 pedidos (muda status → cliente vê na 18) · 38 cardápio · 39 criar prato · 40 aprovação · 41 analytics · 42 financeiro · 43 relatórios (CSV) · 44 perfil · `/admin` (aprovar CRN/CNPJ/pratos) · `/admin/avaliacoes` (moderação) · `/admin/suporte` · `/admin/restaurantes` (comissão + simular renovação) · **job da entrega simulada** (PRONTO → A_CAMINHO → ENTREGUE) | `docs/frentes/frente-c-restaurante.md` |
+| **B — Nutricionista** · **LIVRE: é a frente para quem está chegando agora (branch `frente-b-nutri`)** | 06 cadastro da nutri · 26 home · 27 triagens · 28 clientes · 29 perfil do cliente · 30 editor de plano · 31 catálogo · 32 prescrição (PDF + e-mail) · 33 chat · 34 financeiro · 35 perfil · `/nutri/prescricoes` · `/nutri/acompanhamento` | `docs/frentes/frente-b-nutri.md` |
+| **C — Restaurante + Admin** · **a sessão principal está fazendo agora, direto em `main`** | 07 cadastro do restaurante · 36 dashboard · 37 pedidos (muda status → cliente vê na 18) · 38 cardápio · 39 criar prato · 40 aprovação · 41 analytics · 42 financeiro · 43 relatórios (CSV) · 44 perfil · `/admin` (aprovar CRN/CNPJ/pratos) · `/admin/avaliacoes` (moderação) · `/admin/suporte` · `/admin/restaurantes` (comissão + simular renovação) · **job da entrega simulada** (PRONTO → A_CAMINHO → ENTREGUE) | `docs/frentes/frente-c-restaurante.md` |
 
 As rotas que faltam já existem e mostram "em construção": troque `emConstrucao(...)` pelo componente em `frontend/src/app/rotas/rotas<Frente>.tsx`.
 
