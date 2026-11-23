@@ -99,9 +99,7 @@ select pg_temp.criar_cliente(23, 'Juliana Sá',      'juliana.sa@cleaneats.test'
 select pg_temp.criar_cliente(24, 'Lucas Andrade',   'lucas.andrade@cleaneats.test',   'PRO',     'GANHO_MASSA',   26, 75, 1.76, '2026-02-09', true);
 select pg_temp.criar_cliente(25, 'Rafael Mendes',   'rafael.mendes@cleaneats.test',   'PRO',     'EMAGRECIMENTO', 30, 88, 1.82, '2026-03-21', true);
 select pg_temp.criar_cliente(26, 'Thales Cunha',    'thales.cunha@cleaneats.test',    'PRO',     'EQUILIBRIO',    27, 72, 1.75, '2026-03-02', true);
--- ATENÇÃO: a tela 28 mostra a Fernanda Barros como Basic, mas o Basic não inclui nutricionista dedicada (tela 09).
--- Mantido como na tela; decidir com o time (ver docs/relatorio-seed.md).
-select pg_temp.criar_cliente(27, 'Fernanda Barros', 'fernanda.barros@cleaneats.test', 'BASIC',   'EMAGRECIMENTO', 25, 58, 1.62, '2026-04-07', true);
+select pg_temp.criar_cliente(27, 'Fernanda Barros', 'fernanda.barros@cleaneats.test', 'PRO',     'EMAGRECIMENTO', 25, 58, 1.62, '2026-04-07', true);
 select pg_temp.criar_cliente(28, 'Gabriela Nunes',  'gabriela.nunes@cleaneats.test',  'PRO',     'EQUILIBRIO',    32, 65, 1.70, '2026-03-15', true);
 -- Tela 34 (transações da nutri) — também fazem pedidos no Sabor Natural (tela 37). Tiers da tela 34; preços da tela 09.
 select pg_temp.criar_cliente(31, 'Maria Braga',      'maria.braga@cleaneats.test',      'PRO',     'EQUILIBRIO', null, null, null, '2026-04-18', true);

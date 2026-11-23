@@ -12,7 +12,7 @@ Senha de todos os usuários: `CleanEats@2026`. Datas dos pedidos são **relativa
 | `00000000-0000-4000-b000-0000000000NN` | pratos 01–36 (lista abaixo) |
 | `00000000-0000-4000-c000-00000000000N` | endereços do Breno: 1 Casa · 2 Trabalho |
 
-Clientes 21–28: 21 Mariana Costa (Premium) · 22 Pedro Silva (Pro) · 23 Juliana Sá (Premium) · 24 Lucas Andrade (Pro) · 25 Rafael Mendes (Pro) · 26 Thales Cunha (Pro) · 27 Fernanda Barros (Basic) · 28 Gabriela Nunes (Pro).
+Clientes 21–28: 21 Mariana Costa (Premium) · 22 Pedro Silva (Pro) · 23 Juliana Sá (Premium) · 24 Lucas Andrade (Pro) · 25 Rafael Mendes (Pro) · 26 Thales Cunha (Pro) · 27 Fernanda Barros (Pro) · 28 Gabriela Nunes (Pro).
 
 ## Pratos (36)
 | # | Restaurante | Prato | Origem |
@@ -55,4 +55,4 @@ Regra: kcal, P, C e preço das telas do cliente (10/11/12/14) > catálogo da nut
 | Duas fotos das telas não existem mais no Unsplash (404): Carne Magra e Wrap Integral Frango | foto do prato mais parecido (Steak e Wrap Light) |
 
 ## Em aberto — decisão do time
-- **Fernanda Barros (tela 28) é Basic**, mas o Basic não inclui nutricionista dedicada (tela 09). Mantida como Basic e vinculada à Dra. Ana, para a tela ficar fiel. Opções: (a) manter; (b) mudar para Pro no seed.
+- **Fernanda Barros (tela 28)** aparece como Basic, mas o Basic não inclui nutricionista dedicada. **Decisão de 23/11: Pro** (seed e banco atualizados); a tela 28 mostra o tier vindo do banco.

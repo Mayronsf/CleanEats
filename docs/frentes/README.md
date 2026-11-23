@@ -93,3 +93,6 @@ O Supabase do projeto já tem as migrations e o seed central aplicados. Login de
 | A — assinatura Pro/Premium | B — triagens, financeiro | Cliente Pro/Premium sem nutri → triagem `AGUARDANDO` com a nutri disponível (criada pelo service de assinatura de A) |
 | A — avaliação | C — `/admin/avaliacoes` | `avaliacao.status_moderacao` |
 | Todas | P — central de notificações | `NotificacaoService.notificar(...)` |
+
+## Mudança de 23/11 (madrugada)
+As frentes não tinham começado. A **sessão principal assumiu a frente A (telas 10–25)** e trabalha direto em `main`, seguindo `frente-a-cliente.md`. Se uma sessão da frente A for aberta, ela deve primeiro rodar `git merge main` e combinar com o usuário quais telas ainda estão livres (ver a matriz: linhas ☑ já feitas). As frentes B e C seguem disponíveis.
