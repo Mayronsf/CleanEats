@@ -20,9 +20,9 @@ export function CardPrato({ prato, onPedir, layout = 'grade' }: { prato: Prato; 
     },
     onError: () => toast('Não foi possível atualizar o favorito', 'erro'),
   });
-  const p = Number(prato.macros.proteinas) * 4;
-  const c = Number(prato.macros.carboidratos) * 4;
-  const g = Number(prato.macros.gorduras) * 9;
+  const p = Number(prato.macros.proteinas);
+  const c = Number(prato.macros.carboidratos);
+  const g = Number(prato.macros.gorduras);
   const total = p + c + g || 1;
   const { reais, centavos } = partesPreco(Number(prato.preco));
   const link = `/app/marmitas/${prato.id}`;
@@ -45,7 +45,7 @@ export function CardPrato({ prato, onPedir, layout = 'grade' }: { prato: Prato; 
       <div className={s.corpo}>
         <p className={s.rest}><span className={s.restPonto} aria-hidden />{prato.restaurante.nome} · {prato.restaurante.tempoEntregaMin}–{prato.restaurante.tempoEntregaMax} min</p>
         <h3 className={s.nome}><Link to={link}>{prato.nome}</Link></h3>
-        <div className={s.barra} role="img" aria-label={`Proteínas ${Math.round((p / total) * 100)}%, carboidratos ${Math.round((c / total) * 100)}%, gorduras ${Math.round((g / total) * 100)}% das calorias`}>
+        <div className={s.barra} role="img" aria-label={`Proteínas ${Math.round((p / total) * 100)}%, carboidratos ${Math.round((c / total) * 100)}%, gorduras ${Math.round((g / total) * 100)}% dos macronutrientes`}>
           <span style={{ width: `${(p / total) * 100}%`, background: 'var(--prot)' }} />
           <span style={{ width: `${(c / total) * 100}%`, background: 'var(--carb)' }} />
           <span style={{ width: `${(g / total) * 100}%`, background: 'var(--fat)' }} />

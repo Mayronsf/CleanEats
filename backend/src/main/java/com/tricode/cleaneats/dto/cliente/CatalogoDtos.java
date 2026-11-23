@@ -19,10 +19,13 @@ public final class CatalogoDtos {
 
     public record IngredienteDto(String nome, String quantidade, String preparo) {}
 
-    public record AvaliacaoPublicaDto(UUID id, String autor, int nota, String comentario, List<String> tags, OffsetDateTime data) {}
+    public record AvaliacaoPublicaDto(UUID id, String autor, String avatarUrl, int nota, String comentario, List<String> tags,
+                                      OffsetDateTime data, String codigoPedido) {}
+
+    public record RestauranteDetalheDto(String cidade, BigDecimal nota, int totalAvaliacoes, String logoUrl) {}
 
     public record PratoDetalheDto(PratoDto prato, Integer sodioMg, List<IngredienteDto> ingredientes, List<String> compativelCom,
-                                  List<AvaliacaoPublicaDto> avaliacoes, List<PratoDto> similares) {}
+                                  List<AvaliacaoPublicaDto> avaliacoes, List<PratoDto> similares, RestauranteDetalheDto restaurante) {}
 
     public record CategoriaDto(String nome, long total) {}
 }

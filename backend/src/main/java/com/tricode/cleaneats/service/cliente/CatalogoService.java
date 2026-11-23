@@ -171,14 +171,16 @@ public class CatalogoService {
         return new Facetas(g.total(), g.pmin(), g.pmax(), kcal, prot, rests, g.n45(), g.n40());
     }
 
-    /** Pratos parecidos (mesma categoria, melhor avaliados) para o detalhe da tela 12. */
-    private List<PratoDto> listarPorCategoria(String categoria, UUID idUsuario) {
+    /** "Você também vai gostar" (tela 12): mesma categoria primeiro, depois os mais bem avaliados; um por nome. */
+    private List<PratoDto> similares(PratoDto base, UUID idUsuario) {
         var params = new HashMap<String, Object>();
-        String w = where(Filtros.vazio(), idUsuario, params, false) + " and m.categoria = :cat";
-        params.put("cat", categoria);
-        return jdbc.sql(SELECT_PRATO.formatted(idUsuario != null ? FAVORITO : "false", "false") + w
-                        + " order by m.nota_media desc, m.total_avaliacoes desc limit 5")
-                .params(params).query((rs, n) -> prato(rs)).list();
+        String w = where(Filtros.vazio(), idUsuario, params, false) + " and m.id <> :id and m.nome <> :nome";
+        params.put("cat", base.categoria());
+        params.put("id", base.id());
+        params.put("nome", base.nome());
+        String sql = "select * from (select distinct on (x.nome) * from (" + SELECT_PRATO.formatted(idUsuario != null ? FAVORITO : "false", "false")
+                + w + ") x order by x.nome, x.total_avaliacoes desc) y order by (y.categoria = :cat) desc, y.nota_media desc, y.total_avaliacoes desc limit 4";
+        return jdbc.sql(sql).params(params).query((rs, n) -> prato(rs)).list();
     }
 
     /** Categorias com contagem (chips da tela 11), já respeitando as restrições do cliente. */
@@ -211,15 +213,20 @@ public class CatalogoService {
                 select ra.nome from marmita_compatibilidade mc join restricao_alimentar ra on ra.id = mc.id_restricao
                 where mc.id_marmita = :id order by ra.id""").param("id", id).query(String.class).list();
         var avaliacoes = jdbc.sql("""
-                select a.id, u.nome, a.nota, a.comentario, a.tags, a.data_avaliacao
-                from avaliacao a join usuario u on u.id = a.id_usuario
+                select a.id, u.nome, u.avatar_url, a.nota, a.comentario, a.tags, a.data_avaliacao, p.codigo
+                from avaliacao a join usuario u on u.id = a.id_usuario join pedido p on p.id = a.id_pedido
                 where a.id_marmita = :id and a.status_moderacao = 'PUBLICADA'
-                order by a.data_avaliacao desc limit 10""").param("id", id)
-                .query((rs, n) -> new AvaliacaoPublicaDto(rs.getObject("id", UUID.class), abreviar(rs.getString("nome")), rs.getInt("nota"),
-                        rs.getString("comentario"), textos(rs.getArray("tags")), rs.getObject("data_avaliacao", java.time.OffsetDateTime.class)))
+                order by a.data_avaliacao desc limit 6""").param("id", id)
+                .query((rs, n) -> new AvaliacaoPublicaDto(rs.getObject("id", UUID.class), abreviar(rs.getString("nome")), rs.getString("avatar_url"),
+                        rs.getInt("nota"), rs.getString("comentario"), textos(rs.getArray("tags")),
+                        rs.getObject("data_avaliacao", java.time.OffsetDateTime.class), rs.getString("codigo")))
                 .list();
-        var similares = listarPorCategoria(prato.categoria(), idUsuario).stream().filter(p -> !p.id().equals(id)).limit(4).toList();
-        return new PratoDetalheDto(prato, sodio, ingredientes, compativel, avaliacoes, similares);
+        var restaurante = jdbc.sql("select cidade, nota_media, total_avaliacoes, logo_url from restaurante where id = :r")
+                .param("r", prato.restaurante().id())
+                .query((rs, n) -> new RestauranteDetalheDto(rs.getString("cidade"), rs.getBigDecimal("nota_media"), rs.getInt("total_avaliacoes"),
+                        rs.getString("logo_url")))
+                .single();
+        return new PratoDetalheDto(prato, sodio, ingredientes, compativel, avaliacoes, similares(prato, idUsuario), restaurante);
     }
 
     @Transactional

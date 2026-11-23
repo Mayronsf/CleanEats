@@ -5,6 +5,7 @@ import { emConstrucao } from '../EmConstrucao';
 
 const HomeClientePage = lazy(() => import('../../features/cliente/home/HomeClientePage'));
 const MarketplacePage = lazy(() => import('../../features/cliente/marketplace/MarketplacePage'));
+const DetalhePratoPage = lazy(() => import('../../features/cliente/detalhe/DetalhePratoPage'));
 
 /**
  * Rotas do cliente (/app) — DONA: FRENTE A (telas 10–25).
@@ -17,7 +18,7 @@ export const rotasCliente: RouteObject[] = [
     children: [
       { index: true, element: <HomeClientePage /> },
       { path: 'marketplace', element: <MarketplacePage /> },
-      { path: 'marmitas/:id', element: emConstrucao('12', '12-cliente-detalhe-marmita') },
+      { path: 'marmitas/:id', element: <DetalhePratoPage /> },
       { path: 'restaurantes', element: emConstrucao('13', '13-cliente-restaurantes') },
       { path: 'restaurantes/:id', element: emConstrucao('14', '14-cliente-perfil-restaurante') },
       { path: 'monte-sua-marmita', element: emConstrucao('15', '15-cliente-personalizacao') },

@@ -14,8 +14,9 @@ export interface PratoDetalhe {
   prato: Prato; sodioMg: number | null;
   ingredientes: { nome: string; quantidade: string | null; preparo: string | null }[];
   compativelCom: string[];
-  avaliacoes: { id: string; autor: string; nota: number; comentario: string | null; tags: string[]; data: string }[];
+  avaliacoes: { id: string; autor: string; avatarUrl: string | null; nota: number; comentario: string | null; tags: string[]; data: string; codigoPedido: string }[];
   similares: Prato[];
+  restaurante: { cidade: string; nota: number; totalAvaliacoes: number; logoUrl: string | null };
 }
 export interface Nutrientes { calorias: number; proteinas: number; carboidratos: number; gorduras: number; fibras: number; aguaMl: number }
 export interface Consumo { data: string; consumo: Nutrientes; metas: Nutrientes }
