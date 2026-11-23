@@ -49,11 +49,13 @@ public class PedidoClienteService {
     private final ConsumoDiarioRepository consumos;
     private final NotificacaoService notificacoes;
     private final ObjectMapper json;
+    private final MonteSuaMarmitaService monte;
 
     public PedidoClienteService(JdbcClient jdbc, MarmitaRepository marmitas, RestauranteRepository restaurantes, UsuarioRepository usuarios,
-                                PedidoRepository pedidos, ConsumoDiarioRepository consumos, NotificacaoService notificacoes, ObjectMapper json) {
+                                PedidoRepository pedidos, ConsumoDiarioRepository consumos, NotificacaoService notificacoes, ObjectMapper json,
+                                MonteSuaMarmitaService monte) {
         this.jdbc = jdbc; this.marmitas = marmitas; this.restaurantes = restaurantes; this.usuarios = usuarios;
-        this.pedidos = pedidos; this.consumos = consumos; this.notificacoes = notificacoes; this.json = json;
+        this.pedidos = pedidos; this.consumos = consumos; this.notificacoes = notificacoes; this.json = json; this.monte = monte;
     }
 
     /** Monta o pedido em memória (sem gravar) e devolve os valores. */
@@ -118,8 +120,30 @@ public class PedidoClienteService {
         BigDecimal fibras = BigDecimal.ZERO;
         var itensPrevia = new ArrayList<ItemPrevia>();
         for (var it : req.itens()) {
-            if (it.idMarmita() == null) throw new IllegalArgumentException("Item sem prato");
             int qtd = Math.max(1, Math.min(20, it.quantidade()));
+            if (it.idMarmita() == null) {
+                // Monte sua marmita (tela 15): preço e macros recalculados a partir dos componentes do banco
+                var calc = monte.calcular(MonteSuaMarmitaService.selecaoDe(it.personalizacao()));
+                if (restaurante == null) {
+                    restaurante = restaurantes.findById(calc.idRestaurante())
+                            .filter(r -> r.getStatusAprovacao() == StatusAprovacao.APROVADO)
+                            .orElseThrow(() -> new IllegalArgumentException("Restaurante indisponível"));
+                    pedido = new Pedido(idUsuario, restaurante.getId());
+                } else if (!restaurante.getId().equals(calc.idRestaurante())) {
+                    throw new IllegalArgumentException("Cada pedido é de um restaurante só");
+                }
+                var extraMonte = new LinkedHashMap<String, Object>(calc.personalizacao());
+                String obsMonte = limpar(it.observacao(), 200);
+                if (obsMonte != null) extraMonte.put("observacao", obsMonte);
+                var itemMonte = ItemPedido.personalizado(calc.nome(), qtd, calc.preco(), calc.calorias(), calc.proteinas(),
+                        calc.carboidratos(), calc.gorduras(), paraJson(extraMonte));
+                pedido.adicionarItem(itemMonte);
+                fibras = fibras.add(calc.fibras().multiply(BigDecimal.valueOf(qtd)));
+                itensPrevia.add(new ItemPrevia(null, calc.nome(), qtd, calc.preco(), itemMonte.getValorTotal(), calc.calorias() * qtd,
+                        calc.proteinas().multiply(BigDecimal.valueOf(qtd)), calc.carboidratos().multiply(BigDecimal.valueOf(qtd)),
+                        calc.gorduras().multiply(BigDecimal.valueOf(qtd))));
+                continue;
+            }
             var marmita = marmitas.findById(it.idMarmita())
                     .filter(Marmita::visivelNoMarketplace)
                     .orElseThrow(() -> new IllegalArgumentException("Um dos pratos do carrinho não está mais disponível"));

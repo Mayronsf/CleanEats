@@ -76,7 +76,7 @@ export const buscarPlano = async () => (await chamarApi<PlanoAlimentar | undefin
 export const buscarResumo = () => chamarApi<ResumoCliente>('/cliente/resumo');
 
 // ---------- Checkout (tela 16) ----------
-export interface ItemPedidoReq { idMarmita: string; quantidade: number; observacao?: string; personalizacao?: Record<string, unknown> }
+export interface ItemPedidoReq { idMarmita: string | null; quantidade: number; observacao?: string; personalizacao?: Record<string, unknown> }
 export interface PedidoReq {
   itens: ItemPedidoReq[]; cupom?: string; idEndereco?: string; formaPagamento?: 'PIX' | 'CREDITO' | 'DINHEIRO';
   agendadoPara?: string; observacao?: string;
@@ -227,3 +227,23 @@ export const enviarFotoAvaliacao = (arquivo: File) => {
   corpo.append('arquivo', arquivo);
   return chamarApi<{ url: string }>('/avaliacoes/fotos', { method: 'POST', body: corpo });
 };
+
+// ---------- Monte sua marmita (tela 15) ----------
+export type CategoriaComponente = 'PROTEINA' | 'CARBOIDRATO' | 'VEGETAL' | 'ADICIONAL';
+export interface ComponenteMarmita {
+  id: string; categoria: CategoriaComponente; nome: string; porcaoG: number; calorias: number; proteinas: number; carboidratos: number;
+  gorduras: number; fibras: number; preco: number; permiteTamanho: boolean; imagemUrl: string | null;
+}
+export interface CatalogoMonte {
+  restaurante: RestauranteMini; componentes: ComponenteMarmita[];
+  tamanhos: { codigo: 'P' | 'M' | 'G'; nome: string; fator: number; ajustePreco: number }[];
+  limites: { categoria: CategoriaComponente; minimo: number; maximo: number }[];
+  metaPorRefeicao: Record<Objetivo, number>; objetivo: Objetivo | null;
+}
+export interface SelecaoMonte { proteina: string | null; carboidrato: string | null; tamanho: 'P' | 'M' | 'G'; vegetais: string[]; adicionais: string[] }
+export interface CalculoMonte {
+  idRestaurante: string; nome: string; descricao: string; preco: number; calorias: number; proteinas: number; carboidratos: number;
+  gorduras: number; fibras: number; personalizacao: Record<string, unknown>;
+}
+export const buscarComponentesMarmita = () => chamarApi<CatalogoMonte>('/componentes-marmita');
+export const calcularMarmita = (s: SelecaoMonte) => chamarApi<CalculoMonte>('/componentes-marmita/calculo', { method: 'POST', body: JSON.stringify(s) });

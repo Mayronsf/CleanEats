@@ -106,3 +106,9 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET | `/api/pedidos/{id}/avaliacao` | Pratos do pedido e se já foram avaliados, tags permitidas | 11 |
 | POST | `/api/pedidos/{id}/avaliacoes` | Nota, 5 critérios, tags, comentário, fotos, anônima → PENDENTE (avisa admins) | 11 |
 | POST | `/api/avaliacoes/fotos` | Upload (multipart `arquivo`) no bucket `avaliacoes` | 11 |
+
+## Monte sua marmita (tela 15) — frente A
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/componentes-marmita` | Componentes ativos, tamanhos P/M/G, limites por categoria, meta por refeição (450/650/550) e restaurante que prepara | 6 |
+| POST | `/api/componentes-marmita/calculo` | Preço e macros calculados no servidor. No pedido, item com `idMarmita: null` + `personalizacao` é recalculado do mesmo jeito | 6 |

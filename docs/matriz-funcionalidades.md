@@ -333,46 +333,46 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Emagrecimento ~450 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Ganho de Massa ~650 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Equilíbrio ~550 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Frango Grelhado 150g · 35g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Filé Mignon 150g · 38g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Salmão Grelhado 150g · 32g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Carne Magra 150g · 36g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Tilápia 150g · 30g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Tofu Grelhado 120g · 18g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Arroz Integral 100g · 28g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Batata Doce 120g · 32g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Quinoa 100g · 24g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Mandioquinha 120g · 30g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Pequena 60g · -20g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Média 120g · padrão | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Grande 180g · +24g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Brócolis no vapor 80g · 35 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Salada de folhas 60g · 20 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Cenoura ralada 50g · 22 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Abobrinha 70g · 18 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Abacate (50g) +R$ 3,50 · 80 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Ovo cozido +R$ 2,00 · 70 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Queijo cottage +R$ 4,00 · 60 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| Chia / sementes +R$ 2,50 · 40 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/app` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Meu plano | REAL | Navega para `/app/meu-plano` | ☐ |
-| Pedidos | REAL | Navega para `/app/pedidos` | ☐ |
-| NutriBot | REAL | Navega para `/app/nutribot` | ☐ |
-| Meu perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Buscar | REAL | Navega para `/app/marketplace` | ☐ |
-| Perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Emagrecimento | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| ~450 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Ganho de Massa | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| ~650 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Equilíbrio | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| ~550 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Emagrecimento ~450 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Ganho de Massa ~650 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Equilíbrio ~550 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Frango Grelhado 150g · 35g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Filé Mignon 150g · 38g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Salmão Grelhado 150g · 32g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Carne Magra 150g · 36g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Tilápia 150g · 30g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Tofu Grelhado 120g · 18g prot | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Arroz Integral 100g · 28g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Batata Doce 120g · 32g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Quinoa 100g · 24g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Mandioquinha 120g · 30g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Pequena 60g · -20g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Média 120g · padrão | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Grande 180g · +24g carb | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Brócolis no vapor 80g · 35 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Salada de folhas 60g · 20 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Cenoura ralada 50g · 22 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Abobrinha 70g · 18 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Abacate (50g) +R$ 3,50 · 80 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Ovo cozido +R$ 2,00 · 70 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Queijo cottage +R$ 4,00 · 60 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| Chia / sementes +R$ 2,50 · 40 kcal | REAL | Componente do monte sua marmita: recalcula kcal/macros/preço | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/app` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Meu plano | REAL | Navega para `/app/meu-plano` | ☑ |
+| Pedidos | REAL | Navega para `/app/pedidos` | ☑ |
+| NutriBot | REAL | Navega para `/app/nutribot` | ☑ |
+| Meu perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Buscar | REAL | Navega para `/app/marketplace` | ☑ |
+| Perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Emagrecimento | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| ~450 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Ganho de Massa | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| ~650 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Equilíbrio | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| ~550 kcal/refeição | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
 
 ### 16 · 16-cliente-carrinho — `/app/carrinho` — frente A
 

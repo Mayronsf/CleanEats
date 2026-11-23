@@ -1,0 +1,129 @@
+.pagina { max-width: 1440px; margin: 0 auto; padding: 24px var(--page-pad-x, 64px) 64px; }
+.pagina button:focus-visible, .pagina a:focus-visible, .pagina textarea:focus-visible { outline: 2px solid var(--green-primary); outline-offset: 2px; }
+
+.trilha { display: flex; gap: 8px; font-size: 13px; color: var(--gray-500); margin-bottom: 28px; }
+.trilha a { color: var(--gray-500); text-decoration: none; }
+.trilha a:hover { color: var(--green-dark); }
+.trilha strong { color: var(--ink); font-weight: 700; }
+.cabeca { text-align: center; max-width: 1100px; margin: 0 auto 36px; }
+.rotulo { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-dark); }
+.rotulo::before, .rotulo::after { content: ""; width: 28px; height: 2px; background: var(--green-primary); }
+.titulo { font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin: 12px 0; }
+.titulo :global(.script) { color: var(--green-primary); font-weight: 400; }
+.sub { font-size: 16px; color: var(--gray-700); max-width: 620px; margin: 0 auto; line-height: 1.5; }
+
+.grade { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 32px; align-items: start; }
+.coluna { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.passo { background: var(--white); border: 1.5px solid var(--line); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+.passoObjetivo { border: 2px solid var(--green-primary); background: linear-gradient(180deg, var(--green-bg) 0%, var(--white) 30%); }
+.passoTopo { display: flex; align-items: center; gap: 14px; }
+.passoTexto { flex: 1; }
+.passoTexto h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+.passoTexto p { font-size: 13px; color: var(--gray-500); }
+.numero { width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); color: var(--gray-700); font-weight: 800; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.numeroOk { background: var(--green-primary); color: var(--white); }
+.numeroAtivo { background: var(--green-primary); color: var(--white); box-shadow: 0 0 0 4px var(--green-bg-deep); }
+.estado { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 10px; border-radius: var(--radius-pill); background: var(--gray-100); color: var(--gray-500); }
+.estadoOk { background: var(--green-bg); color: var(--green-dark); }
+.estadoAndamento { background: var(--orange); color: var(--white); }
+
+.objetivos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.objetivo { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 18px; border-radius: 18px; border: 1.5px solid var(--line); background: var(--white); font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.objetivo strong { font-size: 15px; font-weight: 800; margin-top: 10px; }
+.objetivo small { font-size: 12px; color: var(--gray-500); }
+.objetivoIcone { width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; }
+.radio { position: absolute; top: 16px; right: 16px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--gray-300); }
+.objetivoAtivo { border: 2px solid var(--green-primary); background: var(--green-bg); }
+.objetivoAtivo .radio { border-color: var(--green-primary); background: var(--green-primary); box-shadow: inset 0 0 0 3px var(--white); }
+.laranja { background: #FEF3E5; color: var(--orange); }
+.coral { background: #FDE2DC; color: var(--prot); }
+.verde { background: var(--green-bg-deep); color: var(--green-dark); }
+
+.meta { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: center; background: var(--gray-100); border-radius: 16px; padding: 18px 20px; }
+.metaRotulo { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); }
+.metaValor { font-size: 28px; font-weight: 800; }
+.metaValor small { font-size: 13px; color: var(--gray-500); }
+.escala { position: relative; }
+.escalaBarra { position: relative; height: 8px; background: var(--white); border-radius: 4px; }
+.escalaAtual { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green-primary), var(--orange) 70%, var(--prot)); transition: width 0.4s var(--ease); }
+.escalaMeta { position: absolute; top: -4px; width: 4px; height: 16px; border-radius: 2px; background: var(--green-dark); transform: translateX(-50%); }
+.escalaRotulos { position: relative; display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-500); margin-top: 8px; height: 14px; }
+.escalaMetaRotulo { position: absolute; transform: translateX(-50%); font-weight: 700; color: var(--green-dark); }
+
+.secao { border: none; margin: 0; padding: 18px; border-radius: 20px; background: var(--gray-100); display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.secaoTopo { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0; float: left; }
+.secaoTitulo { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800; }
+.obrigatorio, .opcional { font-size: 10px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: var(--radius-pill); }
+.obrigatorio { background: var(--prot); color: var(--white); }
+.opcional { background: var(--gray-300); color: var(--gray-700); }
+.componentes { clear: both; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.componente { position: relative; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; border: 1.5px solid transparent; background: var(--white); font: inherit; color: inherit; text-align: left; cursor: pointer; transition: border-color var(--dur), background var(--dur); }
+.componente:hover { border-color: var(--green-bg-deep); }
+.componenteAtivo { border: 2px solid var(--green-primary); background: var(--green-bg); }
+.componenteFoto { width: 48px; height: 48px; border-radius: 12px; overflow: hidden; background: var(--green-bg); color: var(--green-dark); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.componenteFoto img { width: 100%; height: 100%; object-fit: cover; }
+.componenteTexto { display: flex; flex-direction: column; min-width: 0; }
+.componenteTexto strong { font-size: 14px; font-weight: 800; }
+.componenteTexto small { font-size: 11px; color: var(--gray-500); }
+.marca { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; background: var(--green-primary); color: var(--white); display: inline-flex; align-items: center; justify-content: center; }
+.tamanhos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tamanhos button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--white); font: inherit; color: inherit; cursor: pointer; }
+.tamanhos strong { font-size: 14px; font-weight: 800; }
+.tamanhos small { font-size: 11px; color: var(--gray-500); }
+.tamanhos .tamanhoAtivo { background: var(--green-primary); border-color: var(--green-primary); color: var(--white); }
+.tamanhos .tamanhoAtivo small { color: rgba(255, 255, 255, 0.85); }
+.observacao { width: 100%; border: 1.5px solid transparent; border-radius: 16px; padding: 14px 16px; background: var(--gray-100); font: inherit; font-size: 14px; resize: vertical; }
+.observacao:focus { outline: none; border-color: var(--green-primary); background: var(--white); }
+
+.resumo { position: sticky; top: 24px; background: var(--white); border: 1.5px solid var(--line); border-radius: 28px; padding: 24px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05); }
+.resumoTopo { display: flex; justify-content: space-between; align-items: center; }
+.resumoTopo h2 { font-size: 18px; font-weight: 800; }
+.limpar { background: none; border: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--green-primary); cursor: pointer; }
+.limpar:disabled { color: var(--gray-300); cursor: default; }
+.prato { position: relative; background: linear-gradient(135deg, var(--green-bg) 0%, var(--green-bg-deep) 100%); border-radius: 20px; padding: 24px; display: flex; justify-content: center; }
+.pratoCirculo { width: 220px; height: 220px; border-radius: 50%; background: var(--white); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1); display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 18px; }
+.quadrante { position: relative; border-radius: 50%; background: var(--gray-100); overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
+.quadrante img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.quadrante em { position: relative; font-style: normal; font-size: 9px; font-weight: 800; background: var(--ink); color: var(--white); padding: 2px 6px; border-radius: var(--radius-pill); margin-bottom: 4px; }
+.quadranteCheio { background: var(--green-bg-deep); }
+.pilulaProt, .pilulaKcal { position: absolute; display: inline-flex; align-items: center; gap: 6px; background: var(--white); font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: var(--radius-pill); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+.pilulaProt { top: 24px; right: 14px; }
+.pilulaKcal { bottom: 24px; left: 14px; }
+.pilulaProt i, .pilulaKcal i { width: 8px; height: 8px; border-radius: 50%; background: var(--prot); }
+.pilulaKcal i { background: var(--kcal); }
+.painel { background: var(--ink); color: var(--white); border-radius: 20px; padding: 20px; text-align: center; }
+.kcal { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.kcal small { font-size: 16px; color: rgba(255, 255, 255, 0.6); }
+.kcalMeta { font-size: 12px; color: rgba(255, 255, 255, 0.7); margin: 6px 0 16px; padding-bottom: 16px; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); }
+.aneis { display: flex; justify-content: space-around; }
+.anel { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.anelValor { position: absolute; top: 19px; font-size: 12px; font-weight: 800; }
+.anelRotulo { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.75); }
+.vazio { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-500); background: var(--gray-100); border-radius: 14px; padding: 14px; }
+.lista { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.lista li { display: flex; align-items: center; gap: 10px; background: var(--gray-100); border-radius: 12px; padding: 10px 12px; }
+.lista strong { display: block; font-size: 13px; font-weight: 800; }
+.lista small { font-size: 11px; color: var(--gray-500); }
+.listaIcone { color: var(--green-dark); }
+.total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 1.5px dashed var(--line); }
+.total span { font-size: 14px; font-weight: 700; }
+.total strong { font-size: 28px; font-weight: 800; }
+.total small { font-size: 14px; color: var(--gray-500); }
+.adicionar { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green-primary); color: var(--white); border: none; border-radius: var(--radius-pill); padding: 16px; font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px rgba(91, 176, 51, 0.3); }
+.adicionar:hover:not(:disabled) { background: var(--green-dark); }
+.adicionar:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+.voltar { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--gray-700); text-decoration: none; }
+
+@media (max-width: 1200px) {
+  .grade { grid-template-columns: minmax(0, 1fr); }
+  .resumo { position: static; }
+  .componentes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  .pagina { padding: 16px 16px 48px; }
+  .titulo { font-size: 32px; }
+  .passo { padding: 20px; border-radius: 22px; }
+  .objetivos, .componentes { grid-template-columns: minmax(0, 1fr); }
+  .meta { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .secaoTopo { flex-direction: column; align-items: flex-start; gap: 6px; }
+}

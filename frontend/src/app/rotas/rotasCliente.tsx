@@ -16,6 +16,7 @@ const AssinaturaPage = lazy(() => import('../../features/cliente/assinatura/Assi
 const PerfilPage = lazy(() => import('../../features/cliente/perfil/PerfilPage'));
 const EditarPerfilPage = lazy(() => import('../../features/cliente/perfil/EditarPerfilPage'));
 const AvaliarPage = lazy(() => import('../../features/cliente/avaliar/AvaliarPage'));
+const MonteSuaMarmitaPage = lazy(() => import('../../features/cliente/monte/MonteSuaMarmitaPage'));
 const MeuPlanoPage = lazy(() => import('../../features/cliente/plano/MeuPlanoPage'));
 
 /**
@@ -32,7 +33,7 @@ export const rotasCliente: RouteObject[] = [
       { path: 'marmitas/:id', element: <DetalhePratoPage /> },
       { path: 'restaurantes', element: <RestaurantesPage /> },
       { path: 'restaurantes/:id', element: <PerfilRestaurantePage /> },
-      { path: 'monte-sua-marmita', element: emConstrucao('15', '15-cliente-personalizacao') },
+      { path: 'monte-sua-marmita', element: <MonteSuaMarmitaPage /> },
       { path: 'carrinho', element: <CarrinhoPage /> },
       { path: 'pedidos/:id/confirmado', element: <PedidoConfirmadoPage /> },
       { path: 'pedidos/:id', element: <AcompanhamentoPage /> },

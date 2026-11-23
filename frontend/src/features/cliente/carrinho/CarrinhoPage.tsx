@@ -58,7 +58,7 @@ export default function CarrinhoPage() {
   const enderecoEscolhido = idEndereco ?? enderecos.data?.find((e) => e.principal)?.id ?? enderecos.data?.[0]?.id ?? null;
 
   const req: PedidoReq = {
-    itens: carrinho.itens.filter((i) => i.idMarmita).map((i) => ({ idMarmita: i.idMarmita!, quantidade: i.quantidade, observacao: i.observacao, personalizacao: i.personalizacao })),
+    itens: carrinho.itens.map((i) => ({ idMarmita: i.idMarmita, quantidade: i.quantidade, observacao: i.observacao, personalizacao: i.personalizacao })),
     cupom,
   };
   const previa = useQuery({
