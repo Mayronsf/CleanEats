@@ -13,6 +13,7 @@ const EscolhaPerfilPage = lazy(() => import('../../features/conta/EscolhaPerfilP
 const CadastroClientePage = lazy(() => import('../../features/conta/CadastroClientePage'));
 const RecuperarSenhaPage = lazy(() => import('../../features/conta/RecuperarSenhaPage'));
 const PlanosPage = lazy(() => import('../../features/planos/PlanosPage'));
+const FichaPublicaPage = lazy(() => import('../../features/ficha/FichaPublicaPage'));
 
 export const rotasPublicas: RouteObject[] = [
   { path: '/', element: emConstrucao('01', '01-splash') },
@@ -22,7 +23,7 @@ export const rotasPublicas: RouteObject[] = [
   { path: '/cadastro/cliente', element: <CadastroClientePage /> },
   { path: '/recuperar-senha', element: <RecuperarSenhaPage /> },
   { path: '/planos', element: <PlanosPage /> },
-  { path: '/ficha/:id', element: emConstrucao('nova', 'ficha técnica pública (QR Code da tela 12)') },
+  { path: '/ficha/:id', element: <FichaPublicaPage /> },
   { path: '/termos', element: emConstrucao('nova', 'termos de uso') },
   { path: '/privacidade', element: emConstrucao('nova', 'política de privacidade') },
   { path: '/auth/callback', element: <CallbackAuthPage /> },
