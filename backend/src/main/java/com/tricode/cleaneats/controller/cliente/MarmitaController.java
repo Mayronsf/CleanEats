@@ -28,12 +28,12 @@ public class MarmitaController {
 
     @GetMapping("/marmitas")
     public PaginaDto<PratoDto> listar(@RequestParam(required = false) String busca,
-                                      @RequestParam(required = false) List<String> categoria,
-                                      @RequestParam(required = false) Integer proteinaMin,
-                                      @RequestParam(required = false) Integer caloriasMax,
+                                      @RequestParam(required = false) String selo,
+                                      @RequestParam(required = false) List<String> proteina,
+                                      @RequestParam(required = false) List<String> calorias,
                                       @RequestParam(required = false) BigDecimal precoMin,
                                       @RequestParam(required = false) BigDecimal precoMax,
-                                      @RequestParam(required = false) UUID idRestaurante,
+                                      @RequestParam(required = false) List<UUID> restaurante,
                                       @RequestParam(required = false) BigDecimal notaMin,
                                       @RequestParam(required = false) String objetivo,
                                       @RequestParam(required = false) String ordenar,
@@ -41,9 +41,18 @@ public class MarmitaController {
                                       @RequestParam(defaultValue = "true") boolean restricoes,
                                       @RequestParam(defaultValue = "0") int pagina,
                                       @RequestParam(defaultValue = "12") int tamanho) {
-        var filtros = new Filtros(busca, categoria, proteinaMin, caloriasMax, precoMin, precoMax, idRestaurante, notaMin,
+        var filtros = new Filtros(busca, selo, proteina, calorias, precoMin, precoMax, restaurante, notaMin,
                 objetivo, ordenar, favoritos, restricoes);
         return catalogo.listar(filtros, UsuarioLogado.idOpcional(), Math.max(0, pagina), tamanho);
+    }
+
+    /** Contagens da lateral (tela 11). */
+    @GetMapping("/marmitas/facetas")
+    public CatalogoService.Facetas facetas(@RequestParam(required = false) String busca, @RequestParam(required = false) String selo,
+                                           @RequestParam(defaultValue = "false") boolean favoritos,
+                                           @RequestParam(defaultValue = "true") boolean restricoes) {
+        var f = new Filtros(busca, selo, null, null, null, null, null, null, null, null, favoritos, restricoes);
+        return catalogo.facetas(f, UsuarioLogado.idOpcional());
     }
 
     @GetMapping("/marmitas/categorias")

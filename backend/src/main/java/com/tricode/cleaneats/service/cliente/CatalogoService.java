@@ -21,10 +21,33 @@ import java.util.*;
 @Service
 public class CatalogoService {
 
-    /** Filtros da tela 11 (todos opcionais). */
-    public record Filtros(String busca, List<String> categorias, Integer proteinaMin, Integer caloriasMax,
-                          BigDecimal precoMin, BigDecimal precoMax, UUID idRestaurante, BigDecimal notaMin,
-                          String objetivo, String ordenar, boolean somenteFavoritos, boolean respeitarRestricoes) {}
+    /** Filtros da tela 11 (todos opcionais). Faixas no formato "min-max" ou "min-" (ex.: "25-40", "40-"). */
+    public record Filtros(String busca, String selo, List<String> proteinaFaixas, List<String> caloriaFaixas,
+                          BigDecimal precoMin, BigDecimal precoMax, List<UUID> restaurantes, BigDecimal notaMin,
+                          String objetivo, String ordenar, boolean somenteFavoritos, boolean respeitarRestricoes) {
+        public static Filtros vazio() {
+            return new Filtros(null, null, null, null, null, null, null, null, null, null, false, true);
+        }
+    }
+
+    public record Faixa(String faixa, long total) {}
+    public record RestauranteFaceta(UUID id, String nome, long total) {}
+    public record Facetas(long total, BigDecimal precoMin, BigDecimal precoMax, List<Faixa> calorias, List<Faixa> proteinas,
+                          List<RestauranteFaceta> restaurantes, long nota45, long nota40) {}
+
+    private static String compat(String slug) {
+        return "exists (select 1 from marmita_compatibilidade mc join restricao_alimentar ra on ra.id = mc.id_restricao "
+                + "where mc.id_marmita = m.id and ra.slug = '" + slug + "')";
+    }
+
+    /** Selos da barra de categorias da tela 11 (mistura macro e restrição, como no protótipo). */
+    private static final Map<String, String> SELOS = Map.of(
+            "alta-proteina", "m.proteinas >= 30",
+            "vegano", compat("vegano"),
+            "sem-gluten", compat("sem-gluten"),
+            "low-carb", "(" + compat("low-carb") + " or m.carboidratos <= 20)",
+            "sem-lactose", compat("sem-lactose"),
+            "pescetariano", "(m.nome ~* '(salm[aã]o|til[aá]pia|peixe|atum|camar[aã]o)' or " + compat("vegetariano") + ")");
 
     private static final String SELECT_PRATO = """
             select m.id, m.nome, m.descricao, m.categoria, m.imagem_url, m.preco, m.porcao_g, m.calorias, m.proteinas,
@@ -34,58 +57,86 @@ public class CatalogoService {
             from marmita m join vw_restaurante_publico r on r.id = m.id_restaurante
             """;
 
+    private static final String FAVORITO = "exists (select 1 from favorito fv where fv.id_usuario = :u and fv.id_marmita = m.id)";
+
     private final JdbcClient jdbc;
 
     public CatalogoService(JdbcClient jdbc) {
         this.jdbc = jdbc;
     }
 
-    public PaginaDto<PratoDto> listar(Filtros f, UUID idUsuario, int pagina, int tamanho) {
-        var params = new HashMap<String, Object>();
-        var where = new StringBuilder(" where m.status_prato = 'APROVADO'");
-        String objetivo = f.objetivo();
+    /** Monta o WHERE. Sem a lateral: só aprovados, restrições, favoritos, busca e selo (base das contagens). */
+    private String where(Filtros f, UUID idUsuario, Map<String, Object> params, boolean comLateral) {
+        var w = new StringBuilder(" where m.status_prato = 'APROVADO'");
         if (idUsuario != null) {
             params.put("u", idUsuario);
-            if (objetivo == null) {
-                objetivo = jdbc.sql("select objetivo_nutricional from perfil_cliente where id_usuario = :u")
-                        .param("u", idUsuario).query(String.class).optional().orElse(null);
-            }
             if (f.respeitarRestricoes()) {
                 // CE-10: só pratos compatíveis com TODAS as restrições do cliente
-                where.append(" and not exists (select 1 from cliente_restricao cr where cr.id_usuario = :u and not exists ("
-                        + "select 1 from marmita_compatibilidade mc where mc.id_marmita = m.id and mc.id_restricao = cr.id_restricao))");
+                w.append(" and not exists (select 1 from cliente_restricao cr where cr.id_usuario = :u and not exists (")
+                 .append("select 1 from marmita_compatibilidade mc where mc.id_marmita = m.id and mc.id_restricao = cr.id_restricao))");
             }
-            if (f.somenteFavoritos()) where.append(" and exists (select 1 from favorito fv where fv.id_usuario = :u and fv.id_marmita = m.id)");
+            if (f.somenteFavoritos()) w.append(" and ").append(FAVORITO);
         }
         if (f.busca() != null && !f.busca().isBlank()) {
-            where.append(" and (m.nome ilike :busca or m.descricao ilike :busca or m.categoria ilike :busca or r.nome ilike :busca)");
+            w.append(" and (m.nome ilike :busca or m.descricao ilike :busca or m.categoria ilike :busca or r.nome ilike :busca)");
             params.put("busca", "%" + f.busca().trim() + "%");
         }
-        if (f.categorias() != null && !f.categorias().isEmpty()) {
-            where.append(" and m.categoria in (:categorias)");
-            params.put("categorias", f.categorias());
-        }
-        if (f.proteinaMin() != null) { where.append(" and m.proteinas >= :protMin"); params.put("protMin", f.proteinaMin()); }
-        if (f.caloriasMax() != null) { where.append(" and m.calorias <= :kcalMax"); params.put("kcalMax", f.caloriasMax()); }
-        if (f.precoMin() != null) { where.append(" and m.preco >= :precoMin"); params.put("precoMin", f.precoMin()); }
-        if (f.precoMax() != null) { where.append(" and m.preco <= :precoMax"); params.put("precoMax", f.precoMax()); }
-        if (f.idRestaurante() != null) { where.append(" and m.id_restaurante = :rest"); params.put("rest", f.idRestaurante()); }
-        if (f.notaMin() != null) { where.append(" and m.nota_media >= :notaMin"); params.put("notaMin", f.notaMin()); }
+        if (f.selo() != null && SELOS.containsKey(f.selo())) w.append(" and ").append(SELOS.get(f.selo()));
+        if (!comLateral) return w.toString();
+        faixas(w, "m.proteinas", f.proteinaFaixas(), "pf", params);
+        faixas(w, "m.calorias", f.caloriaFaixas(), "cf", params);
+        if (f.precoMin() != null) { w.append(" and m.preco >= :precoMin"); params.put("precoMin", f.precoMin()); }
+        if (f.precoMax() != null) { w.append(" and m.preco <= :precoMax"); params.put("precoMax", f.precoMax()); }
+        if (f.restaurantes() != null && !f.restaurantes().isEmpty()) { w.append(" and m.id_restaurante in (:rests)"); params.put("rests", f.restaurantes()); }
+        if (f.notaMin() != null) { w.append(" and m.nota_media >= :notaMin"); params.put("notaMin", f.notaMin()); }
+        return w.toString();
+    }
 
+    /** "25-40" → coluna >= 25 and coluna < 40; "40-" → coluna >= 40. Várias faixas = OU. */
+    private static void faixas(StringBuilder w, String coluna, List<String> lista, String prefixo, Map<String, Object> params) {
+        if (lista == null || lista.isEmpty()) return;
+        var ou = new ArrayList<String>();
+        int i = 0;
+        for (String fx : lista) {
+            var partes = fx.split("-", -1);
+            try {
+                var min = new BigDecimal(partes[0].trim());
+                String cond = coluna + " >= :" + prefixo + "min" + i;
+                params.put(prefixo + "min" + i, min);
+                if (partes.length > 1 && !partes[1].isBlank()) {
+                    cond += " and " + coluna + " < :" + prefixo + "max" + i;
+                    params.put(prefixo + "max" + i, new BigDecimal(partes[1].trim()));
+                }
+                ou.add("(" + cond + ")");
+                i++;
+            } catch (NumberFormatException ignorada) { /* faixa inválida: ignora */ }
+        }
+        if (!ou.isEmpty()) w.append(" and (").append(String.join(" or ", ou)).append(")");
+    }
+
+    public PaginaDto<PratoDto> listar(Filtros f, UUID idUsuario, int pagina, int tamanho) {
+        var params = new HashMap<String, Object>();
+        String where = where(f, idUsuario, params, true);
+        String objetivo = f.objetivo();
+        if (idUsuario != null && objetivo == null) {
+            objetivo = jdbc.sql("select objetivo_nutricional from perfil_cliente where id_usuario = :u")
+                    .param("u", idUsuario).query(String.class).optional().orElse(null);
+        }
         String doObjetivo = "false";
         if (objetivo != null) { doObjetivo = "(:objetivo = any(m.objetivos))"; params.put("objetivo", objetivo); }
-        String favorito = idUsuario != null ? "exists (select 1 from favorito fv where fv.id_usuario = :u and fv.id_marmita = m.id)" : "false";
+        String favorito = idUsuario != null ? FAVORITO : "false";
 
-        String ordem = switch (f.ordenar() == null ? "" : f.ordenar()) {
+        boolean relevancia = f.ordenar() == null || f.ordenar().isBlank() || f.ordenar().equals("relevancia");
+        String ordem = switch (relevancia ? "" : f.ordenar()) {
             case "preco_asc" -> "m.preco asc";
             case "preco_desc" -> "m.preco desc";
             case "proteina" -> "m.proteinas desc";
             case "calorias" -> "m.calorias asc";
             case "nota" -> "m.nota_media desc, m.total_avaliacoes desc";
-            default -> "m.total_avaliacoes desc";   // relevância
+            default -> "m.total_avaliacoes desc";
         };
-        // CE-4: o objetivo do cliente prioriza (pratos do objetivo primeiro), sem esconder os demais
-        String orderBy = " order by " + (objetivo != null ? "(:objetivo = any(m.objetivos)) desc, " : "") + ordem + ", m.nome, m.id";
+        // CE-4: em "mais relevantes", o objetivo do cliente prioriza (pratos do objetivo primeiro), sem esconder os demais
+        String orderBy = " order by " + (objetivo != null && relevancia ? "(:objetivo = any(m.objetivos)) desc, " : "") + ordem + ", m.nome, m.id";
 
         long total = jdbc.sql("select count(*) from marmita m join vw_restaurante_publico r on r.id = m.id_restaurante" + where)
                 .params(params).query(Long.class).single();
@@ -95,6 +146,39 @@ public class CatalogoService {
         var itens = jdbc.sql(SELECT_PRATO.formatted(favorito, doObjetivo) + where + orderBy + " limit :lim offset :off")
                 .params(params).query((rs, n) -> prato(rs)).list();
         return new PaginaDto<>(itens, pagina, (int) Math.ceil(total / (double) tam), total);
+    }
+
+    /** Contagens da lateral da tela 11, calculadas sobre a base (restrições, busca e selo). */
+    public Facetas facetas(Filtros f, UUID idUsuario) {
+        var params = new HashMap<String, Object>();
+        String from = " from marmita m join vw_restaurante_publico r on r.id = m.id_restaurante" + where(f, idUsuario, params, false);
+        record Geral(long total, BigDecimal pmin, BigDecimal pmax, long n45, long n40) {}
+        var g = jdbc.sql("select count(*) as total, min(m.preco) as pmin, max(m.preco) as pmax, "
+                        + "count(*) filter (where m.nota_media >= 4.5) as n45, count(*) filter (where m.nota_media >= 4.0) as n40" + from)
+                .params(params).query((rs, n) -> new Geral(rs.getLong("total"), rs.getBigDecimal("pmin"), rs.getBigDecimal("pmax"),
+                        rs.getLong("n45"), rs.getLong("n40"))).single();
+        var kcal = jdbc.sql("select count(*) filter (where m.calorias >= 250 and m.calorias < 400) as a, "
+                        + "count(*) filter (where m.calorias >= 400 and m.calorias < 550) as b, count(*) filter (where m.calorias >= 550) as c" + from)
+                .params(params).query((rs, n) -> List.of(new Faixa("250-400", rs.getLong("a")), new Faixa("400-550", rs.getLong("b")),
+                        new Faixa("550-", rs.getLong("c")))).single();
+        var prot = jdbc.sql("select count(*) filter (where m.proteinas >= 15 and m.proteinas < 25) as a, "
+                        + "count(*) filter (where m.proteinas >= 25 and m.proteinas < 40) as b, count(*) filter (where m.proteinas >= 40) as c" + from)
+                .params(params).query((rs, n) -> List.of(new Faixa("15-25", rs.getLong("a")), new Faixa("25-40", rs.getLong("b")),
+                        new Faixa("40-", rs.getLong("c")))).single();
+        var rests = jdbc.sql("select r.id, r.nome, count(*) as total" + from + " group by r.id, r.nome order by count(*) desc, r.nome")
+                .params(params).query((rs, n) -> new RestauranteFaceta(rs.getObject("id", UUID.class), rs.getString("nome"), rs.getLong("total")))
+                .list();
+        return new Facetas(g.total(), g.pmin(), g.pmax(), kcal, prot, rests, g.n45(), g.n40());
+    }
+
+    /** Pratos parecidos (mesma categoria, melhor avaliados) para o detalhe da tela 12. */
+    private List<PratoDto> listarPorCategoria(String categoria, UUID idUsuario) {
+        var params = new HashMap<String, Object>();
+        String w = where(Filtros.vazio(), idUsuario, params, false) + " and m.categoria = :cat";
+        params.put("cat", categoria);
+        return jdbc.sql(SELECT_PRATO.formatted(idUsuario != null ? FAVORITO : "false", "false") + w
+                        + " order by m.nota_media desc, m.total_avaliacoes desc limit 5")
+                .params(params).query((rs, n) -> prato(rs)).list();
     }
 
     /** Categorias com contagem (chips da tela 11), já respeitando as restrições do cliente. */
@@ -134,8 +218,7 @@ public class CatalogoService {
                 .query((rs, n) -> new AvaliacaoPublicaDto(rs.getObject("id", UUID.class), abreviar(rs.getString("nome")), rs.getInt("nota"),
                         rs.getString("comentario"), textos(rs.getArray("tags")), rs.getObject("data_avaliacao", java.time.OffsetDateTime.class)))
                 .list();
-        var filtros = new Filtros(null, List.of(prato.categoria()), null, null, null, null, null, null, null, "nota", false, idUsuario != null);
-        var similares = listar(filtros, idUsuario, 0, 5).itens().stream().filter(p -> !p.id().equals(id)).limit(4).toList();
+        var similares = listarPorCategoria(prato.categoria(), idUsuario).stream().filter(p -> !p.id().equals(id)).limit(4).toList();
         return new PratoDetalheDto(prato, sodio, ingredientes, compativel, avaliacoes, similares);
     }
 

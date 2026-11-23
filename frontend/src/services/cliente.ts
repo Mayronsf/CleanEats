@@ -40,9 +40,16 @@ export const ROTULO_REFEICAO: Record<TipoRefeicao, string> = {
 };
 export const ROTULO_OBJETIVO = { EMAGRECIMENTO: 'Emagrecimento', GANHO_MASSA: 'Ganho de massa', EQUILIBRIO: 'Dieta equilibrada' } as const;
 
+export type Selo = 'alta-proteina' | 'vegano' | 'sem-gluten' | 'low-carb' | 'sem-lactose' | 'pescetariano';
+export type Ordenacao = 'relevancia' | 'nota' | 'preco_asc' | 'preco_desc' | 'proteina' | 'calorias';
 export interface FiltrosMarketplace {
-  busca?: string; categoria?: string[]; proteinaMin?: number; caloriasMax?: number; precoMin?: number; precoMax?: number;
-  idRestaurante?: string; notaMin?: number; ordenar?: string; favoritos?: boolean; pagina?: number; tamanho?: number;
+  busca?: string; selo?: Selo; proteina?: string[]; calorias?: string[]; precoMin?: number; precoMax?: number;
+  restaurante?: string[]; notaMin?: number; ordenar?: Ordenacao; favoritos?: boolean; pagina?: number; tamanho?: number;
+}
+export interface Facetas {
+  total: number; precoMin: number | null; precoMax: number | null;
+  calorias: { faixa: string; total: number }[]; proteinas: { faixa: string; total: number }[];
+  restaurantes: { id: string; nome: string; total: number }[]; nota45: number; nota40: number;
 }
 
 function query(params: Record<string, unknown>) {
@@ -57,6 +64,7 @@ function query(params: Record<string, unknown>) {
 }
 
 export const listarMarmitas = (f: FiltrosMarketplace = {}) => chamarApi<PaginaDto<Prato>>(`/marmitas${query({ ...f })}`);
+export const buscarFacetas = (f: Pick<FiltrosMarketplace, 'busca' | 'selo' | 'favoritos'>) => chamarApi<Facetas>(`/marmitas/facetas${query({ ...f })}`);
 export const listarCategorias = () => chamarApi<{ nome: string; total: number }[]>('/marmitas/categorias');
 export const buscarMarmita = (id: string) => chamarApi<PratoDetalhe>(`/marmitas/${id}`);
 export const favoritar = (id: string) => chamarApi<void>(`/favoritos/${id}`, { method: 'POST' });
