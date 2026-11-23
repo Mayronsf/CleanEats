@@ -32,3 +32,6 @@ Migrations e seed central aplicados no Supabase; login de demo funcionando. Seus
 
 ## [P] 22/11 — `GET /api/auth/me` agora traz `tier`
 `UsuarioDto` e `UsuarioAtual` ganharam o campo `tier` (FREE/BASIC/PRO/PREMIUM), que é o plano vigente. Use `useAuth().usuario.tier` em vez de buscar à parte (limite do NutriBot, desconto, prescrição). Depois de assinar ou trocar de plano, chame `queryClient.invalidateQueries({ queryKey: ['usuario-atual'] })`. A tela 09 chama `POST /api/assinatura` com `{ tier, ciclo, formaPagamento }` (frente A); enquanto ele não existir, mostra um erro amigável.
+
+## [P] 22/11 — Ficha pública pronta (frente A, tela 12)
+O QR Code da tela 12 deve codificar `urlFichaTecnica(prato.id)` (em `services/fichas.ts`), que aponta para `/ficha/:id`. A página e o `GET /api/fichas-tecnicas/{id}` já estão prontos.
