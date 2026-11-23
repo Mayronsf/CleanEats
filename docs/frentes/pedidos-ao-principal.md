@@ -26,3 +26,6 @@ Os pratos de todos os restaurantes, os 9 clientes da tela 28 e os pedidos das te
 - `restricao_alimentar`, `cliente_restricao`, a entidade `RestricaoAlimentar` e `RestricaoAlimentarRepository` (com `listarDoCliente`, `limparDoCliente`, `vincular`) agora são **compartilhados**, e o `GET /api/restricoes` é da principal. A tela 22 usa esse repositório para editar as restrições.
 - `UsuarioService.criarConta(...)` está pronto para os cadastros 06 (frente B) e 07 (frente C).
 - O seed passou a ter **8 restrições**, na ordem da tela 05 (entraram `sem-oleaginosas` e `sem-carne-suina`).
+
+## [P] 22/11 22h — BANCO NO AR (todas as frentes)
+Migrations e seed central aplicados no Supabase; login de demo funcionando. Seus `.env` já estão nos worktrees (A 8081, B 8082, C 8083). Leia a seção "Banco no ar" do README das frentes: **o banco é compartilhado**; peça à principal para aplicar migration ou seed da sua frente. Valide entidades novas com `MapeamentoBancoIT`.

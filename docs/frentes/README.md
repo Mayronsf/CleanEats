@@ -57,8 +57,50 @@ Motivo: tela 12 mostra …  ·  Proposta: coluna `x` em marmita + getter na enti
 ```
 Enquanto isso, siga com outra tela. A principal publica a mudança em `main`; a frente puxa com `git merge main`.
 
-## Até as chaves chegarem (22/11 à noite)
-Supabase, Anthropic e Resend ainda não estão configurados. Até lá, **converta as telas sem depender do banco real**: componentes, layout fiel ao HTML, estados (loading/vazio/erro) e o contrato da API (DTOs do backend + funções em `services/<frente>.ts` + hooks do TanStack Query). Os testes de componente usam dados fictícios **só nos arquivos de teste** — nunca dentro do componente. Quando as chaves chegarem, a principal aplica o banco e avisa; aí cada frente liga as telas aos dados reais.
+## Banco no ar (22/11, 22h)
+O Supabase do projeto já tem as migrations e o seed central aplicados. Login de demo funcionando: , , ,  com a senha .
+- Cada worktree já tem  e , ignorados pelo git: **A na porta 8081, B na 8082, C na 8083**. O  de cada worktree já aponta para a porta certa. Não copie esses arquivos para outro lugar e não os commite.
+- **O banco é compartilhado pelas 4 sessões.** Não rode  nem apague dados: peça à principal. Para aplicar a migration ou o seed da sua frente, mande o pedido em ; a principal aplica e avisa.
+- Criou entidade nova? Antes de cada integração, rode [INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< com.tricode:cleaneats >------------------------
+[INFO] Building CleanEats API 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ cleaneats ---
+[INFO] Copying 1 resource from srcmainesources to targetclasses
+[INFO] Copying 0 resource from srcmainesources to targetclasses
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ cleaneats ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ cleaneats ---
+[INFO] skip non existing resourceDirectory C:UsersjanieDownloadsFábrica de Softwarecleaneatsackendsrc	estesources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ cleaneats ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.4:test (default-test) @ cleaneats ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.tricode.cleaneats.MapeamentoBancoIT
+[WARNING] Tests run: 1, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.005 s -- in com.tricode.cleaneats.MapeamentoBancoIT
+[INFO] 
+[INFO] Results:
+[INFO] 
+[WARNING] Tests run: 1, Failures: 0, Errors: 0, Skipped: 1
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.129 s
+[INFO] Finished at: 2026-11-22T21:59:07-03:00
+[INFO] ------------------------------------------------------------------------. Ele lê todas as entidades do banco real e acusa erro de mapeamento.
+- Siga a ordem: primeiro as telas lendo dados reais (GET), depois as ações.
 
 ## Ritmo e sincronização
 - **Etapa 1 (até 23/11 12h):** todas as telas da frente **navegáveis com dados reais** (GET da API + seed da frente). Nada fixo em componente. Botões ainda podem só navegar.
