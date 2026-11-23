@@ -147,3 +147,11 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET · PATCH | `/api/admin/contatos?abertos=` · `/contatos/{id}` | Fila do Fale conosco; marcar respondido/reabrir | — |
 | GET · PUT | `/api/admin/plataforma` · `/restaurantes/{id}/comissao` | Assinaturas e comissão por restaurante (0–30%) | 17 |
 | POST | `/api/admin/assinaturas/simular-renovacao` | { ate } renova ATIVAS vencidas (fatura PAGA), expira CANCELADAS (volta ao Free), retoma PAUSADAS | 16 |
+
+## Gestão do restaurante (telas 41, 42, 43) — frente C
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/painel-restaurante/analytics?dias=7|30|90` | Pedidos, faturamento, nota e recompra vs período anterior; série por dia/semana; top 5; distribuição de notas | 14 |
+| GET | `/api/painel-restaurante/financeiro?mes=AAAA-MM` | Bruto, comissão congelada, líquido, já pago, 6 meses, repasses, chave PIX | 17 |
+| GET | `/api/painel-restaurante/financeiro/csv?mes=` | CSV dos pedidos do mês (bruto/comissão/líquido) | 17 |
+| GET | `/api/painel-restaurante/relatorios` · `/relatorios/{TIPO}?inicio&fim&formato=PDF|CSV&registrar` | Histórico e geração (OpenPDF) de vendas, financeiro, avaliações, clientes, cardápio e operacional | 17 |

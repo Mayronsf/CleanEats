@@ -14,6 +14,9 @@ const AprovacoesAdminPage = lazy(() => import('../../features/admin/AprovacoesPa
 const AvaliacoesAdminPage = lazy(() => import('../../features/admin/AvaliacoesAdminPage'));
 const SuporteAdminPage = lazy(() => import('../../features/admin/SuporteAdminPage'));
 const PlataformaAdminPage = lazy(() => import('../../features/admin/PlataformaAdminPage'));
+const AnalyticsPage = lazy(() => import('../../features/restaurante/gestao/AnalyticsPage'));
+const FinanceiroRestaurantePage = lazy(() => import('../../features/restaurante/gestao/FinanceiroPage'));
+const RelatoriosPage = lazy(() => import('../../features/restaurante/gestao/RelatoriosPage'));
 const PedidosRestaurantePage = lazy(() => import('../../features/restaurante/pedidos/PedidosPage'));
 
 /**
@@ -44,9 +47,9 @@ export const rotasRestaurante: RouteObject[] = [
       { path: 'cardapio/novo', element: <PratoFormPage key="novo" /> },
       { path: 'cardapio/:id/editar', element: <PratoFormPage /> },
       { path: 'aprovacao', element: <AprovacaoRestaurantePage /> },
-      { path: 'analytics', element: emConstrucao('41', '41-resto-analytics') },
-      { path: 'financeiro', element: emConstrucao('42', '42-resto-financeiro') },
-      { path: 'relatorios', element: emConstrucao('43', '43-resto-relatorios') },
+      { path: 'analytics', element: <AnalyticsPage /> },
+      { path: 'financeiro', element: <FinanceiroRestaurantePage /> },
+      { path: 'relatorios', element: <RelatoriosPage /> },
       { path: 'perfil', element: emConstrucao('44', '44-resto-perfil') },
     ],
   },

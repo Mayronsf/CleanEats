@@ -1,4 +1,5 @@
-import { chamarApi } from './api';
+import { API_URL, chamarApi, ErroApi } from './api';
+import { supabase } from './supabase';
 
 /** Serviços do painel do restaurante (telas 07, 36–44). Dono: frente C. */
 export type StatusPedido = 'NOVO' | 'ACEITO' | 'RECUSADO' | 'PREPARANDO' | 'PRONTO' | 'A_CAMINHO' | 'ENTREGUE' | 'CANCELADO';
@@ -59,3 +60,37 @@ export const enviarFotoPrato = (arquivo: File) => {
 export const ROTULO_STATUS_PRATO: Record<StatusPrato, string> = {
   RASCUNHO: 'Rascunho', EM_ANALISE: 'Em análise', APROVADO: 'Ativo', REJEITADO: 'Rejeitado', PAUSADO: 'Pausado',
 };
+
+// ---------- Gestão (telas 41, 42, 43) ----------
+export interface Comparado { atual: number | null; anterior: number | null }
+export interface AnalyticsRestaurante {
+  dias: number; pedidos: Comparado; faturamento: Comparado; nota: Comparado; recompra: Comparado;
+  serie: { rotulo: string; data: string; pedidos: number; receita: number }[]; topPratos: { nome: string; pedidos: number; receita: number }[];
+  distribuicao: Record<string, number>; totalAvaliacoes: number;
+}
+export interface FinanceiroRestaurante {
+  mes: string; comissaoPercentual: number; bruto: number; brutoAnterior: number; comissao: number; liquido: number; jaPago: number;
+  meses: { mes: string; liquido: number }[]; transacoes: { tipo: 'ENTRADA' | 'SAIDA'; descricao: string; data: string; valor: number; status: string }[];
+  chavePix: string | null; tipoChavePix: string | null; titularPix: string | null; mesesDisponiveis: string[];
+}
+export interface RelatorioGerado { id: string; tipo: TipoRelatorio; formato: 'PDF' | 'CSV'; inicio: string; fim: string; geradoEm: string }
+export type TipoRelatorio = 'VENDAS' | 'FINANCEIRO' | 'AVALIACOES' | 'CLIENTES' | 'CARDAPIO' | 'OPERACIONAL';
+
+export const buscarAnalytics = (dias: number) => chamarApi<AnalyticsRestaurante>(`/painel-restaurante/analytics?dias=${dias}`);
+export const buscarFinanceiro = (mes?: string) => chamarApi<FinanceiroRestaurante>(`/painel-restaurante/financeiro${mes ? `?mes=${mes}` : ''}`);
+export const buscarRelatorios = () => chamarApi<RelatorioGerado[]>('/painel-restaurante/relatorios');
+
+/** Baixa um arquivo autenticado (PDF/CSV) e dispara o download no navegador. */
+export async function baixarArquivo(caminho: string, nomePadrao: string) {
+  const { data } = await supabase.auth.getSession();
+  const resposta = await fetch(`${API_URL}${caminho}`, { headers: data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {} });
+  if (!resposta.ok) {
+    const corpo = await resposta.json().catch(() => null);
+    throw new ErroApi(resposta.status, corpo?.codigo ?? 'ERRO', corpo?.mensagem ?? 'Não foi possível gerar o arquivo.');
+  }
+  const nome = /filename\*=UTF-8''([^;]+)/.exec(resposta.headers.get('content-disposition') ?? '')?.[1];
+  const url = URL.createObjectURL(await resposta.blob());
+  const link = document.createElement('a');
+  link.href = url; link.download = nome ? decodeURIComponent(nome) : nomePadrao; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

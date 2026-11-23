@@ -899,15 +899,15 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Exportar | REAL | Download CSV/PDF gerado no backend | ☐ |
+| Exportar | REAL | Download CSV/PDF gerado no backend | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 43 · 43-resto-relatorios — `/restaurante/relatorios` — frente C
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Gerar relatório | REAL | Download CSV/PDF gerado no backend | ☐ |
-| Baixar | REAL | Download CSV/PDF gerado no backend | ☐ |
+| Gerar relatório | REAL | Download CSV/PDF gerado no backend | ☑ |
+| Baixar | REAL | Download CSV/PDF gerado no backend | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 44 · 44-resto-perfil — `/restaurante/perfil` — frente C
