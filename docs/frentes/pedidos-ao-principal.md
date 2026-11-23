@@ -38,3 +38,6 @@ O QR Code da tela 12 deve codificar `urlFichaTecnica(prato.id)` (em `services/fi
 
 ## [P] 22/11 — Buckets do Storage (frentes A, B, C)
 Os buckets já existem: `pratos` (fotos de prato, frente C), `restaurantes` (logo e capa, frente C), `avatares` (frente A), `avaliacoes` (fotos de avaliação, se usar) — todos públicos — e `prescricoes` (PDF, frente B), privado. Não crie buckets novos sem pedir.
+
+## [P] 23/11 — Upload de imagem pelo backend (frente C: fotos de prato, logo e capa)
+O navegador **não** tem política de escrita no Storage. Use `SupabaseServicoClient.enviarImagem(bucket, pasta, MultipartFile)` (service compartilhado): valida tipo/tamanho (5 MB) e devolve a URL pública. Endpoint multipart com `@RequestParam("arquivo")`; no front, `chamarApi` já aceita `FormData` (não force `Content-Type`). Falhas viram 503 (`ServicoExternoException`). Também: `NotificacaoService.notificar` agora respeita as preferências do usuário e pode devolver `null`. Rode `git merge main`.
