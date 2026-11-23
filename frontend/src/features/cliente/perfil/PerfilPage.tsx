@@ -199,7 +199,7 @@ export default function PerfilPage() {
                 <span className={s.nutriAvatar}>{p.nutricionista.avatarUrl ? <img src={p.nutricionista.avatarUrl} alt="" /> : iniciais(p.nutricionista.nome.replace(/^Dra?\.\s*/, ''))}<span className={s.online} /></span>
                 <div><p className={s.nutriRotulo}>Nutricionista</p><p className={s.nutriNome}>{p.nutricionista.nome}</p><p className={s.nutriCrn}>{p.nutricionista.crn}</p></div>
               </div>
-              <Link to="/app/nutribot" className={s.conversar}><MessageCircle size={16} aria-hidden /> Conversar com a nutri</Link>
+              <Link to="/app/nutribot?nutri=1" className={s.conversar}><MessageCircle size={16} aria-hidden /> Conversar com a nutri</Link>
             </> : <>
               <p className={s.semNutri}>No Pro e no Premium, uma nutricionista com CRN validado acompanha você e monta seu plano da semana.</p>
               <Link to="/app/assinatura" className={s.conversar}>Conhecer o plano Pro</Link>

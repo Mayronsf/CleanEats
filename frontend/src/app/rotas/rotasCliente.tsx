@@ -1,7 +1,6 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 import { LayoutCliente } from '../layouts/LayoutCliente';
-import { emConstrucao } from '../EmConstrucao';
 
 const HomeClientePage = lazy(() => import('../../features/cliente/home/HomeClientePage'));
 const MarketplacePage = lazy(() => import('../../features/cliente/marketplace/MarketplacePage'));
@@ -17,6 +16,7 @@ const PerfilPage = lazy(() => import('../../features/cliente/perfil/PerfilPage')
 const EditarPerfilPage = lazy(() => import('../../features/cliente/perfil/EditarPerfilPage'));
 const AvaliarPage = lazy(() => import('../../features/cliente/avaliar/AvaliarPage'));
 const MonteSuaMarmitaPage = lazy(() => import('../../features/cliente/monte/MonteSuaMarmitaPage'));
+const NutriBotPage = lazy(() => import('../../features/cliente/nutribot/NutriBotPage'));
 const MeuPlanoPage = lazy(() => import('../../features/cliente/plano/MeuPlanoPage'));
 
 /**
@@ -43,7 +43,7 @@ export const rotasCliente: RouteObject[] = [
       { path: 'perfil/editar', element: <EditarPerfilPage /> },
       { path: 'assinatura', element: <AssinaturaPage /> },
       { path: 'meu-plano', element: <MeuPlanoPage /> },
-      { path: 'nutribot', element: emConstrucao('25', '25-cliente-chatbot') },
+      { path: 'nutribot', element: <NutriBotPage /> },
     ],
   },
 ];

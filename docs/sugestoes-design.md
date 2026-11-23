@@ -20,3 +20,8 @@ divergir das telas (acessibilidade/responsivo) ou em que a Impeccable sugeriu al
 | 13 | Distância nos cards (telas 11, 12) | "Sabor Natural · 1.2km" | Mostra o tempo de entrega do restaurante ("25–35 min") | Não temos a localização do cliente (mapas são placeholder); o tempo vem do banco | Aplicado — confirmar |
 | 14 | Galeria da tela 12 | 4 miniaturas | Só a foto principal | Cada prato tem uma foto no banco; miniaturas repetidas confundiriam | Aplicado — confirmar |
 | 15 | Selo "Pescetariano" (tela 11) | Pílula de categoria | Filtra pratos com peixe ou compatíveis com vegetariano | Não existe restrição "pescetariano" no cadastro (tela 05) | Aplicado |
+
+## Tela 25 — NutriBot (23/11)
+- **Botão de anexo (clipe)** removido: o NutriBot não analisa foto de comida (fora do escopo, ver CLAUDE.md). Mantê-lo seria um botão sem ação.
+- **Botão de configurações (engrenagem)** removido do topo do chat: não há configuração do bot no escopo. A lixeira apaga a conversa atual.
+- **Microfone** só aparece quando o navegador suporta reconhecimento de voz (Chrome/Edge); transcreve em pt-BR para o campo.

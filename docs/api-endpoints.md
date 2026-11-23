@@ -112,3 +112,12 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 |---|---|---|---|
 | GET | `/api/componentes-marmita` | Componentes ativos, tamanhos P/M/G, limites por categoria, meta por refeição (450/650/550) e restaurante que prepara | 6 |
 | POST | `/api/componentes-marmita/calculo` | Preço e macros calculados no servidor. No pedido, item com `idMarmita: null` + `personalizacao` é recalculado do mesmo jeito | 6 |
+
+## NutriBot (tela 25) e chat com a nutri — frente A
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/nutribot` | Contexto real do dia, limite do plano, conversas e perguntas prontas | 21 |
+| POST | `/api/nutribot/perguntas` | **SSE**: eventos `texto`, `fim` ({idConversa, mensagem}), `erro`. Corpo { texto, idConversa? } | 8, 21 |
+| GET · DELETE | `/api/nutribot/conversas/{id}` | Mensagens de uma conversa / apagar | 21 |
+| GET | `/api/conversas/nutri` | Conversa do cliente com a nutri vinculada (marca as da nutri como lidas) | 19 |
+| POST | `/api/conversas/nutri/mensagens` | Cliente manda mensagem à nutri (notifica a nutri; a tela 33 responde) | 19 |

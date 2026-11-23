@@ -1,0 +1,107 @@
+.pagina { max-width: 1440px; margin: 0 auto; padding: 24px var(--page-pad-x, 64px) 32px; }
+.pagina button:focus-visible, .pagina a:focus-visible, .pagina textarea:focus-visible { outline: 2px solid var(--green-primary); outline-offset: 2px; }
+.grade { display: grid; grid-template-columns: 300px minmax(0, 1fr) 280px; gap: 24px; align-items: start; }
+
+.conversas, .chat, .cartao { background: var(--white); border: 1.5px solid var(--line); border-radius: 24px; }
+.conversas { padding: 20px 14px; height: calc(100vh - 150px); min-height: 560px; display: flex; flex-direction: column; position: sticky; top: 24px; }
+.tituloLateral { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; padding: 0 6px; }
+.subLateral { font-size: 12px; color: var(--gray-500); margin: 2px 0 14px; }
+.nova { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 6px; background: var(--green-primary); color: var(--white); border: none; border-radius: var(--radius-pill); padding: 13px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; }
+.nova:hover { background: var(--green-dark); }
+.lista { flex: 1; overflow-y: auto; border-top: 1px solid var(--line); padding-top: 10px; }
+.semConversas { font-size: 13px; color: var(--gray-500); padding: 12px; }
+.grupo { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-500); padding: 12px 10px 6px; }
+.conversa { width: 100%; display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 12px; border-radius: 14px; border: none; background: none; font: inherit; color: inherit; cursor: pointer; }
+.conversa:hover { background: var(--gray-100); }
+.conversa strong { font-size: 14px; font-weight: 700; }
+.conversa span { font-size: 12px; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conversa small { font-size: 10px; color: var(--gray-500); font-weight: 600; }
+.conversaAtiva { background: var(--green-bg); }
+
+.chat { display: flex; flex-direction: column; height: calc(100vh - 150px); min-height: 560px; overflow: hidden; }
+.chatTopo { display: flex; align-items: center; gap: 14px; padding: 18px 24px; background: linear-gradient(135deg, var(--green-bg) 0%, var(--white) 80%); }
+.botAvatar { position: relative; width: 52px; height: 52px; border-radius: 16px; background: var(--green-primary); color: var(--white); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.botAvatar i { position: absolute; right: -2px; bottom: -2px; width: 12px; height: 12px; border-radius: 50%; background: var(--green-accent); border: 2px solid var(--white); }
+.botInfo { flex: 1; }
+.botInfo h1 { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.seloIa { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; background: var(--gold); color: var(--ink); padding: 3px 8px; border-radius: var(--radius-pill); }
+.botInfo p { font-size: 12px; font-weight: 700; color: var(--green-dark); display: flex; align-items: center; gap: 6px; }
+.botInfo p i { width: 7px; height: 7px; border-radius: 50%; background: var(--green-primary); }
+.icone { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--white); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--ink); }
+.icone:hover:not(:disabled) { border-color: var(--prot); color: var(--prot); }
+.icone:disabled { opacity: 0.4; cursor: not-allowed; }
+.aviso { display: flex; align-items: flex-start; gap: 12px; background: #FDF4E3; border-top: 1px solid #F6E3BD; border-bottom: 1px solid #F6E3BD; padding: 12px 24px; color: var(--orange); }
+.aviso p { flex: 1; font-size: 12px; line-height: 1.5; color: var(--ink); }
+.linkNutri { background: none; border: none; padding: 0; font: inherit; font-weight: 800; color: var(--orange); cursor: pointer; text-decoration: underline; }
+.fecharAviso { background: none; border: none; cursor: pointer; color: var(--gray-500); }
+
+.mensagens { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.divisor { display: flex; align-items: center; gap: 12px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-500); }
+.divisor::before, .divisor::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.linha { display: flex; gap: 12px; align-items: flex-start; }
+.linhaEu { justify-content: flex-end; }
+.miniBot, .miniEu { width: 36px; height: 36px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; font-weight: 800; }
+.miniBot { background: var(--green-primary); color: var(--white); }
+.miniEu { background: var(--gray-100); color: var(--ink); }
+.blocoMsg { max-width: 78%; display: flex; flex-direction: column; }
+.linhaEu .blocoMsg { align-items: flex-end; }
+.balao { border-radius: 18px; padding: 14px 18px; font-size: 15px; line-height: 1.55; }
+.balao p + p, .balao p + ul, .balao ul + p { margin-top: 10px; }
+.balao ul { padding-left: 18px; }
+.balao li + li { margin-top: 4px; }
+.balaoBot { background: var(--white); border: 1.5px solid var(--line); border-top-left-radius: 4px; }
+.balaoEu { background: var(--ink); color: var(--white); border-top-right-radius: 4px; }
+.hora { font-size: 10px; color: var(--gray-500); margin-top: 4px; }
+.analisando { display: inline-flex; align-items: center; gap: 6px; background: var(--green-bg); color: var(--green-dark); font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: var(--radius-pill); animation: pulso 1.2s ease-in-out infinite; }
+.cursor { display: inline-block; width: 8px; height: 16px; background: var(--green-primary); margin-left: 2px; vertical-align: text-bottom; animation: pisca 0.9s steps(1) infinite; }
+@keyframes pulso { 50% { opacity: 0.55; } }
+@keyframes pisca { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .analisando, .cursor { animation: none; } }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 12px 24px 4px; border-top: 1px solid var(--line); }
+.chips button { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--line); background: var(--white); border-radius: var(--radius-pill); padding: 9px 14px; font: inherit; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; }
+.chips button:hover:not(:disabled) { border-color: var(--green-primary); background: var(--green-bg); }
+.chips button:disabled { opacity: 0.5; cursor: not-allowed; }
+.envio { display: flex; align-items: flex-end; gap: 10px; margin: 10px 24px 6px; background: var(--gray-100); border-radius: 18px; padding: 8px 8px 8px 16px; }
+.envio textarea { flex: 1; resize: none; border: none; background: none; font: inherit; font-size: 15px; padding: 10px 0; max-height: 140px; field-sizing: content; }
+.envio textarea:focus { outline: none; }
+.mic, .enviar { width: 44px; height: 44px; border-radius: 14px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mic { background: var(--white); color: var(--ink); }
+.micAtivo { background: var(--prot); color: var(--white); }
+.enviar { background: var(--green-primary); color: var(--white); }
+.enviar:disabled { opacity: 0.45; cursor: not-allowed; }
+.limite { font-size: 11px; color: var(--gray-500); text-align: center; padding-bottom: 10px; }
+.bloqueio { display: flex; align-items: center; gap: 14px; margin: 14px 24px 18px; padding: 16px 18px; border-radius: 18px; background: var(--green-bg); color: var(--green-dark); }
+.bloqueio p { flex: 1; font-size: 14px; font-weight: 600; color: var(--ink); }
+.botaoBloqueio { background: var(--green-primary); color: var(--white); text-decoration: none; border-radius: var(--radius-pill); padding: 11px 18px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+
+.lateral { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 24px; }
+.cartao { padding: 20px; }
+.contexto { background: var(--ink); color: var(--white); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 9px; }
+.contexto div { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+.contexto dt { color: rgba(255, 255, 255, 0.75); }
+.contexto dd { font-weight: 800; text-align: right; }
+.separador { border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 9px; margin-top: 3px; }
+.humano { background: linear-gradient(160deg, var(--green-bg) 0%, var(--green-bg-deep) 100%); border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+.humanoAvatar { width: 52px; height: 52px; border-radius: 50%; background: var(--white); color: var(--green-dark); font-weight: 800; display: inline-flex; align-items: center; justify-content: center; border: 3px solid var(--white); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); margin-bottom: 8px; }
+.humano h2 { font-size: 17px; font-weight: 800; }
+.humanoNome { font-size: 13px; font-weight: 800; color: var(--green-dark); }
+.humano p { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
+.humanoBotao { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; background: var(--ink); color: var(--white); border: none; border-radius: var(--radius-pill); padding: 13px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; text-decoration: none; }
+
+@media (max-width: 1280px) {
+  .grade { grid-template-columns: 260px minmax(0, 1fr); }
+  .lateral { grid-column: 1 / -1; position: static; flex-direction: row; }
+  .lateral > * { flex: 1; }
+}
+@media (max-width: 900px) {
+  .pagina { padding: 12px 12px 24px; }
+  .grade { grid-template-columns: minmax(0, 1fr); }
+  .conversas { position: static; height: auto; min-height: 0; max-height: 260px; }
+  .chat { height: calc(100vh - 120px); }
+  .lateral { flex-direction: column; }
+  .mensagens, .chatTopo { padding-left: 14px; padding-right: 14px; }
+  .chips { padding: 10px 14px 4px; }
+  .envio { margin: 8px 12px 6px; }
+  .blocoMsg { max-width: 88%; }
+}

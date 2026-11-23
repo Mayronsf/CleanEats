@@ -35,6 +35,8 @@ public class SecurityConfig {
             .cors(c -> {})
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a -> a
+                // Respostas em streaming (NutriBot, SSE): a requisição inicial já foi autenticada; o despacho assíncrono só entrega o resto
+                .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ASYNC, jakarta.servlet.DispatcherType.ERROR).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/saude").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/contatos-suporte").permitAll()

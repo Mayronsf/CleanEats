@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8080/api';
+export const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8080/api';
 
 export type PerfilUsuario = 'CLIENTE' | 'NUTRICIONISTA' | 'RESTAURANTE' | 'ADMIN';
 

@@ -1,4 +1,5 @@
-import { chamarApi } from './api';
+import { API_URL, chamarApi } from './api';
+import { supabase } from './supabase';
 export interface PaginaDto<T> { itens: T[]; pagina: number; totalPaginas: number; totalItens: number }
 
 /** Serviços da área do cliente (telas 10–25). Dono: frente A. */
@@ -247,3 +248,70 @@ export interface CalculoMonte {
 }
 export const buscarComponentesMarmita = () => chamarApi<CatalogoMonte>('/componentes-marmita');
 export const calcularMarmita = (s: SelecaoMonte) => chamarApi<CalculoMonte>('/componentes-marmita/calculo', { method: 'POST', body: JSON.stringify(s) });
+
+// ---------- NutriBot (tela 25) e chat com a nutri ----------
+export interface NutrientesDia { calorias: number; proteinas: number; carboidratos: number; gorduras: number; fibras: number; aguaMl: number }
+export interface ContextoNutriBot {
+  nome: string; tier: CodigoTierCliente; objetivo: Objetivo; metas: NutrientesDia; consumo: NutrientesDia; caloriasRestantes: number;
+  proteinaRestante: number | null; restricoes: string[]; observacoesAlimentares: string | null; proximaRefeicao: string | null; nutricionista: string | null;
+  refeicoesHoje: { horario: string | null; tipo: TipoRefeicao; prato: string; restaurante: string | null; calorias: number; proteinas: number; consumida: boolean }[];
+  pedidosHoje: { codigo: string; status: string; itens: string; calorias: number }[];
+}
+export interface EstadoNutriBot {
+  contexto: ContextoNutriBot; limite: { disponivel: boolean; porDia: number; usadasHoje: number; motivo: string | null };
+  conversas: { id: string; titulo: string; previa: string | null; atualizadaEm: string }[]; sugestoes: string[];
+}
+export interface MensagemNutriBot { id: string; autor: 'USUARIO' | 'BOT'; texto: string; criadoEm: string }
+export const buscarNutriBot = () => chamarApi<EstadoNutriBot>('/nutribot');
+export const buscarConversaNutriBot = (id: string) => chamarApi<MensagemNutriBot[]>(`/nutribot/conversas/${id}`);
+export const excluirConversaNutriBot = (id: string) => chamarApi<void>(`/nutribot/conversas/${id}`, { method: 'DELETE' });
+
+/** Pergunta com resposta em streaming (SSE via fetch, com o token do Supabase). */
+export async function perguntarNutriBot(texto: string, idConversa: string | null, eventos: {
+  aoTexto: (trecho: string) => void; aoFim: (idConversa: string, mensagem: MensagemNutriBot) => void; aoErro: (mensagem: string) => void;
+}, sinal?: AbortSignal) {
+  const { data } = await supabase.auth.getSession();
+  let resposta: Response;
+  try {
+    resposta = await fetch(`${API_URL}/nutribot/perguntas`, {
+      method: 'POST', signal: sinal,
+      headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream', ...(data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {}) },
+      body: JSON.stringify({ texto, idConversa }),
+    });
+  } catch {
+    eventos.aoErro('Não foi possível falar com o servidor.'); return;
+  }
+  if (!resposta.ok || !resposta.body) {
+    const corpo = await resposta.json().catch(() => null);
+    eventos.aoErro(corpo?.mensagem ?? 'NutriBot indisponível agora, tente de novo em instantes.'); return;
+  }
+  const leitor = resposta.body.getReader();
+  const decodificador = new TextDecoder();
+  let buffer = '';
+  let terminou = false;
+  for (;;) {
+    const { value, done } = await leitor.read();
+    if (done) break;
+    buffer += decodificador.decode(value, { stream: true }).replace(/\r\n/g, '\n');
+    let fimEvento: number;
+    while ((fimEvento = buffer.indexOf('\n\n')) >= 0) {
+      const bloco = buffer.slice(0, fimEvento);
+      buffer = buffer.slice(fimEvento + 2);
+      const nome = bloco.match(/^event:(.*)$/m)?.[1]?.trim();
+      const dados = bloco.split('\n').filter((l) => l.startsWith('data:')).map((l) => l.slice(5)).join('\n');
+      if (!nome || !dados) continue;
+      const json = JSON.parse(dados);
+      if (nome === 'texto') eventos.aoTexto(json.texto);
+      else if (nome === 'fim') { terminou = true; eventos.aoFim(json.idConversa, json.mensagem); }
+      else if (nome === 'erro') { terminou = true; eventos.aoErro(json.mensagem); }
+    }
+  }
+  if (!terminou) eventos.aoErro('A conexão caiu antes do fim da resposta. Tente de novo.');
+}
+
+export interface ConversaNutri {
+  nutricionista: { nome: string; crn: string; avatarUrl: string | null };
+  mensagens: { id: string; minha: boolean; texto: string; criadoEm: string; lidaEm: string | null }[];
+}
+export const buscarConversaNutri = () => chamarApi<ConversaNutri>('/conversas/nutri');
+export const enviarMensagemNutri = (texto: string) => chamarApi<ConversaNutri>('/conversas/nutri/mensagens', { method: 'POST', body: JSON.stringify({ texto }) });

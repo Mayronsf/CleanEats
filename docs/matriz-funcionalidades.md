@@ -640,28 +640,28 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Ok, vou de pizza proteica | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Prefiro manter o plano | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| E o pré-treino? | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Falar com a nutri | REAL | Abre conversa com a nutricionista vinculada | ☐ |
-| Posso comer X agora? | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Como tão meus macros? | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Tô com fome | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Sugestões pré-treino | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Lanche da madrugada | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| Bater proteína do dia | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/app` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Meu plano | REAL | Navega para `/app/meu-plano` | ☐ |
-| Pedidos | REAL | Navega para `/app/pedidos` | ☐ |
-| NutriBot | REAL | Navega para `/app/nutribot` | ☐ |
-| Meu perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Dra. Ana Souza | REAL | Abre o perfil da nutricionista vinculada | ☐ |
-| Pedir | REAL | Navega para `/app/carrinho` | ☐ |
-| Buscar | REAL | Navega para `/app/marketplace` | ☐ |
-| Perfil | REAL | Navega para `/app/perfil` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Ok, vou de pizza proteica | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Prefiro manter o plano | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| E o pré-treino? | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Falar com a nutri | REAL | Abre conversa com a nutricionista vinculada | ☑ |
+| Posso comer X agora? | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Como tão meus macros? | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Tô com fome | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Sugestões pré-treino | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Lanche da madrugada | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| Bater proteína do dia | REAL | Envia a pergunta ao NutriBot (POST /api/nutribot/mensagens, contexto real) | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/app` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Meu plano | REAL | Navega para `/app/meu-plano` | ☑ |
+| Pedidos | REAL | Navega para `/app/pedidos` | ☑ |
+| NutriBot | REAL | Navega para `/app/nutribot` | ☑ |
+| Meu perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Dra. Ana Souza | REAL | Abre o perfil da nutricionista vinculada | ☑ |
+| Pedir | REAL | Navega para `/app/carrinho` | ☑ |
+| Buscar | REAL | Navega para `/app/marketplace` | ☑ |
+| Perfil | REAL | Navega para `/app/perfil` | ☑ |
 
 ### 26 · 26-nutri-home (com menos infos) — `/nutri` — frente B
 
