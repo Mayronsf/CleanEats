@@ -131,3 +131,19 @@ export const pedirNovamente = (id: string) => chamarApi<{ itens: { prato: Prato;
 export const listarHistorico = (f: { status?: string; periodo?: string; ordenar?: string; pagina?: number; tamanho?: number }) =>
   chamarApi<PaginaDto<PedidoResumo>>(`/historico-pedidos${query({ ...f })}`);
 export const buscarResumoHistorico = () => chamarApi<ResumoHistorico>('/historico-pedidos/resumo');
+
+// ---------- Restaurantes (telas 13 e 14) ----------
+export interface Restaurante {
+  id: string; nome: string; sigla: string; descricao: string | null; capaUrl: string | null; logoUrl: string | null; cozinhas: string[];
+  nota: number; totalAvaliacoes: number; tempoEntregaMin: number; tempoEntregaMax: number; taxaEntrega: number; pedidoMinimo: number;
+  pratos: number; aberto: boolean; abreAs: string | null; destaque: boolean; bairro: string | null;
+}
+export interface RestauranteDetalhe {
+  restaurante: Restaurante; logradouro: string | null; numero: string | null; cep: string | null; cidade: string; uf: string; telefone: string | null;
+  horarios: { diaSemana: number; abre: string; fecha: string }[]; destaques: Prato[]; secoes: { categoria: string; pratos: Prato[] }[];
+  curadoria: { nome: string; crn: string } | null;
+}
+export const listarRestaurantes = (f: { cozinha?: string; busca?: string; ordenar?: string; pagina?: number; tamanho?: number }) =>
+  chamarApi<PaginaDto<Restaurante>>(`/restaurantes${query({ ...f })}`);
+export const buscarResumoRestaurantes = () => chamarApi<{ total: number; tiposCozinha: number; notaMedia: number | null; cozinhas: { nome: string; total: number }[] }>('/restaurantes/resumo');
+export const buscarRestaurante = (id: string) => chamarApi<RestauranteDetalhe>(`/restaurantes/${id}`);

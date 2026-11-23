@@ -10,6 +10,8 @@ const CarrinhoPage = lazy(() => import('../../features/cliente/carrinho/Carrinho
 const PedidoConfirmadoPage = lazy(() => import('../../features/cliente/pedidos/PedidoConfirmadoPage'));
 const AcompanhamentoPage = lazy(() => import('../../features/cliente/pedidos/AcompanhamentoPage'));
 const HistoricoPage = lazy(() => import('../../features/cliente/pedidos/HistoricoPage'));
+const RestaurantesPage = lazy(() => import('../../features/cliente/restaurantes/RestaurantesPage'));
+const PerfilRestaurantePage = lazy(() => import('../../features/cliente/restaurantes/PerfilRestaurantePage'));
 
 /**
  * Rotas do cliente (/app) — DONA: FRENTE A (telas 10–25).
@@ -23,8 +25,8 @@ export const rotasCliente: RouteObject[] = [
       { index: true, element: <HomeClientePage /> },
       { path: 'marketplace', element: <MarketplacePage /> },
       { path: 'marmitas/:id', element: <DetalhePratoPage /> },
-      { path: 'restaurantes', element: emConstrucao('13', '13-cliente-restaurantes') },
-      { path: 'restaurantes/:id', element: emConstrucao('14', '14-cliente-perfil-restaurante') },
+      { path: 'restaurantes', element: <RestaurantesPage /> },
+      { path: 'restaurantes/:id', element: <PerfilRestaurantePage /> },
       { path: 'monte-sua-marmita', element: emConstrucao('15', '15-cliente-personalizacao') },
       { path: 'carrinho', element: <CarrinhoPage /> },
       { path: 'pedidos/:id/confirmado', element: <PedidoConfirmadoPage /> },
