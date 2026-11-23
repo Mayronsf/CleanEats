@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
-  ArrowRight, Beef, Check, ChevronLeft, ChevronRight, Fish, LayoutGrid, List, MilkOff, Search, SlidersHorizontal, Sparkles,
+  ArrowRight, Beef, Check, ChevronLeft, Heart, ChevronRight, Fish, LayoutGrid, List, MilkOff, Search, SlidersHorizontal, Sparkles,
   Star, Vegan, WheatOff, X, Zap,
 } from 'lucide-react';
 import { EmptyState, ErroCarregamento, SkeletonCardPrato } from '../../../design-system';
@@ -184,10 +184,6 @@ export default function MarketplacePage() {
               </button>
             );
           })}
-          <button type="button" className={`${s.pilula} ${filtros.favoritos ? s.pilulaAtiva : ''}`} aria-pressed={filtros.favoritos}
-            onClick={() => alterar({ favoritos: filtros.favoritos ? null : '1' })}>
-            ♥ Favoritos
-          </button>
         </div>
         <div className={s.divisor} />
         <div className={s.controles}>
@@ -196,6 +192,10 @@ export default function MarketplacePage() {
             {filtros.busca && <> para “{filtros.busca}” <button type="button" className={s.tirarBusca} onClick={() => alterar({ busca: null })} aria-label="Limpar busca"><X size={12} aria-hidden /></button></>}
           </p>
           <div className={s.controlesDireita}>
+            <button type="button" className={`${s.ordenar} ${filtros.favoritos ? s.ordenarAtivo : ''}`} aria-pressed={filtros.favoritos}
+              onClick={() => alterar({ favoritos: filtros.favoritos ? null : '1' })}>
+              <Heart size={14} fill={filtros.favoritos ? 'currentColor' : 'none'} aria-hidden /> Favoritos
+            </button>
             <button type="button" className={`${s.ordenar} ${s.soCelular}`} onClick={() => setLateralAberta(true)}><SlidersHorizontal size={14} aria-hidden /> Filtros</button>
             <label className={s.ordenar}>
               <span>⇅ Ordenar:</span>

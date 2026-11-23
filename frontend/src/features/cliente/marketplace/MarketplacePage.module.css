@@ -106,3 +106,4 @@
   .divisor { margin: 0 -16px 16px; }
   .pratos:not(.pratosLista) { grid-template-columns: minmax(0, 1fr); }
 }
+.ordenarAtivo { border-color: var(--green-primary); background: var(--green-bg); color: var(--green-dark); }
