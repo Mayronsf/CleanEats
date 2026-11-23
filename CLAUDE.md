@@ -1,5 +1,7 @@
 # CLAUDE.md — CleanEats (TRICODE Solutions · UNIFACOL)
 
+> **Continuando o trabalho (outra pessoa/máquina)?** Leia primeiro [`CONTEXTO-CLAUDE-CODE.md`](CONTEXTO-CLAUDE-CODE.md): estado atual, o que falta, como rodar e como dividir as frentes.
+
 Leia isto no início de toda sessão. Prompt original: `docs/PROMPT-CLAUDE-CODE-CLEANEATS.md`.
 Documentação do projeto: `docs/cleaneats-documentacao.md` (backlog CE-1 a CE-21 = critérios de aceite).
 
