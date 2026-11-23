@@ -11,7 +11,7 @@
 1. Criar o projeto. **Authentication → Providers**: Email ligado; **Google** ligado (Client ID/Secret do Google Cloud Console, tipo "Web application", redirect `https://<projeto>.supabase.co/auth/v1/callback`).
 2. **Authentication → URL Configuration**: Site URL = URL da Vercel; Redirect URLs = `http://localhost:5173/auth/callback`, `https://<app>.vercel.app/auth/callback`.
 3. **Authentication → SMTP**: configurar o SMTP do Resend (`smtp.resend.com`, porta 465, usuário `resend`, senha = API key) — o SMTP padrão só envia para e-mails da equipe e tem limite por hora. Sem domínio verificado no Resend, só o e-mail do dono da conta recebe (tela 08 demonstrada com esse e-mail). Template "Reset password" com `{{ .Token }}` (código de 6 dígitos) e expiração de 15 min (Auth → Settings → OTP expiry = 900).
-4. **Storage**: buckets `pratos` (público), `avatares` (público), `logos` (público), `prescricoes` (privado).
+4. **Storage** (já existem no projeto): `pratos`, `restaurantes` (logo e capa), `avatares` e `avaliacoes` públicos; `prescricoes` privado. O `fotos-refeicoes` sobrou do setup anterior e não é usado (o registro por foto está fora do escopo).
 5. Banco: preencher `backend/.env` e rodar `npm install && npm run banco` na raiz (ou colar migrations + `supabase/seed-completo.sql` no SQL Editor). **Feito em 22/11**: projeto `awktnlswurcxkehpzoch`, pooler `aws-1-sa-east-1.pooler.supabase.com:5432` (sessão). O schema antigo que existia no projeto foi substituído pelo do repositório, com autorização do usuário.
 
 ## 2. API no Render

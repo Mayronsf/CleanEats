@@ -35,3 +35,6 @@ Migrations e seed central aplicados no Supabase; login de demo funcionando. Seus
 
 ## [P] 22/11 — Ficha pública pronta (frente A, tela 12)
 O QR Code da tela 12 deve codificar `urlFichaTecnica(prato.id)` (em `services/fichas.ts`), que aponta para `/ficha/:id`. A página e o `GET /api/fichas-tecnicas/{id}` já estão prontos.
+
+## [P] 22/11 — Buckets do Storage (frentes A, B, C)
+Os buckets já existem: `pratos` (fotos de prato, frente C), `restaurantes` (logo e capa, frente C), `avatares` (frente A), `avaliacoes` (fotos de avaliação, se usar) — todos públicos — e `prescricoes` (PDF, frente B), privado. Não crie buckets novos sem pedir.
