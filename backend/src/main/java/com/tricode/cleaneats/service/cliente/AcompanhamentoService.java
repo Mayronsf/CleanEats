@@ -107,6 +107,17 @@ public class AcompanhamentoService {
                 new NutricionistaMiniDto(c.idNutri(), c.nomeNutri(), c.crn(), c.avatar()), refeicoes));
     }
 
+    /** Registra água bebida hoje (ml positivo soma, negativo desfaz), entre 0 e 10 L. */
+    public ConsumoDto registrarAgua(UUID idUsuario, int ml) {
+        if (ml == 0 || Math.abs(ml) > 2000) throw new IllegalArgumentException("Quantidade de água inválida");
+        var hoje = hoje();
+        jdbc.sql("""
+                insert into consumo_diario (id_usuario, data, agua_ml) values (:u, :d, greatest(:ml, 0))
+                on conflict (id_usuario, data) do update set agua_ml = least(greatest(consumo_diario.agua_ml + :ml, 0), 10000)""")
+                .param("u", idUsuario).param("d", hoje).param("ml", ml).update();
+        return consumo(idUsuario, hoje);
+    }
+
     public ResumoDto resumo(UUID idUsuario) {
         return jdbc.sql("""
                 select u.nome, u.id_tier, pc.objetivo_nutricional,

@@ -598,43 +598,43 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Hoje | REAL | Seleciona dia do plano | ☐ |
-| Seg 12 Concluído | REAL | Seleciona dia do plano | ☐ |
-| Ter 13 Concluído | REAL | Seleciona dia do plano | ☐ |
-| Qua 14 Hoje | REAL | Seleciona dia do plano | ☐ |
-| Qui 15 Planejado | REAL | Seleciona dia do plano | ☐ |
-| Sex 16 Planejado | REAL | Seleciona dia do plano | ☐ |
-| Sáb 17 Planejado | REAL | Seleciona dia do plano | ☐ |
-| Dom 18 Livre | REAL | Seleciona dia do plano | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/app` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Meu plano | REAL | Navega para `/app/meu-plano` | ☐ |
-| Pedidos | REAL | Navega para `/app/pedidos` | ☐ |
-| NutriBot | REAL | Navega para `/app/nutribot` | ☐ |
-| Meu perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Conversar com a nutri | REAL | Navega para `/app/nutribot` | ☐ |
-| Pedir agora | REAL | Navega para `/app/carrinho` | ☐ |
-| Pedir | REAL | Navega para `/app/marmitas/:id` | ☐ |
-| Buscar | REAL | Navega para `/app/marketplace` | ☐ |
-| Perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Seg | REAL | Seleciona dia do plano | ☐ |
-| 12 | REAL | Paginação / navegação de período | ☐ |
-| Ter | REAL | Seleciona dia do plano | ☐ |
-| 13 | REAL | Paginação / navegação de período | ☐ |
-| Qua | REAL | Seleciona dia do plano | ☐ |
-| 14 | REAL | Paginação / navegação de período | ☐ |
-| Qui | REAL | Seleciona dia do plano | ☐ |
-| 15 | REAL | Paginação / navegação de período | ☐ |
-| Planejado | REAL | Seleciona dia do plano | ☐ |
-| Sex | REAL | Seleciona dia do plano | ☐ |
-| 16 | REAL | Paginação / navegação de período | ☐ |
-| Sáb | REAL | Seleciona dia do plano | ☐ |
-| 17 | REAL | Paginação / navegação de período | ☐ |
-| Dom | REAL | Seleciona dia do plano | ☐ |
-| 18 | REAL | Paginação / navegação de período | ☐ |
-| Livre | REAL | Seleciona dia do plano | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Hoje | REAL | Seleciona dia do plano | ☑ |
+| Seg 12 Concluído | REAL | Seleciona dia do plano | ☑ |
+| Ter 13 Concluído | REAL | Seleciona dia do plano | ☑ |
+| Qua 14 Hoje | REAL | Seleciona dia do plano | ☑ |
+| Qui 15 Planejado | REAL | Seleciona dia do plano | ☑ |
+| Sex 16 Planejado | REAL | Seleciona dia do plano | ☑ |
+| Sáb 17 Planejado | REAL | Seleciona dia do plano | ☑ |
+| Dom 18 Livre | REAL | Seleciona dia do plano | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/app` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Meu plano | REAL | Navega para `/app/meu-plano` | ☑ |
+| Pedidos | REAL | Navega para `/app/pedidos` | ☑ |
+| NutriBot | REAL | Navega para `/app/nutribot` | ☑ |
+| Meu perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Conversar com a nutri | REAL | Navega para `/app/nutribot` | ☑ |
+| Pedir agora | REAL | Navega para `/app/carrinho` | ☑ |
+| Pedir | REAL | Navega para `/app/marmitas/:id` | ☑ |
+| Buscar | REAL | Navega para `/app/marketplace` | ☑ |
+| Perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Seg | REAL | Seleciona dia do plano | ☑ |
+| 12 | REAL | Paginação / navegação de período | ☑ |
+| Ter | REAL | Seleciona dia do plano | ☑ |
+| 13 | REAL | Paginação / navegação de período | ☑ |
+| Qua | REAL | Seleciona dia do plano | ☑ |
+| 14 | REAL | Paginação / navegação de período | ☑ |
+| Qui | REAL | Seleciona dia do plano | ☑ |
+| 15 | REAL | Paginação / navegação de período | ☑ |
+| Planejado | REAL | Seleciona dia do plano | ☑ |
+| Sex | REAL | Seleciona dia do plano | ☑ |
+| 16 | REAL | Paginação / navegação de período | ☑ |
+| Sáb | REAL | Seleciona dia do plano | ☑ |
+| 17 | REAL | Paginação / navegação de período | ☑ |
+| Dom | REAL | Seleciona dia do plano | ☑ |
+| 18 | REAL | Paginação / navegação de período | ☑ |
+| Livre | REAL | Seleciona dia do plano | ☑ |
 
 ### 25 · 25-cliente-chatbot — `/app/nutribot` — frente A
 

@@ -27,6 +27,11 @@ public class AcompanhamentoController {
         return servico.consumo(UsuarioLogado.id(), data != null ? data : AcompanhamentoService.hoje());
     }
 
+    @PostMapping("/consumo-diario/agua")
+    public ConsumoDto agua(@RequestBody java.util.Map<String, Integer> corpo) {
+        return servico.registrarAgua(UsuarioLogado.id(), corpo.getOrDefault("ml", 0));
+    }
+
     /** 204 quando a nutricionista ainda não montou o plano (a tela mostra o estado vazio). */
     @GetMapping("/plano-alimentar")
     public ResponseEntity<PlanoDto> plano() {

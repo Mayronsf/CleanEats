@@ -147,3 +147,4 @@ export const listarRestaurantes = (f: { cozinha?: string; busca?: string; ordena
   chamarApi<PaginaDto<Restaurante>>(`/restaurantes${query({ ...f })}`);
 export const buscarResumoRestaurantes = () => chamarApi<{ total: number; tiposCozinha: number; notaMedia: number | null; cozinhas: { nome: string; total: number }[] }>('/restaurantes/resumo');
 export const buscarRestaurante = (id: string) => chamarApi<RestauranteDetalhe>(`/restaurantes/${id}`);
+export const registrarAgua = (ml: number) => chamarApi<Consumo>('/consumo-diario/agua', { method: 'POST', body: JSON.stringify({ ml }) });
