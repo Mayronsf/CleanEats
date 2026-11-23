@@ -1,23 +1,13 @@
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
 .marca {
-  width: 42px; height: 42px;
-  background: var(--green-primary);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--white);
-  font-size: 22px; font-weight: 700;
-  position: relative; flex-shrink: 0;
+  width: 40px; height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
 }
-.marca::before {
-  content: '';
-  position: absolute;
-  bottom: 6px; left: 6px; right: 6px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 2px;
-}
-.texto { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+.texto { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.025em; line-height: 1; }
 .verde { color: var(--green-primary); font-weight: 800; }
 
-.compacto .marca { width: 38px; height: 38px; border-radius: 11px; font-size: 19px; }
+.compacto { gap: 8px; }
+.compacto .marca { width: 34px; height: 34px; }
 .compacto .texto { font-size: 21px; }

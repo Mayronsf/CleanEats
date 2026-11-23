@@ -48,22 +48,24 @@ export default function LandingPage() {
   return (
     <div className={s.pagina}>
       <header className={s.nav}>
-        <Logo />
-        <nav aria-label="Principal">
-          <ul className={s.links}>
-            {LINKS.map((l) => <li key={l.rotulo}><a href={l.para} className={l.para === '/' ? s.ativo : undefined}>{l.rotulo}</a></li>)}
-          </ul>
-        </nav>
-        <div className={s.acoes}>
-          {minhaArea ? (
-            <Link to={minhaArea} className={s.btnPrimario}>Ir para minha área <ArrowRight size={16} aria-hidden /></Link>
-          ) : (
-            <>
-              <Link to="/login" className={s.btnLinha}>Login</Link>
-              <Link to="/cadastro" className={s.btnPrimario}>Criar conta <ArrowRight size={16} aria-hidden /></Link>
-            </>
-          )}
-          <button type="button" className={s.hamburguer} onClick={() => setMenu(true)} aria-label="Abrir menu" aria-expanded={menu}><Menu size={22} aria-hidden /></button>
+        <div className={s.navDentro}>
+          <Logo />
+          <nav aria-label="Principal">
+            <ul className={s.links}>
+              {LINKS.map((l) => <li key={l.rotulo}><a href={l.para} className={l.para === '/' ? s.ativo : undefined}>{l.rotulo}</a></li>)}
+            </ul>
+          </nav>
+          <div className={s.acoes}>
+            {minhaArea ? (
+              <Link to={minhaArea} className={s.btnPrimario}>Ir para minha área <ArrowRight size={16} aria-hidden /></Link>
+            ) : (
+              <>
+                <Link to="/login" className={s.btnLinha}>Login</Link>
+                <Link to="/cadastro" className={s.btnPrimario}>Criar conta <ArrowRight size={16} aria-hidden /></Link>
+              </>
+            )}
+            <button type="button" className={s.hamburguer} onClick={() => setMenu(true)} aria-label="Abrir menu" aria-expanded={menu}><Menu size={22} aria-hidden /></button>
+          </div>
         </div>
       </header>
       {menu && (
@@ -198,40 +200,44 @@ export default function LandingPage() {
         </section>
 
         <section className={s.numeros} aria-label="CleanEats em números">
-          {[
-            [n?.usuarios, 'Clientes ativos'], [n?.restaurantes, 'Restaurantes parceiros'],
-            [n?.nutricionistas, 'Nutricionistas CRN'], [n?.notaMedia != null ? String(n.notaMedia).replace('.', ',') : undefined, 'Avaliação média'],
-          ].map(([v, r]) => (
-            <div key={r as string} className={s.numero}>
-              <p className={s.numeroValor}>{v ?? '—'}</p>
-              <p className={s.numeroRotulo}>{r}</p>
-            </div>
-          ))}
+          <div className={s.numerosGrade}>
+            {[
+              [n?.usuarios, 'Clientes ativos'], [n?.restaurantes, 'Restaurantes parceiros'],
+              [n?.nutricionistas, 'Nutricionistas CRN'], [n?.notaMedia != null ? String(n.notaMedia).replace('.', ',') : undefined, 'Avaliação média'],
+            ].map(([v, r]) => (
+              <div key={r as string} className={s.numero}>
+                <p className={s.numeroValor}>{v ?? '—'}</p>
+                <p className={s.numeroRotulo}>{r}</p>
+              </div>
+            ))}
+          </div>
         </section>
       </main>
 
       <footer className={s.rodape}>
-        <div className={s.rodapeGrade}>
-          <div className={s.rodapeMarca}>
-            <Logo />
-            <p>Marketplace de alimentação saudável que conecta restaurantes, nutricionistas e clientes em um único ecossistema. Uma plataforma TRICODE Solutions.</p>
+        <div className={s.rodapeDentro}>
+          <div className={s.rodapeGrade}>
+            <div className={s.rodapeMarca}>
+              <Logo />
+              <p>Marketplace de alimentação saudável que conecta restaurantes, nutricionistas e clientes em um único ecossistema. Uma plataforma TRICODE Solutions.</p>
+            </div>
+            <nav aria-label="Produto">
+              <h4>Produto</h4>
+              <ul><li><Link to="/app/marketplace">Marketplace</Link></li><li><Link to="/planos">Planos de assinatura</Link></li><li><a href="#perfis">Nutricionistas</a></li><li><Link to="/app/restaurantes">Restaurantes</Link></li></ul>
+            </nav>
+            <nav aria-label="Empresa">
+              <h4>Empresa</h4>
+              <ul><li><a href="#como-funciona">Sobre nós</a></li><li><Link to="/termos#servico">Equipe TRICODE</Link></li><li><button type="button" onClick={() => setSuporte('Carreira na TRICODE')}>Carreira</button></li><li><button type="button" onClick={() => setSuporte('Contato')}>Contato</button></li></ul>
+            </nav>
+            <nav aria-label="Suporte">
+              <h4>Suporte</h4>
+              <ul><li><button type="button" onClick={() => setSuporte('Central de ajuda')}>Central de ajuda</button></li><li><Link to="/termos">Termos de uso</Link></li><li><Link to="/privacidade">Privacidade</Link></li><li><Link to="/privacidade#direitos">LGPD</Link></li></ul>
+            </nav>
           </div>
-          <nav aria-label="Produto">
-            <h4>Produto</h4>
-            <ul><li><Link to="/app/marketplace">Marketplace</Link></li><li><Link to="/planos">Planos de assinatura</Link></li><li><a href="#perfis">Nutricionistas</a></li><li><Link to="/app/restaurantes">Restaurantes</Link></li></ul>
-          </nav>
-          <nav aria-label="Empresa">
-            <h4>Empresa</h4>
-            <ul><li><a href="#como-funciona">Sobre nós</a></li><li><Link to="/termos#servico">Equipe TRICODE</Link></li><li><button type="button" onClick={() => setSuporte('Carreira na TRICODE')}>Carreira</button></li><li><button type="button" onClick={() => setSuporte('Contato')}>Contato</button></li></ul>
-          </nav>
-          <nav aria-label="Suporte">
-            <h4>Suporte</h4>
-            <ul><li><button type="button" onClick={() => setSuporte('Central de ajuda')}>Central de ajuda</button></li><li><Link to="/termos">Termos de uso</Link></li><li><Link to="/privacidade">Privacidade</Link></li><li><Link to="/privacidade#direitos">LGPD</Link></li></ul>
-          </nav>
-        </div>
-        <div className={s.rodapeBase}>
-          <p>© 2026 CleanEats — TRICODE Solutions · Recife · Brasil</p>
-          <p>v1.0 · MVP — UNIFACOL</p>
+          <div className={s.rodapeBase}>
+            <p>© 2026 CleanEats — TRICODE Solutions · Recife · Brasil</p>
+            <p>v1.0 · MVP — UNIFACOL</p>
+          </div>
         </div>
       </footer>
       <FaleConosco aberto={suporte !== null} onFechar={() => setSuporte(null)} assuntoInicial={suporte ?? ''} />

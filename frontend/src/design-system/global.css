@@ -22,6 +22,82 @@ a { color: inherit; }
   outline-offset: 2px;
 }
 
+/* Modais (<dialog>): centralizados na viewport + contenção de scroll + transição suave */
+dialog {
+  margin: auto;
+  opacity: 0;
+  transition-property: opacity, transform, display, overlay;
+  transition-duration: 0.24s;
+  transition-timing-function: var(--ease);
+  transition-behavior: allow-discrete;
+}
+
+dialog:modal {
+  margin: auto;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  background-color: rgba(26, 46, 26, 0);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  transition-property: background-color, display, overlay;
+  transition-duration: 0.24s;
+  transition-timing-function: var(--ease);
+  transition-behavior: allow-discrete;
+}
+
+dialog[open] {
+  opacity: 1;
+}
+
+dialog[open]::backdrop {
+  background-color: rgba(26, 46, 26, 0.45);
+}
+
+@starting-style {
+  dialog[open] {
+    opacity: 0;
+  }
+  dialog[open]::backdrop {
+    background-color: rgba(26, 46, 26, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog {
+    transform: translateY(10px) scale(0.97);
+  }
+  dialog[open] {
+    transform: translateY(0) scale(1);
+  }
+  @starting-style {
+    dialog[open] {
+      transform: translateY(10px) scale(0.97);
+    }
+  }
+}
+
+/* Entrada fluida de páginas na navegação */
+@keyframes paginaEntrar {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.paginaTransicao {
+  animation: paginaEntrar 0.28s var(--ease) both;
+}
+
 /* Palavra de destaque manuscrita nos títulos ("Entrar na sua conta") */
 .script {
   font-family: var(--font-script);
@@ -37,6 +113,12 @@ a { color: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  dialog {
+    transition-duration: 0.1s;
+  }
+  .paginaTransicao {
+    animation: none;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

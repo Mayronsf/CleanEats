@@ -29,7 +29,7 @@
 .pinoRotulo { position: absolute; background: var(--white); padding: 6px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800; white-space: nowrap; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); z-index: 3; }
 .rotuloRest { top: 20%; left: 24%; }
 .rotuloCliente { bottom: 13%; right: 23%; }
-.aoVivo { position: absolute; top: 24px; left: 24px; right: 24px; background: var(--white); border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; gap: 14px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); z-index: 5; }
+.aoVivo { position: absolute; top: 16px; left: 16px; right: 16px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(8px); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); z-index: 450; }
 .aoVivoPonto { width: 12px; height: 12px; background: var(--prot); border-radius: 50%; position: relative; flex-shrink: 0; }
 .aoVivoPonto::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--prot); border-radius: 50%; animation: pulso 1.5s infinite; }
 @keyframes pulso { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }

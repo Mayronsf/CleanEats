@@ -8,5 +8,10 @@ export const supabaseConfigurado = Boolean(url && anonKey && !url.includes('SEU-
 
 /** Cliente do Supabase no navegador — só com a chave anon/publishable (RLS protege os dados). */
 export const supabase: SupabaseClient = createClient(url ?? 'http://localhost:54321', anonKey ?? 'chave-ausente', {
-  auth: { persistSession: true, autoRefreshToken: true },
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+  },
 });

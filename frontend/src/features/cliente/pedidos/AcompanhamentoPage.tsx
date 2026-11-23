@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Bike, Headphones, MapPin, MessageCircle, Phone, Star, Store, User, XCircle } from 'lucide-react';
+import { ArrowLeft, Bike, Headphones, MapPin, MessageCircle, Phone, Star, XCircle } from 'lucide-react';
 import { Confirmacao, EmptyState, ErroCarregamento, Skeleton, TimelineStatusPedido, useToast } from '../../../design-system';
 import { usePedidoAoVivo } from '../../../hooks/cliente/usePedidoAoVivo';
 import { formatarData, formatarHora, partesPreco } from '../../../lib/formato';
@@ -9,12 +9,13 @@ import { ErroApi } from '../../../services/api';
 import { cancelarPedido, type PedidoDetalhe } from '../../../services/cliente';
 import { FaleConosco } from '../../suporte/FaleConosco';
 import { hojeIso } from '../tempo';
+import { MapaEntregaReal } from './MapaEntregaReal';
 import { horaDe, minutosParaChegar, veiculoSimulado } from './tempoPedido';
 import s from './AcompanhamentoPage.module.css';
 
 /**
- * Tela 18 — Acompanhamento. Timeline REAL (Realtime em historico_status_pedido, CE-14).
- * Entregador, veículo e mapa são SIMULADOS (decisão do escopo); o avanço PRONTO → A_CAMINHO → ENTREGUE vem do job do backend.
+ * Tela 18 — Acompanhamento. Timeline REAL (Realtime em historico_status_pedido, CE-14)
+ * com mapa interativo OpenStreetMap + rota real (OSRM) e entregador animado ao vivo.
  */
 export default function AcompanhamentoPage() {
   const { id = '' } = useParams();
@@ -24,8 +25,13 @@ export default function AcompanhamentoPage() {
   const pedido = usePedidoAoVivo(id);
   const [suporte, setSuporte] = useState(false);
   const [cancelando, setCancelando] = useState(false);
-  const [, setRelogio] = useState(0);
-  useEffect(() => { const t = setInterval(() => setRelogio((x) => x + 1), 30_000); return () => clearInterval(t); }, []);
+  const [agora, setAgora] = useState(() => Date.now());
+  const statusAtual = pedido.data?.status;
+  useEffect(() => {
+    const intervalo = statusAtual === 'A_CAMINHO' || statusAtual === 'PRONTO' ? 1_000 : 10_000;
+    const t = setInterval(() => setAgora(Date.now()), intervalo);
+    return () => clearInterval(t);
+  }, [statusAtual]);
 
   const cancelar = useMutation({
     mutationFn: () => cancelarPedido(id),
@@ -60,21 +66,13 @@ export default function AcompanhamentoPage() {
 
       <div className={s.grade}>
         <div className={s.esquerda}>
-          <section className={s.mapa} aria-label="Mapa da entrega (ilustrativo)">
-            <div className={s.mapaFundo} aria-hidden>
-              <span className={`${s.rua} ${s.rua1}`} /><span className={`${s.rua} ${s.rua2}`} /><span className={`${s.rua} ${s.rua3}`} />
-              <svg className={s.rota} viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M5 5 C 30 40, 60 30, 95 95" stroke="var(--green-primary)" strokeWidth="1.5" strokeDasharray="4 3" fill="none" vectorEffect="non-scaling-stroke" /></svg>
-              <span className={`${s.pino} ${s.pinoRest}`}><Store size={18} /></span>
-              <span className={`${s.pinoRotulo} ${s.rotuloRest}`}>{p.restaurante.nome}</span>
-              {(p.status === 'PRONTO' || p.status === 'A_CAMINHO' || p.status === 'ENTREGUE') && <span className={`${s.pino} ${s.pinoEntrega} ${p.status === 'A_CAMINHO' ? s.pinoAndando : ''}`} style={posicaoEntregador(p)}><Bike size={22} /></span>}
-              <span className={`${s.pino} ${s.pinoCliente}`}><User size={18} /></span>
-              <span className={`${s.pinoRotulo} ${s.rotuloCliente}`}>Você</span>
-            </div>
+          <section className={s.mapa} aria-label="Mapa da entrega em tempo real">
+            <MapaEntregaReal pedido={p} agora={agora} />
             <div className={s.aoVivo} role="status" aria-live="polite">
               <span className={s.aoVivoPonto} aria-hidden />
               <p className={s.aoVivoTexto}><strong>{tituloAoVivo(p, nomeEntregador)}</strong>{subtituloAoVivo(p)}</p>
               {(p.status === 'A_CAMINHO' || p.status === 'PRONTO' || p.status === 'PREPARANDO' || p.status === 'ACEITO' || p.status === 'NOVO') && (
-                <div className={s.eta}><p className={s.etaNum}>{minutosParaChegar(p)}min</p><p className={s.etaRotulo}>para chegar</p></div>
+                <div className={s.eta}><p className={s.etaNum}>{minutosParaChegar(p, agora)}min</p><p className={s.etaRotulo}>para chegar</p></div>
               )}
             </div>
           </section>
@@ -176,11 +174,4 @@ function subtituloAoVivo(p: PedidoDetalhe) {
   if (p.status === 'ENTREGUE') { const h = horaDe(p, 'ENTREGUE'); return h ? `Entregue às ${h}` : ''; }
   if (p.status === 'CANCELADO' || p.status === 'RECUSADO') return p.motivoRecusa ?? '';
   return 'Você recebe uma notificação a cada etapa';
-}
-
-/** Posição ilustrativa do entregador no mapa: no restaurante até sair, no meio do caminho, e na sua porta ao entregar. */
-function posicaoEntregador(p: PedidoDetalhe): React.CSSProperties {
-  if (p.status === 'A_CAMINHO') return { top: '55%', left: '50%' };
-  if (p.status === 'ENTREGUE') return { top: '68%', left: '70%' };
-  return { top: '30%', left: '30%' };
 }

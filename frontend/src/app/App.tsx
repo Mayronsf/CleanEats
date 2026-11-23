@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, useRoutes, type RouteObject } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, useLocation, useRoutes, type RouteObject } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../hooks/useAuth';
 import { ToastProvider } from '../design-system';
@@ -32,8 +32,24 @@ const rotas: RouteObject[] = [
   { path: '*', element: <NaoEncontradaPage /> },
 ];
 
+/** Rola sempre para o topo (ou âncora #hash) ao trocar de página e anima a entrada de forma fluida. */
 function Rotas() {
-  return useRoutes(rotas);
+  const { pathname, hash } = useLocation();
+  const elemento = useRoutes(rotas);
+
+  useEffect(() => {
+    if (hash) {
+      const alvo = document.getElementById(hash.slice(1));
+      if (alvo) {
+        alvo.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.querySelector<HTMLElement>('main')?.scrollTo?.({ top: 0, left: 0 });
+  }, [pathname, hash]);
+
+  return <div key={pathname} className="paginaTransicao">{elemento}</div>;
 }
 
 export function App() {

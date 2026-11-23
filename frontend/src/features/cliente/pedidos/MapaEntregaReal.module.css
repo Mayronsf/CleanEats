@@ -1,0 +1,131 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  height: 410px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #E8F5D8;
+  isolation: isolate;
+}
+
+.mapa {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.mapa :global(.leaflet-control-attribution) {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 2px 6px;
+  border-top-left-radius: 8px;
+}
+
+.mapa :global(.leaflet-control-zoom) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  margin-bottom: 24px !important;
+  margin-right: 14px !important;
+}
+
+.mapa :global(.leaflet-control-zoom a) {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  color: var(--ink) !important;
+  font-weight: 800;
+}
+
+/* Marcadores personalizados do mapa */
+.pinoBase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.bolha {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bolhaRest {
+  background: #E07856;
+}
+
+.bolhaCasa {
+  background: #1A2E1A;
+}
+
+.bolhaMoto {
+  width: 46px;
+  height: 46px;
+  background: #5BB033;
+  box-shadow: 0 0 0 6px rgba(91, 176, 51, 0.28), 0 8px 20px rgba(0, 0, 0, 0.28);
+  animation: pulsarMoto 1.8s ease-in-out infinite;
+}
+
+@keyframes pulsarMoto {
+  0%, 100% {
+    box-shadow: 0 0 0 5px rgba(91, 176, 51, 0.3), 0 8px 20px rgba(0, 0, 0, 0.28);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 11px rgba(91, 176, 51, 0.08), 0 10px 22px rgba(0, 0, 0, 0.24);
+    transform: scale(1.06);
+  }
+}
+
+.etiqueta {
+  background: #FFFFFF;
+  color: #1A2E1A;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
+}
+
+.barraProgresso {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  z-index: 450;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barraPonto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-primary);
+}
+
+@media (max-width: 767px) {
+  .wrap {
+    height: 330px;
+  }
+}
