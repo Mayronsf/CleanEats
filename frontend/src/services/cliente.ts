@@ -171,3 +171,41 @@ export const pausarAssinatura = acaoAssinatura('pausa');
 export const retomarAssinatura = acaoAssinatura('retomada');
 export const trocarFormaPagamento = (formaPagamento: 'PIX' | 'CARTAO') =>
   chamarApi<MinhaAssinatura>('/assinatura/forma-pagamento', { method: 'PATCH', body: JSON.stringify({ formaPagamento }) });
+
+// ---------- Perfil (telas 21 e 22) ----------
+export type Objetivo = keyof typeof ROTULO_OBJETIVO;
+export type NivelAtividade = 'SEDENTARIO' | 'LEVE' | 'MODERADO' | 'INTENSO' | 'ATLETA';
+export interface PerfilCliente {
+  id: string; nome: string; email: string; telefone: string | null; avatarUrl: string | null; capaUrl: string | null;
+  username: string | null; bio: string | null; membroDesde: string; tier: CodigoTierCliente; sexo: 'F' | 'M' | 'O' | null;
+  dataNascimento: string | null; idade: number | null; pesoKg: number | null; alturaCm: number | null; nivelAtividade: NivelAtividade | null;
+  imc: number | null; classificacaoImc: string | null; objetivo: Objetivo;
+  metas: { calorias: number | null; proteinas: number | null; carboidratos: number | null; gorduras: number | null; fibras: number | null; aguaMl: number | null };
+  metaPesoKg: number | null; prazoMetaMeses: number | null; restricoes: { id: number; slug: string; nome: string }[];
+  observacoesAlimentares: string | null; cidade: string | null; totalEnderecos: number; preferencias: Record<string, boolean>;
+  nutricionista: { nome: string; crn: string; avatarUrl: string | null } | null;
+}
+export interface AtualizarPerfil {
+  nome: string; telefone: string | null; username: string | null; bio: string | null; dataNascimento: string | null; sexo: 'F' | 'M' | 'O' | null;
+  pesoKg: number | null; alturaCm: number | null; nivelAtividade: NivelAtividade | null; objetivo: Objetivo;
+  metaPesoKg: number | null; prazoMetaMeses: number | null; restricoes: string[]; observacoesAlimentares: string | null;
+}
+export interface Conquista { codigo: string; nome: string; descricao: string; icone: string; obtida: boolean; obtidaEm: string | null; progresso: number; alvo: number }
+export interface EstatisticasPerfil {
+  pedidos: number; calorias: number; proteinas: number; avaliacoes: number; semanaInicio: string; diasRestantes: number;
+  semana: { nome: string; consumido: number; meta: number | null; previstoRestante: number }[]; conquistas: Conquista[];
+}
+export const buscarPerfil = () => chamarApi<PerfilCliente>('/perfil');
+export const atualizarPerfil = (dados: AtualizarPerfil) => chamarApi<PerfilCliente>('/perfil', { method: 'PUT', body: JSON.stringify(dados) });
+export const buscarEstatisticasPerfil = () => chamarApi<EstatisticasPerfil>('/perfil/estatisticas');
+const enviarImagemPerfil = (caminho: string) => (arquivo: File) => {
+  const corpo = new FormData();
+  corpo.append('arquivo', arquivo);
+  return chamarApi<PerfilCliente>(caminho, { method: 'POST', body: corpo });
+};
+export const enviarAvatar = enviarImagemPerfil('/perfil/avatar');
+export const enviarCapa = enviarImagemPerfil('/perfil/capa');
+export const removerAvatar = () => chamarApi<PerfilCliente>('/perfil/avatar', { method: 'DELETE' });
+export const salvarPreferenciasNotificacao = (p: Record<string, boolean>) =>
+  chamarApi<Record<string, boolean>>('/perfil/preferencias-notificacao', { method: 'PUT', body: JSON.stringify(p) });
+export const excluirConta = () => chamarApi<void>('/perfil', { method: 'DELETE' });

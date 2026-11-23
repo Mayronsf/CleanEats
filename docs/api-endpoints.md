@@ -89,3 +89,13 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | POST | `/api/admin/aprovacoes/{tipo}/{id}` | `{ decisao: APROVADO\|REJEITADO, motivo }` | 3, 18 |
 | GET | `/api/admin/avaliacoes?status=PENDENTE` · POST `/{id}/moderacao` | Moderação de avaliações | 11 |
 | GET | `/api/admin/restaurantes` · PATCH `/{id}/comissao` | Comissão por restaurante (padrão 8%) | 17 |
+
+
+## Perfil do cliente (telas 21 e 22) — frente A
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET · PUT | `/api/perfil` | Dados pessoais e físicos, objetivo (recalcula metas), restrições, meta de peso | 12 |
+| GET | `/api/perfil/estatisticas` | Pedidos, kcal, proteína, avaliações, metas da semana e conquistas (calculadas e gravadas) | 12 |
+| POST · DELETE | `/api/perfil/avatar` · POST `/api/perfil/capa` | Upload (multipart, campo `arquivo`) no bucket `avatares` pelo backend | 12 |
+| PUT | `/api/perfil/preferencias-notificacao` | Liga/desliga tipos no sino (NotificacaoService respeita) | 13 |
+| DELETE | `/api/perfil` | LGPD: anonimiza, apaga endereços/restrições, encerra assinatura e bloqueia o login | 12 |

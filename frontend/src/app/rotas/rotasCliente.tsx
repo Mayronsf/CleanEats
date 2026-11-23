@@ -13,6 +13,8 @@ const HistoricoPage = lazy(() => import('../../features/cliente/pedidos/Historic
 const RestaurantesPage = lazy(() => import('../../features/cliente/restaurantes/RestaurantesPage'));
 const PerfilRestaurantePage = lazy(() => import('../../features/cliente/restaurantes/PerfilRestaurantePage'));
 const AssinaturaPage = lazy(() => import('../../features/cliente/assinatura/AssinaturaPage'));
+const PerfilPage = lazy(() => import('../../features/cliente/perfil/PerfilPage'));
+const EditarPerfilPage = lazy(() => import('../../features/cliente/perfil/EditarPerfilPage'));
 const MeuPlanoPage = lazy(() => import('../../features/cliente/plano/MeuPlanoPage'));
 
 /**
@@ -35,8 +37,8 @@ export const rotasCliente: RouteObject[] = [
       { path: 'pedidos/:id', element: <AcompanhamentoPage /> },
       { path: 'pedidos', element: <HistoricoPage /> },
       { path: 'pedidos/:id/avaliar', element: emConstrucao('20', '20-cliente-avaliar') },
-      { path: 'perfil', element: emConstrucao('21', '21-cliente-perfil') },
-      { path: 'perfil/editar', element: emConstrucao('22', '22-cliente-editar-perfil') },
+      { path: 'perfil', element: <PerfilPage /> },
+      { path: 'perfil/editar', element: <EditarPerfilPage /> },
       { path: 'assinatura', element: <AssinaturaPage /> },
       { path: 'meu-plano', element: <MeuPlanoPage /> },
       { path: 'nutribot', element: emConstrucao('25', '25-cliente-chatbot') },

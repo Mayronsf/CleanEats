@@ -30,7 +30,7 @@ export async function chamarApi<T>(caminho: string, init: RequestInit = {}): Pro
     resposta = await fetch(`${API_URL}${caminho}`, {
       ...init,
       headers: {
-        'Content-Type': 'application/json',
+        ...(init.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...init.headers,
       },

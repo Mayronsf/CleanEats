@@ -493,69 +493,69 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/app` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Meu plano | REAL | Navega para `/app/meu-plano` | ☐ |
-| Pedidos | REAL | Navega para `/app/pedidos` | ☐ |
-| NutriBot | REAL | Navega para `/app/nutribot` | ☐ |
-| Meu perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Alterar capa | REAL | Navega para `/app/perfil/editar` | ☐ |
-| Editar perfil | REAL | Navega para `/app/perfil/editar` | ☐ |
-| Configurações | REAL | Navega para `/app/perfil/editar` | ☐ |
-| Ver histórico | REAL | Navega para `/app/pedidos` | ☐ |
-| Ver todas (12) | REAL | Abre a central de notificações | ☐ |
-| Gerenciar | REAL | Navega para `/app/assinatura` | ☐ |
-| Fazer upgrade | REAL | Navega para `/planos` | ☐ |
-| Conversar com a nutri | REAL | Navega para `/app/nutribot` | ☐ |
-| Dados pessoais Nome, contato, foto › | REAL | Navega para `/app/perfil/editar` | ☐ |
-| Endereços salvos 2 endereços cadastrados › | REAL | Seleciona/cadastra endereço (GET/POST /api/enderecos) | ☐ |
-| Métodos de pagamento 3 cartões salvos › | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Notificações Push, email e SMS › | REAL | Preferências de notificação: PUT /api/perfil/preferencias-notificacao | ☐ |
-| Segurança e privacidade Senha, 2FA, dados › | REAL | Seleciona dia do plano | ☐ |
-| Ajuda e suporte FAQ, contato, status › | REAL | Abre "Fale conosco" (POST /api/contatos-suporte) | ☐ |
-| ↪ Sair da conta Você precisará logar de novo › | REAL | Navega para `/login` | ☐ |
-| Buscar | REAL | Navega para `/app/marketplace` | ☐ |
-| Perfil | REAL | Navega para `/app/perfil` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/app` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Meu plano | REAL | Navega para `/app/meu-plano` | ☑ |
+| Pedidos | REAL | Navega para `/app/pedidos` | ☑ |
+| NutriBot | REAL | Navega para `/app/nutribot` | ☑ |
+| Meu perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Alterar capa | REAL | Navega para `/app/perfil/editar` | ☑ |
+| Editar perfil | REAL | Navega para `/app/perfil/editar` | ☑ |
+| Configurações | REAL | Navega para `/app/perfil/editar` | ☑ |
+| Ver histórico | REAL | Navega para `/app/pedidos` | ☑ |
+| Ver todas (12) | REAL | Abre a central de notificações | ☑ |
+| Gerenciar | REAL | Navega para `/app/assinatura` | ☑ |
+| Fazer upgrade | REAL | Navega para `/planos` | ☑ |
+| Conversar com a nutri | REAL | Navega para `/app/nutribot` | ☑ |
+| Dados pessoais Nome, contato, foto › | REAL | Navega para `/app/perfil/editar` | ☑ |
+| Endereços salvos 2 endereços cadastrados › | REAL | Seleciona/cadastra endereço (GET/POST /api/enderecos) | ☑ |
+| Métodos de pagamento 3 cartões salvos › | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Notificações Push, email e SMS › | REAL | Preferências de notificação: PUT /api/perfil/preferencias-notificacao | ☑ |
+| Segurança e privacidade Senha, 2FA, dados › | REAL | Seleciona dia do plano | ☑ |
+| Ajuda e suporte FAQ, contato, status › | REAL | Abre "Fale conosco" (POST /api/contatos-suporte) | ☑ |
+| ↪ Sair da conta Você precisará logar de novo › | REAL | Navega para `/login` | ☑ |
+| Buscar | REAL | Navega para `/app/marketplace` | ☑ |
+| Perfil | REAL | Navega para `/app/perfil` | ☑ |
 
 ### 22 · 22-cliente-editar-perfil — `/app/perfil/editar` — frente A
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Trocar foto | REAL | Upload no Storage (avatar) + PUT /api/perfil | ☐ |
-| Remover | REAL | Atualiza carrinho (estado local persistido) e recalcula prévia | ☐ |
-| Emagrecimento ~1.800 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Ganho de Massa ~2.200 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Equilíbrio ~2.000 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Sem glúten | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem lactose | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Vegetariano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Vegano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Low carb | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem oleaginosas | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem frutos do mar | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Sem carne suína | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☐ |
-| Excluir conta | REAL | DELETE /api/perfil (anonimiza dados, LGPD) + signOut | ☐ |
-| C Clean Eats | REAL | Navega para `/` | ☐ |
-| Home | REAL | Navega para `/app` | ☐ |
-| Marketplace | REAL | Navega para `/app/marketplace` | ☐ |
-| Meu plano | REAL | Navega para `/app/meu-plano` | ☐ |
-| Pedidos | REAL | Navega para `/app/pedidos` | ☐ |
-| NutriBot | REAL | Navega para `/app/nutribot` | ☐ |
-| Meu perfil | REAL | Navega para `/app/perfil` | ☐ |
-| (ícone) | REAL | Navega para `/app/perfil` | ☐ |
-| Descartar | REAL | Navega para `/app/perfil` | ☐ |
-| Salvar alterações | REAL | Navega para `/app/perfil` | ☐ |
-| Buscar | REAL | Navega para `/app/marketplace` | ☐ |
-| Perfil | REAL | Navega para `/app/perfil` | ☐ |
-| Emagrecimento | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| ~1.800 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Ganho de Massa | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| ~2.200 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| Equilíbrio | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
-| ~2.000 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Trocar foto | REAL | Upload no Storage (avatar) + PUT /api/perfil | ☑ |
+| Remover | REAL | Atualiza carrinho (estado local persistido) e recalcula prévia | ☑ |
+| Emagrecimento ~1.800 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Ganho de Massa ~2.200 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Equilíbrio ~2.000 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Sem glúten | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem lactose | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Vegetariano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Vegano | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Low carb | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem oleaginosas | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem frutos do mar | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Sem carne suína | REAL | Filtro/opção que atualiza resultados automaticamente (CE-10) | ☑ |
+| Excluir conta | REAL | DELETE /api/perfil (anonimiza dados, LGPD) + signOut | ☑ |
+| C Clean Eats | REAL | Navega para `/` | ☑ |
+| Home | REAL | Navega para `/app` | ☑ |
+| Marketplace | REAL | Navega para `/app/marketplace` | ☑ |
+| Meu plano | REAL | Navega para `/app/meu-plano` | ☑ |
+| Pedidos | REAL | Navega para `/app/pedidos` | ☑ |
+| NutriBot | REAL | Navega para `/app/nutribot` | ☑ |
+| Meu perfil | REAL | Navega para `/app/perfil` | ☑ |
+| (ícone) | REAL | Navega para `/app/perfil` | ☑ |
+| Descartar | REAL | Navega para `/app/perfil` | ☑ |
+| Salvar alterações | REAL | Navega para `/app/perfil` | ☑ |
+| Buscar | REAL | Navega para `/app/marketplace` | ☑ |
+| Perfil | REAL | Navega para `/app/perfil` | ☑ |
+| Emagrecimento | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| ~1.800 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Ganho de Massa | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| ~2.200 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| Equilíbrio | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
+| ~2.000 kcal/dia | REAL | Seleciona objetivo → filtra/prioriza pratos e meta de kcal | ☑ |
 
 ### 23 · 23-cliente-planos — `/app/assinatura` — frente A
 
