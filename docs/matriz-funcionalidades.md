@@ -866,27 +866,27 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| 1 | REAL | Paginação / navegação de período | ☐ |
-| 2 | REAL | Paginação / navegação de período | ☐ |
-| Novo prato | REAL | Navega para `/restaurante/cardapio/novo` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| 1 | REAL | Paginação / navegação de período | ☑ |
+| 2 | REAL | Paginação / navegação de período | ☑ |
+| Novo prato | REAL | Navega para `/restaurante/cardapio/novo` | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 39 · 39-resto-criar-prato — `/restaurante/cardapio/novo` — frente C
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Salvar prato | REAL | PUT/POST no recurso da tela (validação Bean Validation) | ☐ |
-| Cancelar | REAL | Navega para `/restaurante/cardapio` | ☐ |
+| Salvar prato | REAL | PUT/POST no recurso da tela (validação Bean Validation) | ☑ |
+| Cancelar | REAL | Navega para `/restaurante/cardapio` | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 40 · 40-resto-aprovacao — `/restaurante/aprovacao` — frente C
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| Pendente | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Aprovado | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
-| Rejeitado | REAL | Aba/filtro por status (consulta no servidor) | ☐ |
+| Pendente | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Aprovado | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
+| Rejeitado | REAL | Aba/filtro por status (consulta no servidor) | ☑ |
 | _Extração automática incompleta (botões em `div`): a frente completa esta lista na 1ª passada_ | | | |
 
 ### 41 · 41-resto-analytics — `/restaurante/analytics` — frente C

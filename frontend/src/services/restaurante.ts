@@ -27,3 +27,35 @@ export const mudarStatusPedido = (id: string, acao: AcaoPedido, motivo?: string)
 export const ROTULO_STATUS: Record<StatusPedido, string> = {
   NOVO: 'Novo', ACEITO: 'Aceito', PREPARANDO: 'Preparando', PRONTO: 'Pronto', A_CAMINHO: 'A caminho', ENTREGUE: 'Entregue', RECUSADO: 'Recusado', CANCELADO: 'Cancelado',
 };
+
+// ---------- Cardápio (telas 38, 39, 40) ----------
+export type StatusPrato = 'RASCUNHO' | 'EM_ANALISE' | 'APROVADO' | 'REJEITADO' | 'PAUSADO';
+export interface PratoLinha {
+  id: string; nome: string; categoria: string; imagemUrl: string | null; preco: number; calorias: number | null; pedidos: number;
+  status: StatusPrato; motivoRejeicao: string | null; tags: string[]; enviadoEm: string | null; avaliadoEm: string | null; tempoPreparoMin: number | null;
+}
+export interface Cardapio { pratos: PratoLinha[]; total: number; ativos: number; categorias: string[] }
+export interface PratoForm {
+  nome: string; descricao: string | null; categoria: string; preco: number | null; porcaoG: number | null; tempoPreparoMin: number | null; servePessoas: number | null;
+  calorias: number | null; proteinas: number | null; carboidratos: number | null; gorduras: number | null; fibras: number | null; sodioMg: number | null;
+  objetivos: string[]; alergenos: string[]; compatibilidades: string[]; tags: string[]; observacoesInternas: string | null; imagemUrl: string | null;
+  ingredientes: { nome: string; quantidade: string | null }[]; ativo: boolean;
+}
+export interface PratoDetalhe { id: string; status: StatusPrato; motivoRejeicao: string | null; dados: PratoForm }
+export interface SalvarPrato { id: string; status: StatusPrato; mensagem: string }
+
+export const buscarCardapio = () => chamarApi<Cardapio>('/painel-restaurante/pratos');
+export const buscarAlergenos = () => chamarApi<string[]>('/painel-restaurante/pratos/alergenos');
+export const buscarPrato = (id: string) => chamarApi<PratoDetalhe>(`/painel-restaurante/pratos/${id}`);
+export const salvarPrato = (id: string | null, f: PratoForm) =>
+  chamarApi<SalvarPrato>(id ? `/painel-restaurante/pratos/${id}` : '/painel-restaurante/pratos', { method: id ? 'PUT' : 'POST', body: JSON.stringify(f) });
+export const alternarPausaPrato = (id: string) => chamarApi<SalvarPrato>(`/painel-restaurante/pratos/${id}/pausa`, { method: 'POST' });
+export const reenviarPrato = (id: string) => chamarApi<SalvarPrato>(`/painel-restaurante/pratos/${id}/reenvio`, { method: 'POST' });
+export const enviarFotoPrato = (arquivo: File) => {
+  const corpo = new FormData();
+  corpo.append('arquivo', arquivo);
+  return chamarApi<{ url: string }>('/painel-restaurante/pratos/foto', { method: 'POST', body: corpo });
+};
+export const ROTULO_STATUS_PRATO: Record<StatusPrato, string> = {
+  RASCUNHO: 'Rascunho', EM_ANALISE: 'Em análise', APROVADO: 'Ativo', REJEITADO: 'Rejeitado', PAUSADO: 'Pausado',
+};

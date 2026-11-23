@@ -129,3 +129,11 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | GET | `/api/painel-restaurante/pedidos?aba=` | Fila do dia + abertos; abas TODOS/NOVOS/PREPARANDO/PRONTOS/ENTREGUES/ENCERRADOS com contagens | 14 |
 | PATCH | `/api/painel-restaurante/pedidos/{id}/status` | { acao: ACEITAR (→ACEITO→PREPARANDO) · RECUSAR (motivo, estorna consumo) · PRONTO · RETIRADA (→A_CAMINHO com entregador simulado) } + notificação ao cliente | 14 |
 | job | `EntregaSimuladaJob` (5 s) | PRONTO há 20 s–10 min → A_CAMINHO; A_CAMINHO com previsão vencida → ENTREGUE; notifica o cliente | 14 |
+
+## Cardápio do restaurante (telas 38, 39, 40) — frente C
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/painel-restaurante/pratos` | Pratos com status, pedidos vendidos, datas de envio/avaliação e motivo | 3 |
+| GET · POST · PUT | `/api/painel-restaurante/pratos[/{id}]` | Ficha completa (macros coerentes ±25%), ingredientes, alérgenos, compatibilidades, objetivos, tags. Ficha completa → EM_ANALISE; mudar a ficha de um aprovado volta para análise | 3 |
+| POST | `/api/painel-restaurante/pratos/{id}/pausa` · `/reenvio` | Pausar/reativar aprovado · reenviar rejeitado | 3 |
+| POST | `/api/painel-restaurante/pratos/foto` | Upload (multipart `arquivo`) no bucket `pratos` | 3 |

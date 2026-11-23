@@ -1,0 +1,57 @@
+.pagina { max-width: 1180px; }
+.pagina button:focus-visible, .pagina input:focus-visible, .pagina select:focus-visible, .pagina textarea:focus-visible, .upload:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.titulo { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; }
+.sub { font-size: 14px; color: var(--gray-500); }
+.botoes { display: flex; gap: 10px; }
+.cancelar, .salvar { display: inline-flex; align-items: center; gap: 8px; border-radius: var(--radius-pill); padding: 12px 22px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; }
+.cancelar { background: var(--white); border: 1.5px solid var(--line); color: var(--ink); }
+.salvar { background: var(--accent); border: 1.5px solid var(--accent); color: var(--white); }
+.salvar:disabled { opacity: 0.6; cursor: wait; }
+.rejeitado { display: flex; align-items: center; gap: 10px; background: #FFF5F2; border: 1.5px solid #FDE2DC; color: var(--prot); border-radius: 16px; padding: 14px 18px; margin-bottom: 20px; }
+.rejeitado p { color: var(--ink); font-size: 14px; }
+.grade { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.coluna { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.cartao { background: var(--white); border: 1.5px solid var(--line); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.cartaoTopo { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.cartaoTopo h2 { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 800; }
+.cartaoTopo h2 span { color: var(--accent); display: inline-flex; }
+.campo { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.campo label { font-size: 13px; font-weight: 700; }
+.campo label span { color: var(--prot); }
+.campo input, .campo select, .campo textarea, .ingredientes input { width: 100%; background: var(--gray-100); border: 1.5px solid transparent; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 15px; color: var(--ink); }
+.campo textarea { resize: vertical; }
+.campo input:focus, .campo select:focus, .campo textarea:focus, .ingredientes input:focus { outline: none; border-color: var(--accent); background: var(--white); }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.macro { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--gray-100); border-radius: 14px; padding: 14px 10px; }
+.macro span { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-500); }
+.macro input { width: 100%; border: none; background: none; text-align: center; font: inherit; font-size: 24px; font-weight: 800; color: var(--ink); }
+.macro input:focus { outline: none; }
+.macro:focus-within { box-shadow: 0 0 0 2px var(--accent); }
+.macro small { font-size: 11px; color: var(--gray-500); }
+.fichaOk, .fichaFalta { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: var(--radius-pill); }
+.fichaOk { background: var(--green-bg); color: var(--green-dark); }
+.fichaFalta { background: #FEF3E5; color: var(--orange); }
+.alerta { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--orange); }
+.ingredientes { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.ingredientes li { display: grid; grid-template-columns: 1.6fr 1fr auto; gap: 8px; }
+.ingredientes button { width: 42px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--white); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--gray-700); }
+.adicionar { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: none; border: 1.5px dashed var(--gray-300); border-radius: var(--radius-pill); padding: 8px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { border: 1.5px solid var(--line); background: var(--white); border-radius: var(--radius-pill); padding: 8px 16px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.chips .chipAtivo { border-color: var(--accent); background: var(--accent-bg, #FDECE6); color: var(--accent-dark, var(--accent)); }
+.rotuloGrupo { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); }
+.upload { min-height: 180px; border: 2px dashed var(--gray-300); border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; overflow: hidden; color: var(--gray-700); text-align: center; padding: 12px; }
+.upload strong { font-size: 15px; }
+.upload small { font-size: 12px; color: var(--gray-500); }
+.upload img { width: 100%; height: 220px; object-fit: cover; border-radius: 12px; }
+.uploadAtivo { border-color: var(--accent); background: var(--accent-bg, #FDECE6); }
+.removerFoto { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; background: none; border: none; font: inherit; font-size: 13px; font-weight: 700; color: var(--prot); cursor: pointer; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; background: var(--gray-100); border-radius: 12px; padding: 8px; }
+.tags span { display: inline-flex; align-items: center; gap: 4px; background: var(--white); border-radius: var(--radius-pill); padding: 4px 6px 4px 12px; font-size: 13px; font-weight: 700; }
+.tags span button { border: none; background: none; cursor: pointer; display: inline-flex; color: var(--gray-500); }
+.tags input { flex: 1; min-width: 160px; background: none !important; border: none !important; padding: 6px !important; }
+@media (max-width: 1000px) { .grade { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) { .duas, .tres, .macros { grid-template-columns: 1fr 1fr; } .ingredientes li { grid-template-columns: 1fr; } }

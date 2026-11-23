@@ -70,6 +70,24 @@ public class Marmita {
         this.avaliadoEm = OffsetDateTime.now();
     }
 
+    /** Restaurante tira um prato aprovado do marketplace temporariamente (tela 38). */
+    public void pausar() {
+        if (statusPrato != StatusPrato.APROVADO) throw new IllegalArgumentException("Só pratos aprovados podem ser pausados");
+        this.statusPrato = StatusPrato.PAUSADO;
+    }
+
+    public void reativar() {
+        if (statusPrato != StatusPrato.PAUSADO) throw new IllegalArgumentException("O prato não está pausado");
+        this.statusPrato = StatusPrato.APROVADO;
+    }
+
+    /** Mudou a ficha nutricional de um prato publicado: volta para a curadoria (CE-3). */
+    public void voltarParaAnalise() {
+        if (!fichaNutricionalCompleta()) throw new IllegalArgumentException("Preencha a ficha nutricional completa");
+        this.statusPrato = StatusPrato.EM_ANALISE;
+        this.motivoRejeicao = null;
+    }
+
     public boolean visivelNoMarketplace() { return statusPrato == StatusPrato.APROVADO; }
 
     public UUID getId() { return id; }

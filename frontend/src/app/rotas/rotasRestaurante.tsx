@@ -7,6 +7,9 @@ import { emConstrucao } from '../EmConstrucao';
 import { LayoutRestaurante } from '../../features/restaurante/LayoutRestaurante';
 
 const DashboardRestaurantePage = lazy(() => import('../../features/restaurante/dashboard/DashboardPage'));
+const CardapioPage = lazy(() => import('../../features/restaurante/cardapio/CardapioPage'));
+const PratoFormPage = lazy(() => import('../../features/restaurante/cardapio/PratoFormPage'));
+const AprovacaoRestaurantePage = lazy(() => import('../../features/restaurante/aprovacao/AprovacaoPage'));
 const PedidosRestaurantePage = lazy(() => import('../../features/restaurante/pedidos/PedidosPage'));
 
 /**
@@ -33,10 +36,10 @@ export const rotasRestaurante: RouteObject[] = [
     children: [
       { index: true, element: <DashboardRestaurantePage /> },
       { path: 'pedidos', element: <PedidosRestaurantePage /> },
-      { path: 'cardapio', element: emConstrucao('38', '38-resto-cardapio') },
-      { path: 'cardapio/novo', element: emConstrucao('39', '39-resto-criar-prato') },
-      { path: 'cardapio/:id/editar', element: emConstrucao('39', '39-resto-criar-prato') },
-      { path: 'aprovacao', element: emConstrucao('40', '40-resto-aprovacao') },
+      { path: 'cardapio', element: <CardapioPage /> },
+      { path: 'cardapio/novo', element: <PratoFormPage key="novo" /> },
+      { path: 'cardapio/:id/editar', element: <PratoFormPage /> },
+      { path: 'aprovacao', element: <AprovacaoRestaurantePage /> },
       { path: 'analytics', element: emConstrucao('41', '41-resto-analytics') },
       { path: 'financeiro', element: emConstrucao('42', '42-resto-financeiro') },
       { path: 'relatorios', element: emConstrucao('43', '43-resto-relatorios') },
