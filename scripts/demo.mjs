@@ -2,7 +2,7 @@
 //   npm run demo
 // Pré-requisitos: backend/.env e frontend/.env.local preenchidos (o Supabase continua na nuvem).
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -41,7 +41,8 @@ function encerrar() {
 process.on('SIGINT', encerrar);
 process.on('SIGTERM', encerrar);
 
-console.log(`${cor.ok}CleanEats — subindo API (http://localhost:8080/api/saude) e web (http://localhost:5173)${cor.fim}`);
+const porta = (readFileSync(join(raiz, 'backend', '.env'), 'utf8').match(/^PORT=(\d+)/m) || [])[1] || '8080';
+console.log(`${cor.ok}CleanEats — subindo API (http://localhost:${porta}/api/saude) e web (http://localhost:5173)${cor.fim}`);
 console.log('Ctrl+C encerra os dois.\n');
 iniciar('api', windows ? 'mvnw.cmd' : './mvnw', ['-q', 'spring-boot:run'], join(raiz, 'backend'));
 iniciar('web', 'npm', ['run', 'dev', '--', '--host'], join(raiz, 'frontend'));
