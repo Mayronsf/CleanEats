@@ -213,7 +213,8 @@ public class CatalogoService {
                 select ra.nome from marmita_compatibilidade mc join restricao_alimentar ra on ra.id = mc.id_restricao
                 where mc.id_marmita = :id order by ra.id""").param("id", id).query(String.class).list();
         var avaliacoes = jdbc.sql("""
-                select a.id, u.nome, u.avatar_url, a.nota, a.comentario, a.tags, a.data_avaliacao, p.codigo
+                select a.id, case when a.anonima then 'Anônimo' else u.nome end as nome,
+                       case when a.anonima then null else u.avatar_url end as avatar_url, a.nota, a.comentario, a.tags, a.data_avaliacao, p.codigo
                 from avaliacao a join usuario u on u.id = a.id_usuario join pedido p on p.id = a.id_pedido
                 where a.id_marmita = :id and a.status_moderacao = 'PUBLICADA' and a.comentario is not null
                 order by a.data_avaliacao desc limit 6""").param("id", id)

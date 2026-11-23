@@ -209,3 +209,21 @@ export const removerAvatar = () => chamarApi<PerfilCliente>('/perfil/avatar', { 
 export const salvarPreferenciasNotificacao = (p: Record<string, boolean>) =>
   chamarApi<Record<string, boolean>>('/perfil/preferencias-notificacao', { method: 'PUT', body: JSON.stringify(p) });
 export const excluirConta = () => chamarApi<void>('/perfil', { method: 'DELETE' });
+
+// ---------- Avaliar pedido (tela 20) ----------
+export interface ContextoAvaliacao {
+  idPedido: string; codigo: string; status: string; entregueEm: string | null; restaurante: string;
+  itens: { idMarmita: string; nome: string; imagemUrl: string | null; avaliado: boolean }[]; tags: string[];
+}
+export interface NovaAvaliacao {
+  idMarmita: string; nota: number; notaSabor: number | null; notaApresentacao: number | null; notaPorcao: number | null;
+  notaEntrega: number | null; notaTemperatura: number | null; tags: string[]; comentario: string | null; fotos: string[]; anonima: boolean;
+}
+export const buscarContextoAvaliacao = (idPedido: string) => chamarApi<ContextoAvaliacao>(`/pedidos/${idPedido}/avaliacao`);
+export const enviarAvaliacao = (idPedido: string, a: NovaAvaliacao) =>
+  chamarApi<{ id: string; statusModeracao: string }>(`/pedidos/${idPedido}/avaliacoes`, { method: 'POST', body: JSON.stringify(a) });
+export const enviarFotoAvaliacao = (arquivo: File) => {
+  const corpo = new FormData();
+  corpo.append('arquivo', arquivo);
+  return chamarApi<{ url: string }>('/avaliacoes/fotos', { method: 'POST', body: corpo });
+};

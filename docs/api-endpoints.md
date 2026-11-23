@@ -99,3 +99,10 @@ Login, cadastro de conta (etapa 1) e recuperação de senha (código de 6 dígit
 | POST · DELETE | `/api/perfil/avatar` · POST `/api/perfil/capa` | Upload (multipart, campo `arquivo`) no bucket `avatares` pelo backend | 12 |
 | PUT | `/api/perfil/preferencias-notificacao` | Liga/desliga tipos no sino (NotificacaoService respeita) | 13 |
 | DELETE | `/api/perfil` | LGPD: anonimiza, apaga endereços/restrições, encerra assinatura e bloqueia o login | 12 |
+
+## Avaliar pedido (tela 20) — frente A
+| Método | Rota | O que faz | CE |
+|---|---|---|---|
+| GET | `/api/pedidos/{id}/avaliacao` | Pratos do pedido e se já foram avaliados, tags permitidas | 11 |
+| POST | `/api/pedidos/{id}/avaliacoes` | Nota, 5 critérios, tags, comentário, fotos, anônima → PENDENTE (avisa admins) | 11 |
+| POST | `/api/avaliacoes/fotos` | Upload (multipart `arquivo`) no bucket `avaliacoes` | 11 |

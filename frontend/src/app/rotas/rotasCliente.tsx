@@ -15,6 +15,7 @@ const PerfilRestaurantePage = lazy(() => import('../../features/cliente/restaura
 const AssinaturaPage = lazy(() => import('../../features/cliente/assinatura/AssinaturaPage'));
 const PerfilPage = lazy(() => import('../../features/cliente/perfil/PerfilPage'));
 const EditarPerfilPage = lazy(() => import('../../features/cliente/perfil/EditarPerfilPage'));
+const AvaliarPage = lazy(() => import('../../features/cliente/avaliar/AvaliarPage'));
 const MeuPlanoPage = lazy(() => import('../../features/cliente/plano/MeuPlanoPage'));
 
 /**
@@ -36,7 +37,7 @@ export const rotasCliente: RouteObject[] = [
       { path: 'pedidos/:id/confirmado', element: <PedidoConfirmadoPage /> },
       { path: 'pedidos/:id', element: <AcompanhamentoPage /> },
       { path: 'pedidos', element: <HistoricoPage /> },
-      { path: 'pedidos/:id/avaliar', element: emConstrucao('20', '20-cliente-avaliar') },
+      { path: 'pedidos/:id/avaliar', element: <AvaliarPage /> },
       { path: 'perfil', element: <PerfilPage /> },
       { path: 'perfil/editar', element: <EditarPerfilPage /> },
       { path: 'assinatura', element: <AssinaturaPage /> },

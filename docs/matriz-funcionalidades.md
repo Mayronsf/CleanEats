@@ -475,19 +475,19 @@ Gerado a partir das telas HTML. A extração automática não pega os botões fe
 
 | Elemento | Nível | Ação / endpoint | Feito |
 |---|---|---|---|
-| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☐ |
-| Bem temperado | REAL | Tag da avaliação | ☐ |
-| Ingredientes frescos | REAL | Tag da avaliação | ☐ |
-| Macros corretos | REAL | Tag da avaliação | ☐ |
-| Boa apresentação | REAL | Tag da avaliação | ☐ |
-| Embalagem boa | REAL | Tag da avaliação | ☐ |
-| Entrega rápida | REAL | Tag da avaliação | ☐ |
-| Vale o preço | REAL | Tag da avaliação | ☐ |
-| Repetiria | REAL | Tag da avaliação | ☐ |
-| Recomendaria | REAL | Tag da avaliação | ☐ |
-| (ícone) | REAL | Navega para `/app/pedidos` | ☐ |
-| Pular por agora | REAL | Navega para `/app/pedidos` | ☐ |
-| Publicar avaliação | REAL | Navega para `/app/pedidos` | ☐ |
+| (ícone) | REAL | Ação do ícone (favoritar, notificações, voltar, fechar, menu) — identificar na tela | ☑ |
+| Bem temperado | REAL | Tag da avaliação | ☑ |
+| Ingredientes frescos | REAL | Tag da avaliação | ☑ |
+| Macros corretos | REAL | Tag da avaliação | ☑ |
+| Boa apresentação | REAL | Tag da avaliação | ☑ |
+| Embalagem boa | REAL | Tag da avaliação | ☑ |
+| Entrega rápida | REAL | Tag da avaliação | ☑ |
+| Vale o preço | REAL | Tag da avaliação | ☑ |
+| Repetiria | REAL | Tag da avaliação | ☑ |
+| Recomendaria | REAL | Tag da avaliação | ☑ |
+| (ícone) | REAL | Navega para `/app/pedidos` | ☑ |
+| Pular por agora | REAL | Navega para `/app/pedidos` | ☑ |
+| Publicar avaliação | REAL | Navega para `/app/pedidos` | ☑ |
 
 ### 21 · 21-cliente-perfil — `/app/perfil` — frente A
 
