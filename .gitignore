@@ -1,34 +1,30 @@
-# Segredos
+# Segredos e variáveis locais
 .env
 .env.*
 !.env.example
 application-local.yml
-.claude/settings.local.json
 
 # Frontend
 frontend/node_modules/
 frontend/dist/
 frontend/coverage/
+*.tsbuildinfo
 
 # Backend
 backend/target/
 *.class
 
-# Supabase CLI
+# Supabase CLI / arquivos gerados
 supabase/.branches/
 supabase/.temp/
+supabase/seed-completo.sql
 
-# Impeccable (config local)
-.impeccable/config.local.json
-
-# SO / IDE
+# SO / IDE / Testes
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
 *.log
-supabase/seed-completo.sql
 node_modules/
 e2e-relatorio/
 test-results/
-e2e-capturas/
