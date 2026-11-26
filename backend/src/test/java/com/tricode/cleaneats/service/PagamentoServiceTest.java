@@ -54,4 +54,25 @@ class PagamentoServiceTest {
         assertEquals("PENDENTE", PagamentoService.mapearStatusMercadoPago("pending"));
         assertEquals("REJEITADO", PagamentoService.mapearStatusMercadoPago("rejected"));
     }
+
+    @Test
+    void processaCartaoNoModoDemoEAceitaOuRecusa() {
+        UUID usuario = UUID.randomUUID();
+        var aprovado = service.processarCartao(usuario, "cliente@cleaneats.test",
+                new PagamentoService.CriarCartaoReq(
+                        new BigDecimal("49.90"), "Pedido CleanEats", "ref-card", null,
+                        "visa", 2, "4242", "MARIA SILVA", "12345678909", "12/29", "123"
+                ));
+        assertEquals("APROVADO", aprovado.status());
+        assertEquals("SIMULADO", aprovado.modo());
+        assertEquals(2, aprovado.parcelas());
+        assertNotNull(aprovado.codigoAutorizacao());
+
+        var recusado = service.processarCartao(usuario, "cliente@cleaneats.test",
+                new PagamentoService.CriarCartaoReq(
+                        new BigDecimal("49.90"), "Pedido CleanEats", "ref-card-2", null,
+                        "master", 1, "5555", "TESTE RECUSAR", "12345678909", "12/29", "123"
+                ));
+        assertEquals("REJEITADO", recusado.status());
+    }
 }

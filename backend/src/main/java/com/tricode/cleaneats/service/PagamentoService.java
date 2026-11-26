@@ -2,6 +2,7 @@ package com.tricode.cleaneats.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,35 @@ public class PagamentoService {
 
     public record CriarPixReq(BigDecimal valor, String descricao, String referencia) {}
 
+    public record ConfigGatewayDto(String modo, String publicKey) {}
+
+    public record CriarCartaoReq(
+            BigDecimal valor,
+            String descricao,
+            String referencia,
+            String token,            // Token gerado pelo MercadoPago.js v2 quando publicKey está ativo
+            String paymentMethodId,  // visa | master | elo | amex | hipercard
+            Integer parcelas,        // 1..3
+            String ultimos4,         // Últimos 4 dígitos (exibição / modo demo)
+            String titular,          // Nome impresso no cartão
+            String cpf,              // CPF do titular (11 dígitos)
+            String validade,         // MM/AA
+            String cvv               // Usado apenas para validação no modo demonstração (em produção vai no token MP)
+    ) {}
+
+    public record PagamentoCartaoDto(
+            String id,
+            String modo,             // MERCADO_PAGO | SIMULADO
+            String status,           // APROVADO | PENDENTE | REJEITADO
+            String detalheStatus,    // Mensagem amigável (ex.: "accredited", "Pagamento aprovado")
+            BigDecimal valor,
+            int parcelas,
+            String bandeira,
+            String ultimos4,
+            String codigoAutorizacao,
+            OffsetDateTime pagoEm
+    ) {}
+
     public record CobrancaPixDto(
             String id,
             String modo,          // MERCADO_PAGO | SIMULADO
@@ -51,21 +81,35 @@ public class PagamentoService {
     private final RestClient http;
     private final ObjectMapper json;
     private final String accessToken;
+    private final String publicKey;
     private final String chavePixDemo;
     private final ConcurrentHashMap<String, CobrancaDemo> cobrancasDemo = new ConcurrentHashMap<>();
 
+    @Autowired
     public PagamentoService(
             ObjectMapper json,
             @Value("${cleaneats.pagamento.mercadopago-access-token:}") String accessToken,
+            @Value("${cleaneats.pagamento.mercadopago-public-key:}") String publicKey,
             @Value("${cleaneats.pagamento.chave-pix-demo:pagamentos@cleaneats.com.br}") String chavePixDemo) {
         this.http = RestClient.builder().baseUrl("https://api.mercadopago.com").build();
         this.json = json;
         this.accessToken = accessToken == null ? "" : accessToken.trim();
+        this.publicKey = publicKey == null ? "" : publicKey.trim();
         this.chavePixDemo = chavePixDemo == null || chavePixDemo.isBlank() ? "pagamentos@cleaneats.com.br" : chavePixDemo.trim();
+    }
+
+    public PagamentoService(ObjectMapper json, String accessToken, String chavePixDemo) {
+        this(json, accessToken, "", chavePixDemo);
     }
 
     public boolean mercadoPagoAtivo() {
         return !accessToken.isBlank();
+    }
+
+    public ConfigGatewayDto configuracao() {
+        boolean mpCartao = mercadoPagoAtivo() && !publicKey.isBlank();
+        return new ConfigGatewayDto(mpCartao ? "MERCADO_PAGO" : (mercadoPagoAtivo() ? "MERCADO_PAGO_PIX" : "SIMULADO"),
+                mpCartao ? publicKey : null);
     }
 
     public CobrancaPixDto criarCobrancaPix(UUID idUsuario, String email, CriarPixReq req) {
@@ -125,6 +169,118 @@ public class PagamentoService {
         var aprovada = new CobrancaDemo(demo.id(), demo.idUsuario(), demo.valor(), demo.expiraEm(), "APROVADO", pagoEm);
         cobrancasDemo.put(idPagamento, aprovada);
         return new StatusPixDto(idPagamento, "SIMULADO", "APROVADO", pagoEm);
+    }
+
+    /**
+     * Processa pagamento no cartão de crédito via API do Mercado Pago (/v1/payments) quando
+     * MERCADOPAGO_ACCESS_TOKEN e token estiverem configurados; no ambiente acadêmico (sem token),
+     * valida os campos e retorna autorização simulada (inclusive recusa controlada se titular tiver RECUSAR ou CVV 000).
+     */
+    public PagamentoCartaoDto processarCartao(UUID idUsuario, String email, CriarCartaoReq req) {
+        if (req == null || req.valor() == null || req.valor().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Informe um valor válido para o pagamento no cartão.");
+        }
+        var valor = req.valor().setScale(2, RoundingMode.HALF_UP);
+        int parcelas = req.parcelas() == null ? 1 : Math.max(1, Math.min(3, req.parcelas()));
+        String bandeira = (req.paymentMethodId() == null || req.paymentMethodId().isBlank())
+                ? "visa" : req.paymentMethodId().trim().toLowerCase(Locale.ROOT);
+        String cpfLimpo = req.cpf() == null ? "" : req.cpf().replaceAll("\\D", "");
+        if (cpfLimpo.length() != 11) {
+            throw new IllegalArgumentException("Informe um CPF válido com 11 dígitos.");
+        }
+        String ultimos4 = req.ultimos4() == null ? "0000" : req.ultimos4().replaceAll("\\D", "");
+        if (ultimos4.length() > 4) ultimos4 = ultimos4.substring(ultimos4.length() - 4);
+        String descricao = (req.descricao() == null || req.descricao().isBlank()) ? "CleanEats · Pedido" : req.descricao().trim();
+        if (descricao.length() > 140) descricao = descricao.substring(0, 140);
+
+        // Produção / Sandbox Mercado Pago real quando access token e card token estiverem presentes
+        if (mercadoPagoAtivo() && req.token() != null && !req.token().isBlank()) {
+            return cobrarCartaoNoMercadoPago(email, valor, descricao, req.referencia(), req.token().trim(), bandeira, parcelas, cpfLimpo, ultimos4);
+        }
+
+        // Modo demonstração acadêmica: valida titular, validade e CVV
+        String titular = req.titular() == null ? "" : req.titular().trim();
+        if (titular.length() < 3) {
+            throw new IllegalArgumentException("Informe o nome impresso no cartão.");
+        }
+        if (req.validade() == null || !req.validade().matches("^(0[1-9]|1[0-2])/\\d{2}$")) {
+            throw new IllegalArgumentException("Validade inválida. Use o formato MM/AA.");
+        }
+        String cvv = req.cvv() == null ? "" : req.cvv().replaceAll("\\D", "");
+        if (cvv.length() < 3 || cvv.length() > 4) {
+            throw new IllegalArgumentException("Informe o código de segurança (3 ou 4 dígitos).");
+        }
+
+        String idDemo = "mp-card-" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+        // Permite demonstrar cenário de cartão recusado digitando "RECUSAR" no nome ou CVV "000"
+        if (titular.toUpperCase(Locale.ROOT).contains("RECUSAR") || "000".equals(cvv)) {
+            return new PagamentoCartaoDto(
+                    idDemo, "SIMULADO", "REJEITADO",
+                    traduzirDetalheMercadoPago("cc_rejected_other_reason"),
+                    valor, parcelas, bandeira, ultimos4, null, null
+            );
+        }
+
+        String aut = "AUTH-" + idDemo.substring(8, 14).toUpperCase(Locale.ROOT);
+        return new PagamentoCartaoDto(
+                idDemo, "SIMULADO", "APROVADO",
+                "Pagamento aprovado no cartão",
+                valor, parcelas, bandeira, ultimos4, aut, OffsetDateTime.now(FUSO)
+        );
+    }
+
+    private PagamentoCartaoDto cobrarCartaoNoMercadoPago(
+            String email, BigDecimal valor, String descricao, String referencia,
+            String token, String bandeira, int parcelas, String cpfLimpo, String ultimos4) {
+        try {
+            var corpo = new LinkedHashMap<String, Object>();
+            corpo.put("transaction_amount", valor);
+            corpo.put("token", token);
+            corpo.put("description", descricao);
+            corpo.put("installments", parcelas);
+            corpo.put("payment_method_id", bandeira);
+            if (referencia != null && !referencia.isBlank()) {
+                corpo.put("external_reference", referencia.trim());
+            }
+            corpo.put("payer", Map.of(
+                    "email", (email == null || email.isBlank()) ? "cliente@cleaneats.app" : email,
+                    "identification", Map.of("type", "CPF", "number", cpfLimpo)
+            ));
+
+            String resposta = http.post()
+                    .uri("/v1/payments")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("X-Idempotency-Key", UUID.randomUUID().toString())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(corpo)
+                    .retrieve()
+                    .body(String.class);
+
+            JsonNode root = json.readTree(resposta);
+            String id = root.path("id").asText();
+            String status = mapearStatusMercadoPago(root.path("status").asText("rejected"));
+            String detail = traduzirDetalheMercadoPago(root.path("status_detail").asText(""));
+            String aut = root.path("authorization_code").asText(null);
+            String last4 = root.path("card").path("last_four_digits").asText(ultimos4);
+            OffsetDateTime pagoEm = "APROVADO".equals(status) ? OffsetDateTime.now(FUSO) : null;
+            return new PagamentoCartaoDto(id, "MERCADO_PAGO", status, detail, valor, parcelas, bandeira, last4, aut, pagoEm);
+        } catch (Exception e) {
+            throw new ServicoExternoException("Não foi possível processar o cartão no Mercado Pago agora. Verifique os dados e tente novamente.", e);
+        }
+    }
+
+    static String traduzirDetalheMercadoPago(String detail) {
+        return switch (detail == null ? "" : detail.toLowerCase(Locale.ROOT)) {
+            case "accredited" -> "Pagamento aprovado pelo Mercado Pago";
+            case "pending_contingency", "pending_review_manual" -> "Pagamento em análise pelo banco emissor";
+            case "cc_rejected_insufficient_amount" -> "Saldo ou limite insuficiente no cartão.";
+            case "cc_rejected_bad_filled_security_code" -> "Código de segurança (CVV) incorreto.";
+            case "cc_rejected_bad_filled_date" -> "Data de validade do cartão incorreta.";
+            case "cc_rejected_bad_filled_card_number" -> "Número do cartão inválido.";
+            case "cc_rejected_call_for_authorize" -> "Autorize a compra junto ao banco emissor do cartão.";
+            case "cc_rejected_high_risk" -> "Pagamento recusado por segurança. Tente outro cartão ou Pix.";
+            default -> "Pagamento recusado pela operadora. Revise os dados ou use Pix.";
+        };
     }
 
     // ---------- Mercado Pago REST API v1 ----------

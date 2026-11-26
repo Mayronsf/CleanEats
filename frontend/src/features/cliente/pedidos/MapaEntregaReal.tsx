@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { PedidoDetalhe } from '../../../services/cliente';
+import type { PedidoDetalhe, RastreamentoPedido } from '../../../services/cliente';
 import s from './MapaEntregaReal.module.css';
 
 type Coord = [number, number]; // [lat, lng]
@@ -16,14 +16,6 @@ const COORDS_RESTAURANTES: Record<string, Coord> = {
   'Rota Proteica': [-8.1088, -34.8918],
   'Raízes Fit': [-8.0628, -34.8992],
 };
-
-function distanciaKmEntre(a: Coord, b: Coord): number {
-  const rad = (g: number) => (g * Math.PI) / 180;
-  const dLat = rad(b[0] - a[0]);
-  const dLng = rad(b[1] - a[1]);
-  const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLng / 2) ** 2;
-  return 6371 * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
-}
 
 function hashTexto(texto: string): number {
   let h = 0;
@@ -112,66 +104,41 @@ function iconePino(tipo: 'rest' | 'casa' | 'moto', rotulo?: string) {
   });
 }
 
-export function MapaEntregaReal({ pedido, agora }: { pedido: PedidoDetalhe; agora: number }) {
+export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: PedidoDetalhe; rastreamento?: RastreamentoPedido; agora: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapaRef = useRef<L.Map | null>(null);
   const rotaBaseRef = useRef<L.Polyline | null>(null);
   const rotaAndadaRef = useRef<L.Polyline | null>(null);
   const motoRef = useRef<L.Marker | null>(null);
 
-  const { origem, destino: destinoBase } = useMemo(() => pontosDaEntrega(pedido), [pedido.id, pedido.restaurante.nome, pedido.endereco?.cidade, pedido.endereco?.logradouro, pedido.endereco?.numero]);
-  const [destino, setDestino] = useState<Coord>(destinoBase);
-  const [rota, setRota] = useState<Coord[]>(() => rotaCurvaFallback(origem, destinoBase));
-  const [distanciaKm, setDistanciaKm] = useState<string | null>(null);
+  const { origem: origemFallback, destino: destinoBase } = useMemo(
+    () => pontosDaEntrega(pedido),
+    [pedido.id, pedido.restaurante.nome, pedido.endereco?.cidade, pedido.endereco?.logradouro, pedido.endereco?.numero],
+  );
+  const origem: Coord = useMemo(
+    () => (rastreamento ? [rastreamento.origem.lat, rastreamento.origem.lng] : origemFallback),
+    [rastreamento?.origem.lat, rastreamento?.origem.lng, origemFallback],
+  );
+  const destino: Coord = useMemo(
+    () => (rastreamento ? [rastreamento.destino.lat, rastreamento.destino.lng] : destinoBase),
+    [rastreamento?.destino.lat, rastreamento?.destino.lng, destinoBase],
+  );
 
-  // Geocodifica o endereço real do cliente via Nominatim (OpenStreetMap) com fallback seguro
+  const rotaApi = useMemo<Coord[] | null>(
+    () => (rastreamento && rastreamento.rota.length >= 2 ? rastreamento.rota.map((pt) => [pt.lat, pt.lng] as Coord) : null),
+    [rastreamento?.rota],
+  );
+  const [rotaFallback, setRotaFallback] = useState<Coord[]>(() => rotaCurvaFallback(origem, destino));
+  const rota = rotaApi ?? rotaFallback;
+  const distanciaKm = rastreamento
+    ? Number(rastreamento.distanciaRestanteKm > 0 ? rastreamento.distanciaRestanteKm : rastreamento.distanciaTotalKm).toFixed(1).replace('.', ',')
+    : null;
+
   useEffect(() => {
-    setDestino(destinoBase);
-    const end = pedido.endereco;
-    if (!end?.logradouro || !end?.cidade) return;
-    const ctrl = new AbortController();
-    const q = encodeURIComponent(`${end.logradouro} ${end.numero ?? ''}, ${end.bairro ?? ''}, ${end.cidade}, ${end.uf ?? 'PE'}, Brasil`);
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=${q}`, {
-      signal: ctrl.signal,
-      headers: { Accept: 'application/json' },
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((lista) => {
-        const hit = Array.isArray(lista) ? lista[0] : null;
-        if (!hit?.lat || !hit?.lon) return;
-        const candidato: Coord = [Number(hit.lat), Number(hit.lon)];
-        const dist = distanciaKmEntre(origem, candidato);
-        if (Number.isFinite(dist) && dist >= 0.25 && dist <= 35) {
-          setDestino(candidato);
-        }
-      })
-      .catch(() => { /* mantém coordenada de fallback da cidade */ });
-    return () => ctrl.abort();
-  }, [destinoBase, origem, pedido.endereco]);
+    if (!rotaApi) setRotaFallback(rotaCurvaFallback(origem, destino));
+  }, [origem, destino, rotaApi]);
 
-  // Busca rota real pelas ruas via OSRM (gratuito, sem chave)
-  useEffect(() => {
-    const fallback = rotaCurvaFallback(origem, destino);
-    setRota(fallback);
-    const ctrl = new AbortController();
-    const url = `https://router.project-osrm.org/route/v1/driving/${origem[1]},${origem[0]};${destino[1]},${destino[0]}?overview=full&geometries=geojson`;
-    fetch(url, { signal: ctrl.signal })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        const rotaApi = d?.routes?.[0];
-        const coords = rotaApi?.geometry?.coordinates as [number, number][] | undefined;
-        if (coords && coords.length >= 2) {
-          setRota(coords.map(([lng, lat]) => [lat, lng] as Coord));
-          if (typeof rotaApi.distance === 'number') {
-            setDistanciaKm((rotaApi.distance / 1000).toFixed(1).replace('.', ','));
-          }
-        }
-      })
-      .catch(() => { /* mantém a rota curva de fallback */ });
-    return () => ctrl.abort();
-  }, [origem, destino]);
-
-  // Inicializa o mapa Leaflet uma vez
+  // Inicializa o mapa Leaflet quando origem/destino estabilizam
   useEffect(() => {
     const el = containerRef.current;
     if (!el || mapaRef.current) return;
@@ -207,9 +174,9 @@ export function MapaEntregaReal({ pedido, agora }: { pedido: PedidoDetalhe; agor
       rotaAndadaRef.current = null;
       motoRef.current = null;
     };
-  }, [origem, destino, pedido.restaurante.nome]);
+  }, [origem[0], origem[1], destino[0], destino[1], pedido.restaurante.nome]);
 
-  // Atualiza a polilinha quando a rota real do OSRM chega
+  // Atualiza a polilinha quando a rota real da API chega
   useEffect(() => {
     const mapa = mapaRef.current;
     if (!mapa || !rotaBaseRef.current) return;
@@ -218,8 +185,8 @@ export function MapaEntregaReal({ pedido, agora }: { pedido: PedidoDetalhe; agor
     mapa.fitBounds(bounds, { paddingTopLeft: [48, 108], paddingBottomRight: [48, 56], maxZoom: 15 });
   }, [rota]);
 
-  // Atualiza posição do entregador e trecho percorrido em tempo real
-  const progresso = progressoEntrega(pedido, agora);
+  // Atualiza posição do entregador e trecho percorrido a partir da telemetria da API (ou relógio local)
+  const progresso = rastreamento ? rastreamento.posicaoAtual.progresso : progressoEntrega(pedido, agora);
   const mostrarMoto = pedido.status === 'PRONTO' || pedido.status === 'A_CAMINHO' || pedido.status === 'ENTREGUE';
 
   useEffect(() => {
@@ -235,16 +202,18 @@ export function MapaEntregaReal({ pedido, agora }: { pedido: PedidoDetalhe; agor
     }
 
     const { pos, percorrido } = interpolarNaRota(rota, progresso);
-    moto.setLatLng(pos);
+    const posFinal: Coord = rastreamento ? [rastreamento.posicaoAtual.lat, rastreamento.posicaoAtual.lng] : pos;
+    moto.setLatLng(posFinal);
     if (!mapa.hasLayer(moto)) moto.addTo(mapa);
     andada.setLatLngs(percorrido);
-  }, [rota, progresso, mostrarMoto]);
+  }, [rota, progresso, mostrarMoto, rastreamento?.posicaoAtual.lat, rastreamento?.posicaoAtual.lng]);
 
+  const vel = rastreamento?.posicaoAtual.velocidadeKmh;
   const legendaRota = pedido.status === 'A_CAMINHO'
-    ? `Em rota · ${Math.round(progresso * 100)}% do trajeto${distanciaKm ? ` (${distanciaKm} km)` : ''}`
+    ? `Em rota · ${Math.round(progresso * 100)}%${distanciaKm ? ` · faltam ${distanciaKm} km` : ''}${vel ? ` · ${vel} km/h` : ''}`
     : pedido.status === 'ENTREGUE'
-      ? `Trajeto concluído${distanciaKm ? ` · ${distanciaKm} km` : ''}`
-      : `Rota prevista${distanciaKm ? ` · ${distanciaKm} km` : ''}`;
+      ? `Trajeto concluído${rastreamento ? ` · ${Number(rastreamento.distanciaTotalKm).toFixed(1).replace('.', ',')} km` : ''}`
+      : `Rota prevista${rastreamento ? ` · ${Number(rastreamento.distanciaTotalKm).toFixed(1).replace('.', ',')} km` : ''}`;
 
   return (
     <div className={s.wrap}>

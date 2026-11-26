@@ -37,3 +37,5 @@ services:
         sync: false
       - key: MERCADOPAGO_ACCESS_TOKEN
         sync: false
+      - key: MERCADOPAGO_PUBLIC_KEY
+        sync: false

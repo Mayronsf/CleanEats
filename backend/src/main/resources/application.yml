@@ -53,4 +53,5 @@ cleaneats:
     segundos-ate-entregar: ${ENTREGA_SEGUNDOS_ATE_ENTREGAR:40}
   pagamento:
     mercadopago-access-token: ${MERCADOPAGO_ACCESS_TOKEN:}
+    mercadopago-public-key: ${MERCADOPAGO_PUBLIC_KEY:}
     chave-pix-demo: ${PIX_CHAVE_DEMO:pagamentos@cleaneats.com.br}

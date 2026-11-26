@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Bike, Headphones, MapPin, MessageCircle, Phone, Star, XCircle } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Bike, FastForward, Headphones, MapPin, MessageCircle, Phone, Star, XCircle } from 'lucide-react';
 import { Confirmacao, EmptyState, ErroCarregamento, Skeleton, TimelineStatusPedido, useToast } from '../../../design-system';
 import { usePedidoAoVivo } from '../../../hooks/cliente/usePedidoAoVivo';
 import { formatarData, formatarHora, partesPreco } from '../../../lib/formato';
 import { ErroApi } from '../../../services/api';
-import { cancelarPedido, type PedidoDetalhe } from '../../../services/cliente';
+import { buscarRastreamentoPedido, cancelarPedido, simularAvancoPedido, type PedidoDetalhe } from '../../../services/cliente';
 import { FaleConosco } from '../../suporte/FaleConosco';
 import { hojeIso } from '../tempo';
 import { MapaEntregaReal } from './MapaEntregaReal';
@@ -27,6 +27,26 @@ export default function AcompanhamentoPage() {
   const [cancelando, setCancelando] = useState(false);
   const [agora, setAgora] = useState(() => Date.now());
   const statusAtual = pedido.data?.status;
+  const ativo = statusAtual === 'NOVO' || statusAtual === 'ACEITO' || statusAtual === 'PREPARANDO' || statusAtual === 'PRONTO' || statusAtual === 'A_CAMINHO';
+
+  // Consome a API real de telemetria /api/pedidos/{id}/rastreamento a cada 2s enquanto a entrega está ativa
+  const rastreamento = useQuery({
+    queryKey: ['pedido', id, 'rastreamento'],
+    queryFn: () => buscarRastreamentoPedido(id),
+    enabled: !!id && !!pedido.data,
+    refetchInterval: ativo ? 2_000 : false,
+  });
+
+  const simularEtapa = useMutation({
+    mutationFn: () => simularAvancoPedido(id),
+    onSuccess: (r) => {
+      qc.setQueryData(['pedido', id, 'rastreamento'], r);
+      void qc.invalidateQueries({ queryKey: ['pedido', id] });
+      toast(`Etapa avançada para: ${r.status.replace('_', ' ')}`, 'sucesso');
+    },
+    onError: (e) => toast(e instanceof ErroApi ? e.message : 'Não foi possível avançar a etapa.', 'erro'),
+  });
+
   useEffect(() => {
     const intervalo = statusAtual === 'A_CAMINHO' || statusAtual === 'PRONTO' ? 1_000 : 10_000;
     const t = setInterval(() => setAgora(Date.now()), intervalo);
@@ -67,15 +87,33 @@ export default function AcompanhamentoPage() {
       <div className={s.grade}>
         <div className={s.esquerda}>
           <section className={s.mapa} aria-label="Mapa da entrega em tempo real">
-            <MapaEntregaReal pedido={p} agora={agora} />
+            <MapaEntregaReal pedido={p} rastreamento={rastreamento.data} agora={agora} />
             <div className={s.aoVivo} role="status" aria-live="polite">
               <span className={s.aoVivoPonto} aria-hidden />
               <p className={s.aoVivoTexto}><strong>{tituloAoVivo(p, nomeEntregador)}</strong>{subtituloAoVivo(p)}</p>
-              {(p.status === 'A_CAMINHO' || p.status === 'PRONTO' || p.status === 'PREPARANDO' || p.status === 'ACEITO' || p.status === 'NOVO') && (
-                <div className={s.eta}><p className={s.etaNum}>{minutosParaChegar(p, agora)}min</p><p className={s.etaRotulo}>para chegar</p></div>
+              {ativo && (
+                <div className={s.eta}><p className={s.etaNum}>{rastreamento.data?.etaMinutos ?? minutosParaChegar(p, agora)}min</p><p className={s.etaRotulo}>para chegar</p></div>
               )}
             </div>
           </section>
+
+          {ativo && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', padding: '12px 16px', background: 'var(--white)', border: '1.5px solid var(--line)', borderRadius: 16, marginTop: 14 }}>
+              <span style={{ fontSize: 12.5, color: 'var(--gray-700)', fontWeight: 600 }}>
+                API de rastreamento ativa {rastreamento.data ? `· ${rastreamento.data.fonteRota} · ${Number(rastreamento.data.distanciaRestanteKm).toFixed(1).replace('.', ',')} km restantes` : ''}
+                {rastreamento.data?.posicaoAtual.velocidadeKmh ? ` · ${rastreamento.data.posicaoAtual.velocidadeKmh} km/h` : ''}
+              </span>
+              <button
+                type="button"
+                onClick={() => simularEtapa.mutate()}
+                disabled={simularEtapa.isPending}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 999, border: '1.5px solid var(--green-primary)', background: 'var(--green-bg)', color: 'var(--green-dark)', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
+              >
+                <FastForward size={14} aria-hidden />
+                {simularEtapa.isPending ? 'Avançando...' : 'Simular próxima etapa'}
+              </button>
+            </div>
+          )}
 
           <section className={s.entregador} aria-labelledby="entregador-titulo">
             <div className={s.entregadorLinha}>

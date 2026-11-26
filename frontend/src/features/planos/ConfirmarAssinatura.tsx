@@ -7,6 +7,7 @@ import { formatarMoeda } from '../../lib/formato';
 import { ErroApi } from '../../services/api';
 import { listarNutricionistas } from '../../services/cliente';
 import { assinarPlano, type Ciclo, type FormaPagamento, type Tier } from '../../services/planos';
+import { PagamentoCartaoDialog } from '../cliente/componentes/PagamentoCartaoDialog';
 import { PagamentoPixDialog } from '../cliente/componentes/PagamentoPixDialog';
 import s from './ConfirmarAssinatura.module.css';
 
@@ -23,6 +24,7 @@ export function ConfirmarAssinatura({ tier, ciclo, idNutricionistaInicial, onFec
   const [idNutri, setIdNutri] = useState<string>(idNutricionistaInicial ?? '');
   const [enviando, setEnviando] = useState(false);
   const [pixAberto, setPixAberto] = useState(false);
+  const [cartaoAberto, setCartaoAberto] = useState(false);
   const [erro, setErro] = useState<string>();
 
   const temNutri = tier.nutricionistaDedicado;
@@ -32,12 +34,13 @@ export function ConfirmarAssinatura({ tier, ciclo, idNutricionistaInicial, onFec
     enabled: temNutri,
   });
 
+  const subModalAberto = pixAberto || cartaoAberto;
   useEffect(() => {
     const el = dialogo.current;
     if (!el) return;
-    if (!pixAberto && !el.open) el.showModal?.();
-    if (pixAberto && el.open) el.close();
-  }, [pixAberto]);
+    if (!subModalAberto && !el.open) el.showModal?.();
+    if (subModalAberto && el.open) el.close();
+  }, [subModalAberto]);
 
   const valor = ciclo === 'ANUAL' ? Number(tier.precoAnual) : Number(tier.precoMensal);
   const disponiveis = (nutris.data?.itens ?? []).filter((n) => n.disponivel);
@@ -48,9 +51,11 @@ export function ConfirmarAssinatura({ tier, ciclo, idNutricionistaInicial, onFec
     try {
       await assinarPlano(tier.codigo, ciclo, forma, temNutri ? (idNutri || null) : null);
       setPixAberto(false);
+      setCartaoAberto(false);
       onConcluido();
     } catch (e) {
       setPixAberto(false);
+      setCartaoAberto(false);
       setErro(e instanceof ErroApi && e.status !== 404
         ? e.message
         : 'Não foi possível concluir a assinatura agora. Tente de novo em instantes.');
@@ -60,16 +65,13 @@ export function ConfirmarAssinatura({ tier, ciclo, idNutricionistaInicial, onFec
   }
 
   function avancar() {
-    if (forma === 'PIX') {
-      setPixAberto(true);
-    } else {
-      void efetivarAssinatura();
-    }
+    if (forma === 'PIX') setPixAberto(true);
+    else setCartaoAberto(true);
   }
 
   return (
     <>
-      <dialog ref={dialogo} className={s.dialogo} onClose={() => { if (!pixAberto) onFechar(); }} aria-labelledby="assinatura-titulo">
+      <dialog ref={dialogo} className={s.dialogo} onClose={() => { if (!subModalAberto) onFechar(); }} aria-labelledby="assinatura-titulo">
         <div className={s.corpo}>
           <header className={s.cabeca}>
             <h1 id="assinatura-titulo">Assinar o plano <span className="script">{tier.nome}</span></h1>
@@ -124,13 +126,13 @@ export function ConfirmarAssinatura({ tier, ciclo, idNutricionistaInicial, onFec
           </fieldset>
           <p className={s.aviso}>
             {forma === 'PIX'
-              ? 'Na próxima etapa geramos o QR Code Pix e aguardamos a confirmação do pagamento.'
-              : 'Ambiente de demonstração: o pagamento no cartão é aprovado na hora e a fatura aparece em Minha assinatura.'}
+              ? 'Na próxima etapa geramos o QR Code Pix (Mercado Pago) e aguardamos a confirmação do pagamento.'
+              : 'Na próxima etapa você informa os dados do cartão com processamento integrado ao Mercado Pago.'}
           </p>
           {erro && <p className={s.erro} role="alert">{erro}</p>}
           <div className={s.acoes}>
             <Botao variante="secundario" onClick={onFechar}>Voltar</Botao>
-            <Botao carregando={enviando} onClick={avancar}>{forma === 'PIX' ? 'Gerar QR Code Pix' : 'Confirmar assinatura'}</Botao>
+            <Botao carregando={enviando} onClick={avancar}>{forma === 'PIX' ? 'Gerar QR Code Pix' : 'Informar dados do cartão'}</Botao>
           </div>
         </div>
       </dialog>
@@ -142,6 +144,17 @@ export function ConfirmarAssinatura({ tier, ciclo, idNutricionistaInicial, onFec
         referencia={`assinatura-${tier.codigo}-${ciclo}`}
         finalizando={enviando}
         onFechar={() => setPixAberto(false)}
+        onAprovado={() => void efetivarAssinatura()}
+      />
+      <PagamentoCartaoDialog
+        aberto={cartaoAberto}
+        valor={valor}
+        descricao={`Assinatura CleanEats ${tier.nome}`}
+        detalhe={`Ciclo ${ciclo === 'ANUAL' ? 'anual' : 'mensal'}`}
+        referencia={`assinatura-${tier.codigo}-${ciclo}`}
+        maxParcelas={ciclo === 'ANUAL' ? 3 : 1}
+        finalizando={enviando}
+        onFechar={() => setCartaoAberto(false)}
         onAprovado={() => void efetivarAssinatura()}
       />
     </>

@@ -126,7 +126,24 @@ export interface ResumoHistorico {
   andamento: number; entregues: number; cancelados: number; meses: { mes: string; pedidos: number; total: number }[];
 }
 export const FORMA_PAGAMENTO = { PIX: 'Pix', CREDITO: 'Cartão de crédito', DINHEIRO: 'Dinheiro' } as const;
+export interface RastreamentoPedido {
+  idPedido: string;
+  codigo: string;
+  status: StatusPedido;
+  fonteRota: 'OSRM' | 'FALLBACK';
+  origem: { lat: number; lng: number; nome: string; detalhe: string };
+  destino: { lat: number; lng: number; nome: string; detalhe: string };
+  entregador: { nome: string; veiculo: string; placa: string; nota: number; entregas: number } | null;
+  posicaoAtual: { lat: number; lng: number; progresso: number; velocidadeKmh: number; anguloGraus: number };
+  distanciaTotalKm: number;
+  distanciaRestanteKm: number;
+  etaMinutos: number;
+  rota: { lat: number; lng: number }[];
+  atualizadoEm: string;
+}
 export const buscarPedido = (id: string) => chamarApi<PedidoDetalhe>(`/pedidos/${id}`);
+export const buscarRastreamentoPedido = (id: string) => chamarApi<RastreamentoPedido>(`/pedidos/${id}/rastreamento`);
+export const simularAvancoPedido = (id: string) => chamarApi<RastreamentoPedido>(`/pedidos/${id}/simular-avanco`, { method: 'POST' });
 export const cancelarPedido = (id: string, motivo?: string) => chamarApi<PedidoDetalhe>(`/pedidos/${id}/cancelamento`, { method: 'POST', body: JSON.stringify({ motivo }) });
 export const pedirNovamente = (id: string) => chamarApi<{ itens: { prato: Prato; quantidade: number; observacao: string | null }[]; indisponiveis: string[] }>(`/pedidos/${id}/pedir-novamente`, { method: 'POST' });
 export const listarHistorico = (f: { status?: string; periodo?: string; ordenar?: string; pagina?: number; tamanho?: number }) =>

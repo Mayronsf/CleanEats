@@ -4,6 +4,8 @@ import com.tricode.cleaneats.dto.PaginaDto;
 import com.tricode.cleaneats.security.UsuarioLogado;
 import com.tricode.cleaneats.service.cliente.PedidoConsultaService;
 import com.tricode.cleaneats.service.cliente.PedidoConsultaService.*;
+import com.tricode.cleaneats.service.cliente.RastreamentoPedidoService;
+import com.tricode.cleaneats.service.cliente.RastreamentoPedidoService.RastreamentoDto;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,14 +22,28 @@ import java.util.UUID;
 public class PedidoConsultaController {
 
     private final PedidoConsultaService servico;
+    private final RastreamentoPedidoService rastreamento;
 
-    public PedidoConsultaController(PedidoConsultaService servico) {
+    public PedidoConsultaController(PedidoConsultaService servico, RastreamentoPedidoService rastreamento) {
         this.servico = servico;
+        this.rastreamento = rastreamento;
     }
 
     @GetMapping("/pedidos/{id}")
     public PedidoDetalhe detalhe(@PathVariable UUID id) {
         return servico.detalhe(UsuarioLogado.id(), id);
+    }
+
+    /** API de rastreamento em tempo real (telemetria simulada + rota real OSRM/Nominatim). */
+    @GetMapping("/pedidos/{id}/rastreamento")
+    public RastreamentoDto rastrear(@PathVariable UUID id) {
+        return rastreamento.consultar(UsuarioLogado.id(), id);
+    }
+
+    /** Avança o pedido para a próxima etapa no modo demonstração (útil para testes e apresentações). */
+    @PostMapping("/pedidos/{id}/simular-avanco")
+    public RastreamentoDto simularAvanco(@PathVariable UUID id) {
+        return rastreamento.simularProximaEtapa(UsuarioLogado.id(), id);
     }
 
     @PostMapping("/pedidos/{id}/cancelamento")
