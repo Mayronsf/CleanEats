@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import * as maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { ExternalLink, Layers, Navigation } from 'lucide-react';
 import type { PedidoDetalhe, RastreamentoPedido } from '../../../services/cliente';
 import {
-  alternarSatelite,
-  aplicarTemaCleanEats,
   COORDS_VITORIA_RESTAURANTES,
   DESTINOS_VITORIA,
-  ESTILO_MAPA_VETORIAL,
   SVG_CAPACETE_ENTREGADOR,
   SVG_CASA,
   SVG_LOJA_IFOOD,
+  TILE_MAPA_LIMPO,
+  TILE_SATELITE,
+  TILE_SATELITE_ROTULOS,
   type CoordLatLng,
 } from '../../../lib/mapaEstilo';
 import s from './MapaEntregaReal.module.css';
@@ -75,57 +75,31 @@ function interpolarNaRota(pontos: CoordLatLng[], t: number): { pos: CoordLatLng;
   return { pos, percorrido: [...pontos.slice(0, i + 1), pos] };
 }
 
-function paraGeoJsonLinha(pontos: CoordLatLng[]) {
-  return {
-    type: 'Feature' as const,
-    properties: {},
-    geometry: {
-      type: 'LineString' as const,
-      coordinates: pontos.map(([lat, lng]) => [lng, lat]),
-    },
-  };
-}
+function iconeGota(tipo: 'rest' | 'casa' | 'moto', rotulo?: string) {
+  const classeTipo = tipo === 'moto' ? s.gotaMoto : tipo === 'casa' ? s.gotaCasa : s.gotaRest;
+  const svg = tipo === 'moto' ? SVG_CAPACETE_ENTREGADOR : tipo === 'casa' ? SVG_CASA : SVG_LOJA_IFOOD;
+  const selo = tipo === 'rest' ? `<span class="${s.seloLoja}">C</span>` : '';
+  const escape = (txt: string) => txt.replace(/[<>&"]/g, '');
+  const tag = rotulo ? `<span class="${s.etiqueta}">${escape(rotulo)}</span>` : '';
 
-function criarMarcadorGota(tipo: 'rest' | 'casa' | 'moto', rotulo?: string): HTMLDivElement {
-  const wrap = document.createElement('div');
-  wrap.className = s.marcadorWrap;
-
-  const gota = document.createElement('div');
-  gota.className = tipo === 'moto' ? `${s.gota} ${s.gotaMoto}` : tipo === 'casa' ? `${s.gota} ${s.gotaCasa}` : `${s.gota} ${s.gotaRest}`;
-
-  const corpo = document.createElement('div');
-  corpo.className = s.gotaCorpo;
-  corpo.innerHTML = tipo === 'moto' ? SVG_CAPACETE_ENTREGADOR : tipo === 'casa' ? SVG_CASA : SVG_LOJA_IFOOD;
-
-  if (tipo === 'rest') {
-    const selo = document.createElement('span');
-    selo.className = s.seloLoja;
-    selo.textContent = 'C';
-    corpo.appendChild(selo);
-  }
-
-  const ponta = document.createElement('span');
-  ponta.className = s.gotaPonta;
-
-  gota.appendChild(corpo);
-  gota.appendChild(ponta);
-  wrap.appendChild(gota);
-
-  if (rotulo) {
-    const tag = document.createElement('span');
-    tag.className = s.etiqueta;
-    tag.textContent = rotulo;
-    wrap.appendChild(tag);
-  }
-  return wrap;
+  return L.divIcon({
+    className: '',
+    html: `<div class="${s.marcadorWrap}"><div class="${s.gota} ${classeTipo}"><div class="${s.gotaCorpo}">${svg}${selo}</div><span class="${s.gotaPonta}"></span></div>${tag}</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  });
 }
 
 export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: PedidoDetalhe; rastreamento?: RastreamentoPedido; agora: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const prontoRef = useRef(false);
-  const motoMarkerRef = useRef<maplibregl.Marker | null>(null);
-  const rotaRef = useRef<CoordLatLng[]>([]);
+  const mapaRef = useRef<L.Map | null>(null);
+  const camadaMapaRef = useRef<L.TileLayer | null>(null);
+  const camadaSatRef = useRef<L.LayerGroup | null>(null);
+  const rotaBordaRef = useRef<L.Polyline | null>(null);
+  const rotaBaseRef = useRef<L.Polyline | null>(null);
+  const rotaAndadaHaloRef = useRef<L.Polyline | null>(null);
+  const rotaAndadaRef = useRef<L.Polyline | null>(null);
+  const motoRef = useRef<L.Marker | null>(null);
   const [estilo, setEstilo] = useState<EstiloMapa>('mapa');
 
   const { origem: origemFallback, destino: destinoBase } = useMemo(
@@ -147,8 +121,6 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
   );
   const [rotaFallback, setRotaFallback] = useState<CoordLatLng[]>(() => rotaCurvaFallback(origem, destino));
   const rota = rotaApi ?? rotaFallback;
-  rotaRef.current = rota;
-
   const distanciaKm = rastreamento
     ? Number(rastreamento.distanciaRestanteKm > 0 ? rastreamento.distanciaRestanteKm : rastreamento.distanciaTotalKm).toFixed(1).replace('.', ',')
     : null;
@@ -158,105 +130,89 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
   }, [origem, destino, rotaApi]);
 
   const enquadrar = useCallback((pontos: CoordLatLng[]) => {
-    const map = mapRef.current;
-    if (!map || pontos.length < 2) return;
-    const bounds = new maplibregl.LngLatBounds();
-    pontos.forEach(([lat, lng]) => bounds.extend([lng, lat]));
-    map.fitBounds(bounds, { padding: { top: 112, bottom: 72, left: 56, right: 56 }, maxZoom: 16, duration: 550 });
+    const mapa = mapaRef.current;
+    if (!mapa || pontos.length < 2) return;
+    mapa.fitBounds(L.latLngBounds(pontos), {
+      paddingTopLeft: [56, 118],
+      paddingBottomRight: [56, 68],
+      maxZoom: 16,
+      animate: true,
+    });
   }, []);
 
-  // Inicializa o mapa vetorial estilo iFood / Apple Maps
+  // Inicializa o mapa Leaflet (puro DOM/SVG, 100% compatível em qualquer navegador)
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || mapRef.current) return;
+    if (!el || mapaRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: el,
-      style: ESTILO_MAPA_VETORIAL,
-      center: [origem[1], origem[0]],
-      zoom: 15,
-      attributionControl: false,
-      pitchWithRotate: false,
-    });
-    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-
-    map.on('style.load', () => {
-      aplicarTemaCleanEats(map);
-      prontoRef.current = true;
-
-      if (!map.getSource('rota-base')) {
-        map.addSource('rota-base', { type: 'geojson', data: paraGeoJsonLinha(rotaRef.current) });
-        map.addLayer({
-          id: 'rota-base-borda',
-          type: 'line',
-          source: 'rota-base',
-          layout: { 'line-join': 'round', 'line-cap': 'round' },
-          paint: { 'line-color': '#FFFFFF', 'line-width': 9, 'line-opacity': 0.92 },
-        });
-        map.addLayer({
-          id: 'rota-base-linha',
-          type: 'line',
-          source: 'rota-base',
-          layout: { 'line-join': 'round', 'line-cap': 'round' },
-          paint: { 'line-color': '#94A3B8', 'line-width': 5, 'line-dasharray': [1.8, 1.4], 'line-opacity': 0.8 },
-        });
-      }
-
-      if (!map.getSource('rota-andada')) {
-        map.addSource('rota-andada', { type: 'geojson', data: paraGeoJsonLinha([]) });
-        map.addLayer({
-          id: 'rota-andada-halo',
-          type: 'line',
-          source: 'rota-andada',
-          layout: { 'line-join': 'round', 'line-cap': 'round' },
-          paint: { 'line-color': '#FFFFFF', 'line-width': 9.5, 'line-opacity': 0.95 },
-        });
-        map.addLayer({
-          id: 'rota-andada-linha',
-          type: 'line',
-          source: 'rota-andada',
-          layout: { 'line-join': 'round', 'line-cap': 'round' },
-          paint: { 'line-color': '#3D8B24', 'line-width': 5.5, 'line-opacity': 1 },
-        });
-      }
-
-      enquadrar(rotaRef.current.length >= 2 ? rotaRef.current : [origem, destino]);
+    const mapa = L.map(el, {
+      zoomControl: false,
+      scrollWheelZoom: false,
+      attributionControl: true,
     });
 
-    new maplibregl.Marker({ element: criarMarcadorGota('rest', pedido.restaurante.nome), anchor: 'bottom' })
-      .setLngLat([origem[1], origem[0]])
-      .addTo(map);
+    const camadaLimpa = L.tileLayer(TILE_MAPA_LIMPO, {
+      attribution: '&copy; Esri &copy; OpenStreetMap',
+      maxZoom: 19,
+    });
+    const camadaSat = L.layerGroup([
+      L.tileLayer(TILE_SATELITE, { attribution: '&copy; Esri Satélite', maxZoom: 19 }),
+      L.tileLayer(TILE_SATELITE_ROTULOS, { maxZoom: 19, opacity: 0.92 }),
+    ]);
 
-    new maplibregl.Marker({ element: criarMarcadorGota('casa', 'Sua casa'), anchor: 'bottom' })
-      .setLngLat([destino[1], destino[0]])
-      .addTo(map);
+    camadaMapaRef.current = camadaLimpa;
+    camadaSatRef.current = camadaSat;
+    camadaLimpa.addTo(mapa);
 
-    motoMarkerRef.current = new maplibregl.Marker({ element: criarMarcadorGota('moto'), anchor: 'bottom' })
-      .setLngLat([origem[1], origem[0]]);
+    // Rota limpa estilo iFood (halo branco + tracejado suave do restante + verde vibrante no percorrido)
+    rotaBordaRef.current = L.polyline(rota, { color: '#FFFFFF', weight: 9, opacity: 0.92, lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
+    rotaBaseRef.current = L.polyline(rota, { color: '#64748B', weight: 4.5, opacity: 0.72, dashArray: '8 8', lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
+    rotaAndadaHaloRef.current = L.polyline([], { color: '#FFFFFF', weight: 9.5, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
+    rotaAndadaRef.current = L.polyline([], { color: '#3D8B24', weight: 5.5, opacity: 1, lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
 
-    mapRef.current = map;
+    L.marker(origem, { icon: iconeGota('rest', pedido.restaurante.nome), zIndexOffset: 220 }).addTo(mapa);
+    L.marker(destino, { icon: iconeGota('casa', 'Sua casa'), zIndexOffset: 220 }).addTo(mapa);
+    motoRef.current = L.marker(origem, { icon: iconeGota('moto'), zIndexOffset: 600 });
+
+    mapaRef.current = mapa;
+    mapa.fitBounds(L.latLngBounds([origem, destino]), { paddingTopLeft: [56, 118], paddingBottomRight: [56, 68], maxZoom: 16 });
+    const t = setTimeout(() => mapa.invalidateSize(), 120);
 
     return () => {
-      prontoRef.current = false;
-      motoMarkerRef.current = null;
-      map.remove();
-      mapRef.current = null;
+      clearTimeout(t);
+      mapa.remove();
+      mapaRef.current = null;
+      camadaMapaRef.current = null;
+      camadaSatRef.current = null;
+      rotaBordaRef.current = null;
+      rotaBaseRef.current = null;
+      rotaAndadaHaloRef.current = null;
+      rotaAndadaRef.current = null;
+      motoRef.current = null;
     };
-  }, [origem[0], origem[1], destino[0], destino[1], pedido.restaurante.nome, enquadrar]);
+  }, [origem[0], origem[1], destino[0], destino[1], pedido.restaurante.nome]);
 
   // Alterna camada limpa / satélite
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !prontoRef.current) return;
-    alternarSatelite(map, estilo === 'satelite');
+    const mapa = mapaRef.current;
+    const limpa = camadaMapaRef.current;
+    const sat = camadaSatRef.current;
+    if (!mapa || !limpa || !sat) return;
+    if (estilo === 'satelite') {
+      if (mapa.hasLayer(limpa)) mapa.removeLayer(limpa);
+      if (!mapa.hasLayer(sat)) sat.addTo(mapa);
+    } else {
+      if (mapa.hasLayer(sat)) mapa.removeLayer(sat);
+      if (!mapa.hasLayer(limpa)) limpa.addTo(mapa);
+    }
   }, [estilo]);
 
-  // Atualiza geometria da rota quando a rota real OSRM chega da API
+  // Atualiza geometria quando a rota real OSRM chega da API
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !prontoRef.current) return;
-    const src = map.getSource('rota-base') as maplibregl.GeoJSONSource | undefined;
-    if (src) src.setData(paraGeoJsonLinha(rota));
+    const mapa = mapaRef.current;
+    if (!mapa || !rotaBordaRef.current || !rotaBaseRef.current) return;
+    rotaBordaRef.current.setLatLngs(rota);
+    rotaBaseRef.current.setLatLngs(rota);
     enquadrar(rota);
   }, [rota, enquadrar]);
 
@@ -265,21 +221,25 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
   const mostrarMoto = pedido.status === 'PRONTO' || pedido.status === 'A_CAMINHO' || pedido.status === 'ENTREGUE';
 
   useEffect(() => {
-    const map = mapRef.current;
-    const moto = motoMarkerRef.current;
-    if (!map || !moto) return;
+    const mapa = mapaRef.current;
+    const moto = motoRef.current;
+    const andada = rotaAndadaRef.current;
+    const andadaHalo = rotaAndadaHaloRef.current;
+    if (!mapa || !moto || !andada || !andadaHalo) return;
 
-    const srcAndada = prontoRef.current ? (map.getSource('rota-andada') as maplibregl.GeoJSONSource | undefined) : undefined;
     if (!mostrarMoto) {
-      moto.remove();
-      srcAndada?.setData(paraGeoJsonLinha([]));
+      if (mapa.hasLayer(moto)) mapa.removeLayer(moto);
+      andada.setLatLngs([]);
+      andadaHalo.setLatLngs([]);
       return;
     }
 
     const { pos, percorrido } = interpolarNaRota(rota, progresso);
     const posFinal: CoordLatLng = rastreamento ? [rastreamento.posicaoAtual.lat, rastreamento.posicaoAtual.lng] : pos;
-    moto.setLngLat([posFinal[1], posFinal[0]]).addTo(map);
-    srcAndada?.setData(paraGeoJsonLinha(percorrido));
+    moto.setLatLng(posFinal);
+    if (!mapa.hasLayer(moto)) moto.addTo(mapa);
+    andadaHalo.setLatLngs(percorrido);
+    andada.setLatLngs(percorrido);
   }, [rota, progresso, mostrarMoto, rastreamento?.posicaoAtual.lat, rastreamento?.posicaoAtual.lng]);
 
   const vel = rastreamento?.posicaoAtual.velocidadeKmh;
@@ -293,7 +253,11 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
 
   return (
     <div className={s.wrap}>
-      <div ref={containerRef} className={s.mapa} aria-label="Mapa interativo personalizado da entrega em Vitória de Santo Antão" />
+      <div
+        ref={containerRef}
+        className={`${s.mapa} ${estilo === 'mapa' ? s.mapaEstiloIfood : ''}`}
+        aria-label="Mapa interativo personalizado da entrega em Vitória de Santo Antão"
+      />
 
       <div className={s.controlesTopo} role="group" aria-label="Modo de exibição do mapa">
         <button

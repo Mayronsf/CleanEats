@@ -14,10 +14,17 @@
   z-index: 1;
 }
 
-.mapa :global(.maplibregl-ctrl-attrib) {
+/* Suaviza os tiles do mapa base para a paleta limpa estilo Apple Maps / iFood */
+.mapaEstiloIfood :global(.leaflet-tile-pane) {
+  filter: saturate(0.72) brightness(1.04) contrast(0.95);
+}
+
+.mapa :global(.leaflet-control-attribution) {
   font-size: 9.5px;
-  background: rgba(255, 255, 255, 0.72) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
   backdrop-filter: blur(4px);
+  padding: 2px 6px;
+  border-top-left-radius: 8px;
 }
 
 /* Marcadores em formato de gota branca estilo iFood / Apple Maps */
@@ -26,6 +33,7 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  transform: translate(-50%, -100%);
   pointer-events: auto;
 }
 
@@ -144,7 +152,7 @@
   position: absolute;
   left: 16px;
   top: 96px;
-  z-index: 10;
+  z-index: 450;
   display: inline-flex;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 999px;
@@ -186,7 +194,7 @@
   position: absolute;
   right: 16px;
   bottom: 52px;
-  z-index: 10;
+  z-index: 450;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -216,7 +224,7 @@
   left: 16px;
   right: 72px;
   bottom: 14px;
-  z-index: 10;
+  z-index: 450;
   display: flex;
   align-items: center;
   gap: 8px;

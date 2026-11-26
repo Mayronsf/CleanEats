@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import * as maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Navigation, Star, Store, X } from 'lucide-react';
 import { EmptyState, ErroCarregamento, Skeleton } from '../../../design-system';
 import { formatarMoeda } from '../../../lib/formato';
 import {
-  aplicarTemaCleanEats,
-  CENTRO_VITORIA_LNG_LAT,
+  CENTRO_VITORIA_LAT_LNG,
   COORDS_VITORIA_RESTAURANTES,
   ENDERECOS_VITORIA_RESTAURANTES,
-  ESTILO_MAPA_VETORIAL,
   SVG_LOJA_IFOOD,
+  TILE_MAPA_LIMPO,
 } from '../../../lib/mapaEstilo';
 import { buscarResumoRestaurantes, listarRestaurantes, type Restaurante } from '../../../services/cliente';
 import s from './RestaurantesPage.module.css';
@@ -123,8 +122,8 @@ type FiltroMapa = 'todos' | 'abertos' | 'gratis' | 'fitness' | 'bowls';
 function MapaBairros({ onFechar }: { onFechar: () => void }) {
   const todos = useQuery({ queryKey: ['restaurantes', 'todos'], queryFn: () => listarRestaurantes({ tamanho: 24 }) });
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<maplibregl.Marker[]>([]);
+  const mapRef = useRef<L.Map | null>(null);
+  const camadaPinosRef = useRef<L.LayerGroup | null>(null);
   const [filtro, setFiltro] = useState<FiltroMapa>('todos');
   const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
 
@@ -149,84 +148,75 @@ function MapaBairros({ onFechar }: { onFechar: () => void }) {
     const map = mapRef.current;
     if (!map || !filtrados.length) return;
     if (filtrados.length === 1) {
-      const [lat, lng] = coordDe(filtrados[0]!, 0);
-      map.flyTo({ center: [lng, lat], zoom: 15.5, duration: 500 });
+      map.flyTo(coordDe(filtrados[0]!, 0), 16, { duration: 0.5 });
       return;
     }
-    const bounds = new maplibregl.LngLatBounds();
-    filtrados.forEach((x, idx) => {
-      const [lat, lng] = coordDe(x, idx);
-      bounds.extend([lng, lat]);
-    });
-    map.fitBounds(bounds, { padding: { top: 86, bottom: 42, left: 48, right: 48 }, maxZoom: 15, duration: 500 });
+    const pontos = filtrados.map((x, idx) => coordDe(x, idx));
+    map.fitBounds(L.latLngBounds(pontos), { paddingTopLeft: [48, 86], paddingBottomRight: [48, 48], maxZoom: 15, animate: true });
   }, [filtrados, coordDe]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el || mapRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: el,
-      style: ESTILO_MAPA_VETORIAL,
-      center: CENTRO_VITORIA_LNG_LAT,
-      zoom: 13.8,
-      attributionControl: false,
-      pitchWithRotate: false,
-    });
-    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
-    map.on('style.load', () => {
-      aplicarTemaCleanEats(map);
-      map.resize();
-    });
+    const map = L.map(el, {
+      zoomControl: false,
+      scrollWheelZoom: false,
+      attributionControl: true,
+    }).setView(CENTRO_VITORIA_LAT_LNG, 14);
+
+    L.tileLayer(TILE_MAPA_LIMPO, {
+      attribution: '&copy; Esri &copy; OpenStreetMap',
+      maxZoom: 19,
+    }).addTo(map);
+
+    camadaPinosRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
-    const t = setTimeout(() => map.resize(), 160);
+    const t = setTimeout(() => map.invalidateSize(), 160);
     return () => {
       clearTimeout(t);
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
       map.remove();
       mapRef.current = null;
+      camadaPinosRef.current = null;
     };
   }, []);
 
   // Atualiza pinos em gota branca estilo iFood conforme o filtro / seleção
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    const grupo = camadaPinosRef.current;
+    if (!map || !grupo) return;
 
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
-
-    const bounds = new maplibregl.LngLatBounds();
+    grupo.clearLayers();
+    const pontos: [number, number][] = [];
     filtrados.forEach((x, idx) => {
-      const [lat, lng] = coordDe(x, idx);
-      bounds.extend([lng, lat]);
+      const coord = coordDe(x, idx);
+      pontos.push(coord);
 
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `${s.pinoGota} ${selecionadoId === x.id ? s.pinoGotaAtivo : ''}`;
-      btn.setAttribute('aria-label', `${x.nome} em ${x.bairro ?? 'Vitória de Santo Antão'}`);
-      btn.innerHTML = `<span class="${s.pinoGotaCorpo}">${SVG_LOJA_IFOOD}<span class="${s.pinoGotaSelo}">${x.sigla.slice(0, 1)}</span></span><span class="${s.pinoGotaPonta}"></span>`;
-      btn.addEventListener('click', () => {
-        setSelecionadoId(x.id);
-        map.flyTo({ center: [lng, lat], zoom: 15.6, duration: 480 });
+      const ativo = selecionadoId === x.id;
+      const icone = L.divIcon({
+        className: '',
+        html: `<div class="${s.pinoGotaWrap}"><span class="${s.pinoGota} ${ativo ? s.pinoGotaAtivo : ''}"><span class="${s.pinoGotaCorpo}">${SVG_LOJA_IFOOD}<span class="${s.pinoGotaSelo}">${x.sigla.slice(0, 1)}</span></span><span class="${s.pinoGotaPonta}"></span></span></div>`,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
       });
 
-      const marker = new maplibregl.Marker({ element: btn, anchor: 'bottom' })
-        .setLngLat([lng, lat])
-        .addTo(map);
-      markersRef.current.push(marker);
+      L.marker(coord, { icon: icone, zIndexOffset: ativo ? 500 : 200 })
+        .on('click', () => {
+          setSelecionadoId(x.id);
+          map.flyTo(coord, 16, { duration: 0.45 });
+        })
+        .addTo(grupo);
     });
 
-    if (filtrados.length > 1 && !selecionadoId) {
-      map.fitBounds(bounds, { padding: { top: 86, bottom: 42, left: 48, right: 48 }, maxZoom: 15, duration: 450 });
+    if (pontos.length > 1 && !selecionadoId) {
+      map.fitBounds(L.latLngBounds(pontos), { paddingTopLeft: [48, 86], paddingBottomRight: [48, 48], maxZoom: 15 });
     }
   }, [filtrados, selecionadoId, coordDe]);
 
   function focarRestaurante(x: Restaurante, idx: number) {
     setSelecionadoId(x.id);
-    const [lat, lng] = coordDe(x, idx);
-    mapRef.current?.flyTo({ center: [lng, lat], zoom: 15.8, duration: 500 });
+    mapRef.current?.flyTo(coordDe(x, idx), 16, { duration: 0.45 });
   }
 
   return (

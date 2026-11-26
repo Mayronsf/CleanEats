@@ -1,9 +1,16 @@
-import type * as maplibregl from 'maplibre-gl';
-
 export type CoordLatLng = [number, number]; // [lat, lng]
 
-/** Estilo vetorial OpenFreeMap gratuito (zero API key, zero marca d'água). */
-export const ESTILO_MAPA_VETORIAL = 'https://tiles.openfreemap.org/styles/positron';
+/** Camada limpa estilo Apple Maps / iFood (ArcGIS World Street Map — gratuita, sem API key, sem marca d'água). */
+export const TILE_MAPA_LIMPO =
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
+
+/** Camada Satélite real (Esri World Imagery — gratuita, sem API key). */
+export const TILE_SATELITE =
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+
+/** Rótulos de ruas e locais sobre a camada satélite. */
+export const TILE_SATELITE_ROTULOS =
+  'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}';
 
 /** Coordenadas reais dos restaurantes parceiros em Vitória de Santo Antão - PE. */
 export const COORDS_VITORIA_RESTAURANTES: Record<string, CoordLatLng> = {
@@ -36,89 +43,7 @@ export const DESTINOS_VITORIA: CoordLatLng[] = [
   [-8.117900, -35.308500], // Maués
 ];
 
-export const CENTRO_VITORIA_LNG_LAT: [number, number] = [-35.2895, -8.1165];
-
-/**
- * Aplica paleta limpa inspirada em Apple Maps / iFood ao estilo vetorial Positron:
- * - Fundo creme off-white suave e edificações discretas
- * - Ruas brancas nítidas com nomes legíveis, sem poluição de ícones externos
- * - Áreas verdes em tom CleanEats suave e água azul clarinha
- * - Camada satélite Esri pronta para alternância instantânea
- */
-export function aplicarTemaCleanEats(map: maplibregl.Map) {
-  const pintar = (id: string, prop: Parameters<maplibregl.Map['setPaintProperty']>[1], val: string | number) => {
-    try {
-      if (map.getLayer(id)) map.setPaintProperty(id, prop, val);
-    } catch { /* camada opcional */ }
-  };
-
-  pintar('background', 'background-color', '#F5F4EF');
-  pintar('landuse_residential', 'fill-color', '#F1F0EA');
-  pintar('building', 'fill-color', '#E7E5DE');
-  pintar('building', 'fill-opacity', 0.88);
-  pintar('park', 'fill-color', '#C7EDAE');
-  pintar('park', 'fill-opacity', 0.9);
-  pintar('landcover_wood', 'fill-color', '#BCE89E');
-  pintar('landcover_wood', 'fill-opacity', 0.82);
-  pintar('water', 'fill-color', '#B8E0F8');
-  pintar('waterway', 'line-color', '#B8E0F8');
-
-  pintar('highway_path', 'line-color', '#EAE8E0');
-  pintar('highway_minor', 'line-color', '#FFFFFF');
-  pintar('highway_major_casing', 'line-color', '#DFDDD5');
-  pintar('highway_major_inner', 'line-color', '#FFFFFF');
-  pintar('highway_major_subtle', 'line-color', '#EAE9E3');
-  pintar('highway_motorway_casing', 'line-color', '#BFC5CC');
-  pintar('highway_motorway_inner', 'line-color', '#D7DCE2');
-  pintar('highway_motorway_subtle', 'line-color', '#D7DCE2');
-  pintar('highway_motorway_bridge_casing', 'line-color', '#BFC5CC');
-  pintar('highway_motorway_bridge_inner', 'line-color', '#D7DCE2');
-
-  pintar('highway-name-minor', 'text-color', '#5B6470');
-  pintar('highway-name-minor', 'text-halo-color', '#FFFFFF');
-  pintar('highway-name-minor', 'text-halo-width', 1.6);
-  pintar('highway-name-major', 'text-color', '#374151');
-  pintar('highway-name-major', 'text-halo-color', '#FFFFFF');
-  pintar('highway-name-major', 'text-halo-width', 1.8);
-
-  // Camada satélite opcional (inicialmente oculta) abaixo dos rótulos de ruas
-  if (!map.getSource('satelite-esri')) {
-    map.addSource('satelite-esri', {
-      type: 'raster',
-      tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-      tileSize: 256,
-      attribution: '&copy; Esri',
-    });
-    const antesDe = map.getLayer('highway-name-minor') ? 'highway-name-minor' : undefined;
-    map.addLayer(
-      {
-        id: 'satelite-layer',
-        type: 'raster',
-        source: 'satelite-esri',
-        layout: { visibility: 'none' },
-      },
-      antesDe,
-    );
-  }
-}
-
-export function alternarSatelite(map: maplibregl.Map, ativo: boolean) {
-  try {
-    if (map.getLayer('satelite-layer')) {
-      map.setLayoutProperty('satelite-layer', 'visibility', ativo ? 'visible' : 'none');
-    }
-    const corTexto = ativo ? '#FFFFFF' : '#475569';
-    const corHalo = ativo ? 'rgba(15, 23, 42, 0.85)' : '#FFFFFF';
-    if (map.getLayer('highway-name-minor')) {
-      map.setPaintProperty('highway-name-minor', 'text-color', corTexto);
-      map.setPaintProperty('highway-name-minor', 'text-halo-color', corHalo);
-    }
-    if (map.getLayer('highway-name-major')) {
-      map.setPaintProperty('highway-name-major', 'text-color', corTexto);
-      map.setPaintProperty('highway-name-major', 'text-halo-color', corHalo);
-    }
-  } catch { /* estilo ainda carregando */ }
-}
+export const CENTRO_VITORIA_LAT_LNG: CoordLatLng = [-8.1165, -35.2895];
 
 /** SVG minimalista de capacete de entregador estilo iFood na paleta CleanEats. */
 export const SVG_CAPACETE_ENTREGADOR = `
