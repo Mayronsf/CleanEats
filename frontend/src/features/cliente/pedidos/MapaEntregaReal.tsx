@@ -154,10 +154,11 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
     const camadaLimpa = L.tileLayer(TILE_MAPA_LIMPO, {
       attribution: '&copy; Esri &copy; OpenStreetMap',
       maxZoom: 19,
+      zIndex: 1,
     });
     const camadaSat = L.layerGroup([
-      L.tileLayer(TILE_SATELITE, { attribution: '&copy; Esri Satélite', maxZoom: 19 }),
-      L.tileLayer(TILE_SATELITE_ROTULOS, { maxZoom: 19, opacity: 0.92 }),
+      L.tileLayer(TILE_SATELITE, { attribution: '&copy; Esri Satélite', maxZoom: 19, zIndex: 1 }),
+      L.tileLayer(TILE_SATELITE_ROTULOS, { maxZoom: 19, opacity: 0.92, zIndex: 2 }),
     ]);
 
     camadaMapaRef.current = camadaLimpa;
@@ -252,10 +253,10 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
   const urlGoogleMaps = `https://www.google.com/maps/dir/?api=1&origin=${origem[0].toFixed(6)},${origem[1].toFixed(6)}&destination=${destino[0].toFixed(6)},${destino[1].toFixed(6)}&travelmode=driving`;
 
   return (
-    <div className={s.wrap}>
+    <div className={`${s.wrap} ${estilo === 'mapa' ? s.mapaEstiloIfood : ''}`}>
       <div
         ref={containerRef}
-        className={`${s.mapa} ${estilo === 'mapa' ? s.mapaEstiloIfood : ''}`}
+        className={s.mapa}
         aria-label="Mapa interativo personalizado da entrega em Vitória de Santo Antão"
       />
 
