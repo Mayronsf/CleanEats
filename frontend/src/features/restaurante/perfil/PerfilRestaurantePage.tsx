@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  AlertTriangle, Camera, Check, Clock, CreditCard, ImagePlus, MapPin, Save, Star, Tag, Truck, X,
+  AlertTriangle, Camera, Check, Clock, CreditCard, ImagePlus, LogOut, MapPin, Save, Star, Tag, Truck, X,
 } from 'lucide-react';
 import { ErroCarregamento, Skeleton, useToast } from '../../../design-system';
+import { useAuth } from '../../../hooks/useAuth';
 import { ErroApi } from '../../../services/api';
 import {
   buscarPerfilRestaurante, COZINHAS_PADRAO, enviarImagemPerfilRestaurante, ESTADOS_BR, formatarCep,
@@ -31,7 +33,15 @@ const hora = (v: string) => (v ? v.slice(0, 5) : '08:00');
 export default function PerfilRestaurantePage() {
   const toast = useToast();
   const qc = useQueryClient();
+  const navegar = useNavigate();
+  const { sair } = useAuth();
   const q = useQuery({ queryKey: ['restaurante', 'perfil'], queryFn: buscarPerfilRestaurante });
+
+  async function encerrarSessao() {
+    await sair();
+    qc.clear();
+    navegar('/login', { replace: true });
+  }
 
   const [f, setF] = useState<PerfilRestauranteForm | null>(null);
   const [arrastandoCapa, setArrastandoCapa] = useState(false);
@@ -130,10 +140,16 @@ export default function PerfilRestaurantePage() {
           <h1>Perfil do Restaurante</h1>
           <p>Informações públicas e configurações do estabelecimento</p>
         </div>
-        <button type="submit" className={s.btnSalvar} disabled={salvar.isPending || enviarLogo.isPending || enviarCapa.isPending}>
-          <Save size={16} aria-hidden />
-          {salvar.isPending ? 'Salvando…' : 'Salvar alterações'}
-        </button>
+        <div className={s.acoesTopo}>
+          <button type="button" className={s.btnSair} onClick={() => void encerrarSessao()}>
+            <LogOut size={16} aria-hidden />
+            Sair da conta
+          </button>
+          <button type="submit" className={s.btnSalvar} disabled={salvar.isPending || enviarLogo.isPending || enviarCapa.isPending}>
+            <Save size={16} aria-hidden />
+            {salvar.isPending ? 'Salvando…' : 'Salvar alterações'}
+          </button>
+        </div>
       </header>
 
       {p.statusAprovacao !== 'APROVADO' && (
@@ -411,6 +427,10 @@ export default function PerfilRestaurantePage() {
       </section>
 
       <div className={s.rodapeSalvar}>
+        <button type="button" className={s.btnSair} onClick={() => void encerrarSessao()}>
+          <LogOut size={16} aria-hidden />
+          Sair da conta
+        </button>
         <button type="submit" className={s.btnSalvar} disabled={salvar.isPending || enviarLogo.isPending || enviarCapa.isPending}>
           <Save size={16} aria-hidden />
           {salvar.isPending ? 'Salvando…' : 'Salvar alterações'}

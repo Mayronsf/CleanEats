@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Save, Trash2, Upload } from 'lucide-react';
+import { LogOut, Plus, Save, Trash2, Upload } from 'lucide-react';
 import { EmptyState, ErroCarregamento, Skeleton, useToast } from '../../../design-system';
+import { useAuth } from '../../../hooks/useAuth';
 import { ErroApi } from '../../../services/api';
 import { buscarPerfilNutri, enviarAssinaturaNutri, salvarPerfilNutri, type HorarioNutri, type PerfilEdicaoNutri } from '../../../services/nutri/painel';
 import s from './PerfilNutriPage.module.css';
 
 const DIAS=['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 export default function PerfilNutriPage(){
- const toast=useToast();const qc=useQueryClient();const q=useQuery({queryKey:['nutri','perfil'],queryFn:buscarPerfilNutri});
+ const toast=useToast();const qc=useQueryClient();const navegar=useNavigate();const {sair}=useAuth();const q=useQuery({queryKey:['nutri','perfil'],queryFn:buscarPerfilNutri});
+ const encerrarSessao=async()=>{await sair();qc.clear();navegar('/login',{replace:true});};
  const [form,setForm]=useState<PerfilEdicaoNutri>({nome:'',telefone:'',bio:'',especialidades:[],anosExperiencia:null,disponibilidade:[],maxClientes:30,chavePix:''});
  useEffect(()=>{if(q.data)setForm({nome:q.data.nome,telefone:q.data.telefone??'',bio:q.data.bio??'',especialidades:q.data.especialidades,anosExperiencia:q.data.anosExperiencia,disponibilidade:q.data.disponibilidade,maxClientes:q.data.maxClientes,chavePix:q.data.chavePix??''})},[q.data]);
  const campo=<K extends keyof PerfilEdicaoNutri>(chave:K,valor:PerfilEdicaoNutri[K])=>setForm(atual=>({...atual,[chave]:valor}));
@@ -18,7 +21,7 @@ export default function PerfilNutriPage(){
  if(q.isError)return <div className={s.pagina}><ErroCarregamento onTentarNovamente={()=>q.refetch()}/></div>;
  if(!q.data)return <div className={s.pagina}><Skeleton altura={160} raio={22}/><Skeleton altura={520} raio={22}/></div>;
  const p=q.data;
- return <main className={s.pagina}><header className={s.topo}><div><h1>Meu Perfil Profissional</h1><p>Gerencie suas informações públicas e credenciais</p></div><button type="button" className={s.salvar} onClick={()=>salvar.mutate()} disabled={salvar.isPending}><Save size={17}/>{salvar.isPending?'Salvando…':'Salvar alterações'}</button></header>
+ return <main className={s.pagina}><header className={s.topo}><div><h1>Meu Perfil Profissional</h1><p>Gerencie suas informações públicas e credenciais</p></div><div className={s.acoesTopo}><button type="button" className={s.sair} onClick={()=>void encerrarSessao()}><LogOut size={16} aria-hidden/>Sair da conta</button><button type="button" className={s.salvar} onClick={()=>salvar.mutate()} disabled={salvar.isPending}><Save size={17}/>{salvar.isPending?'Salvando…':'Salvar alterações'}</button></div></header>
  {p.statusAprovacao!=='APROVADO'&&<aside className={s.aviso} role="status"><strong>Status: {p.statusAprovacao==='PENDENTE'?'Pendente':'Rejeitado'}</strong>{p.motivoRejeicao&&<span>{p.motivoRejeicao}</span>}</aside>}
  <section className={s.cabecalhoPerfil}><div className={s.avatar}>{p.assinaturaDigitalUrl?<img src={p.assinaturaDigitalUrl} alt="Assinatura digital cadastrada"/>:p.nome.split(' ').map(x=>x[0]).slice(0,2).join('')}</div><div><h2>{form.nome||p.nome}</h2><p>{p.crn} · {p.crnUf}</p><div className={s.tags}>{form.especialidades.map(x=><span key={x}>{x}</span>)}</div></div></section>
  <form className={s.form} onSubmit={e=>{e.preventDefault();salvar.mutate()}}><section className={s.card}><h2>Dados profissionais</h2><div className={s.grade}><label>Nome completo<input required value={form.nome} onChange={e=>campo('nome',e.target.value)}/></label><label>E-mail<input type="email" value={p.email} readOnly/></label><label>Telefone<input type="tel" value={form.telefone??''} onChange={e=>campo('telefone',e.target.value)}/></label><label>CRN<input value={`${p.crn} · ${p.crnUf}`} readOnly/></label><label className={s.largo}>Bio resumida<textarea rows={4} maxLength={600} value={form.bio??''} onChange={e=>campo('bio',e.target.value)}/><small>{(form.bio??'').length}/600 caracteres</small></label><label>Anos de experiência<input type="number" min="0" max="70" value={form.anosExperiencia??''} onChange={e=>campo('anosExperiencia',e.target.value===''?null:Number(e.target.value))}/></label><label>Máximo de clientes<input type="number" min="1" max="500" value={form.maxClientes??''} onChange={e=>campo('maxClientes',e.target.value===''?null:Number(e.target.value))}/></label><label className={s.largo}>Especialidades <small>Separe cada especialidade por vírgula</small><textarea rows={3} required value={form.especialidades.join(', ')} onChange={e=>campo('especialidades',e.target.value.split(',').map(x=>x.trim()).filter(Boolean))}/></label><label className={s.largo}>Chave PIX<input value={form.chavePix??''} onChange={e=>campo('chavePix',e.target.value)} autoComplete="off"/></label></div></section>

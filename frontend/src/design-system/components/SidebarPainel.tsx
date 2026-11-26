@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Menu, MoreHorizontal, X, type LucideIcon } from 'lucide-react';
+import { LogOut, Menu, MoreHorizontal, X, type LucideIcon } from 'lucide-react';
 import { Logo } from './Logo';
 import { iniciais } from '../../lib/formato';
 import s from './SidebarPainel.module.css';
@@ -31,9 +31,11 @@ export interface SidebarPainelProps {
   usuario: { nome: string; subtitulo: string; avatarUrl?: string };
   /** Ação ao lado do usuário (ex.: sino de notificações, CE-13) */
   acao?: ReactNode;
+  /** Encerra a sessão do painel atual */
+  onSair?: () => void;
 }
 
-export function SidebarPainel({ variante, grupos, usuario, acao }: SidebarPainelProps) {
+export function SidebarPainel({ variante, grupos, usuario, acao, onSair }: SidebarPainelProps) {
   const [aberta, setAberta] = useState(false);
   const local = useLocation();
   useEffect(() => setAberta(false), [local.pathname]);
@@ -87,6 +89,11 @@ export function SidebarPainel({ variante, grupos, usuario, acao }: SidebarPainel
             </span>
             {acao ?? <MoreHorizontal size={18} aria-hidden className={s.mais} />}
           </div>
+          {onSair && (
+            <button type="button" className={s.sair} onClick={onSair}>
+              <LogOut size={15} aria-hidden /> Sair da conta
+            </button>
+          )}
         </div>
       </aside>
     </>

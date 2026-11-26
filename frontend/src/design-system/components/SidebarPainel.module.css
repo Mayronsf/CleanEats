@@ -68,6 +68,28 @@
 .usuarioNome { font-size: 13px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .usuarioPapel { font-size: 10px; color: var(--gray-500); }
 .mais { color: var(--gray-500); }
+.sair {
+  width: 100%;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line-panel);
+  background: var(--white);
+  color: var(--gray-700);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+.sair:hover {
+  border-color: var(--prot);
+  background: #FFF5F2;
+  color: var(--prot);
+}
 
 .abrir, .fechar { display: none; }
 .sombra { display: none; }
