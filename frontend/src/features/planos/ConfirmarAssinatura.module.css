@@ -1,14 +1,29 @@
-.dialogo { border: none; border-radius: var(--radius-xl); padding: 0; width: min(480px, calc(100vw - 32px)); box-shadow: var(--shadow-pop); color: var(--ink); }
+.dialogo { border: none; border-radius: var(--radius-xl); padding: 0; width: min(540px, calc(100vw - 24px)); box-shadow: var(--shadow-pop); color: var(--ink); }
 .dialogo::backdrop { background: rgba(26, 46, 26, 0.45); }
-.corpo { padding: 28px; }
-.cabeca { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.cabeca h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.corpo { padding: 26px 28px; }
+.cabeca { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.cabeca h1, .cabeca h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
 .fechar { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--gray-100); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.resumo { background: var(--gray-50); border-radius: var(--radius-lg); padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.resumo { background: var(--gray-50); border-radius: var(--radius-lg); padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .resumo div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
 .resumo dt { color: var(--gray-700); }
 .resumo dd { font-weight: 700; font-variant-numeric: tabular-nums; }
-.formas { border: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.nutris { border: none; margin-bottom: 16px; }
+.nutrisTopo { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.nutrisTopo legend { font-size: 13px; font-weight: 700; color: var(--ink); }
+.verTodosNutris { font-size: 12px; font-weight: 700; color: var(--green-primary); text-decoration: none; }
+.verTodosNutris:hover { text-decoration: underline; }
+.nutrisLista { display: flex; flex-direction: column; gap: 8px; max-height: 210px; overflow-y: auto; padding-right: 2px; }
+.nutriOpcao { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border: 1.5px solid var(--line-strong); border-radius: var(--radius-field); cursor: pointer; transition: all var(--dur-fast); }
+.nutriOpcao input { accent-color: var(--green-primary); width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; }
+.nutriInfo { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.nutriInfo strong { font-size: 13.5px; color: var(--ink); display: inline-flex; align-items: center; gap: 5px; }
+.nutriInfo small { font-size: 11.5px; color: var(--gray-700); line-height: 1.35; }
+.nutriNomeLinha { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nutriNota { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 800; color: var(--ink); background: var(--gray-100); padding: 2px 7px; border-radius: var(--radius-pill); }
+.nutriNota svg { color: var(--orange); }
+.nutriMatch { font-size: 10px; font-weight: 800; text-transform: uppercase; background: #FEF3E5; color: #A8571C; padding: 2px 7px; border-radius: var(--radius-pill); }
+.formas { border: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
 .formas legend { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
 .forma { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid var(--line-strong); border-radius: var(--radius-field); cursor: pointer; transition: all var(--dur-fast); }
 .forma input { accent-color: var(--green-primary); width: 18px; height: 18px; }

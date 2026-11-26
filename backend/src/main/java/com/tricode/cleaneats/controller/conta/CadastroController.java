@@ -1,7 +1,9 @@
 package com.tricode.cleaneats.controller.conta;
 
+import com.tricode.cleaneats.domain.Enums.NivelAtividade;
 import com.tricode.cleaneats.domain.Enums.ObjetivoNutricional;
 import com.tricode.cleaneats.domain.MetasIniciais;
+import com.tricode.cleaneats.domain.MetasIniciais.CalculoMetabolico;
 import com.tricode.cleaneats.dto.UsuarioDto;
 import com.tricode.cleaneats.repository.RestricaoAlimentarRepository;
 import com.tricode.cleaneats.security.UsuarioLogado;
@@ -32,6 +34,8 @@ public class CadastroController {
             @NotNull @DecimalMin("30") @DecimalMax("300") BigDecimal pesoKg,
             @NotNull @DecimalMin("100") @DecimalMax("230") BigDecimal alturaCm,
             @NotNull @Min(14) @Max(110) Integer idade,
+            String sexo,
+            NivelAtividade nivelAtividade,
             @NotNull OffsetDateTime aceiteTermosEm) {}
 
     public record RestricaoDto(String slug, String nome) {}
@@ -48,14 +52,37 @@ public class CadastroController {
     @ResponseStatus(HttpStatus.CREATED)
     public UsuarioDto cadastrarCliente(@Valid @RequestBody CadastroClienteRequest req) {
         return cadastroClienteService.cadastrar(UsuarioLogado.id(), UsuarioLogado.email(), new DadosCliente(
-                req.nome(), req.telefone(), req.objetivo(), req.restricoes(), req.pesoKg(), req.alturaCm(), req.idade(), req.aceiteTermosEm()));
+                req.nome(), req.telefone(), req.objetivo(), req.restricoes(), req.pesoKg(), req.alturaCm(),
+                req.idade(), req.sexo(), req.nivelAtividade(), req.aceiteTermosEm()));
     }
 
     /** Metas iniciais por objetivo (preview "Seu plano inicial" da tela 05). */
     @GetMapping("/cadastro/metas-iniciais")
-    public Map<ObjetivoNutricional, MetasIniciais> metasIniciais() {
+    public Map<ObjetivoNutricional, MetasIniciais> metasIniciais(
+            @RequestParam(required = false) BigDecimal pesoKg,
+            @RequestParam(required = false) BigDecimal alturaCm,
+            @RequestParam(required = false) Integer idade,
+            @RequestParam(required = false) String sexo,
+            @RequestParam(required = false) NivelAtividade nivelAtividade) {
         var mapa = new LinkedHashMap<ObjetivoNutricional, MetasIniciais>();
-        Arrays.stream(ObjetivoNutricional.values()).forEach(o -> mapa.put(o, MetasIniciais.para(o)));
+        boolean temFisico = pesoKg != null && alturaCm != null && idade != null;
+        Arrays.stream(ObjetivoNutricional.values()).forEach(o -> mapa.put(o, temFisico
+                ? MetasIniciais.calcular(o, pesoKg, alturaCm, idade, sexo, nivelAtividade).paraMetas()
+                : MetasIniciais.para(o)));
+        return mapa;
+    }
+
+    /** Cálculo metabólico completo (TMB Mifflin-St Jeor, GET e protocolos Cutting / Bulking / Manutenção). */
+    @GetMapping("/cadastro/calculo-basal")
+    public Map<ObjetivoNutricional, CalculoMetabolico> calculoBasal(
+            @RequestParam(required = false) BigDecimal pesoKg,
+            @RequestParam(required = false) BigDecimal alturaCm,
+            @RequestParam(required = false) Integer idade,
+            @RequestParam(required = false) String sexo,
+            @RequestParam(required = false) NivelAtividade nivelAtividade) {
+        var mapa = new LinkedHashMap<ObjetivoNutricional, CalculoMetabolico>();
+        Arrays.stream(ObjetivoNutricional.values()).forEach(o ->
+                mapa.put(o, MetasIniciais.calcular(o, pesoKg, alturaCm, idade, sexo, nivelAtividade)));
         return mapa;
     }
 

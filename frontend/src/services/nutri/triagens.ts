@@ -2,9 +2,15 @@ import { chamarApi } from '../api';
 
 export type StatusTriagem = 'AGUARDANDO' | 'EM_ANDAMENTO' | 'CONCLUIDA';
 export type OrdenacaoTriagem = 'ANTIGAS' | 'RECENTES' | 'TIER';
+export interface CalculoBasalTriagem {
+  tmb: number; get: number; ajusteKcal: number; protocolo: string; descricaoProtocolo: string;
+  calorias: number; proteinas: number; carboidratos: number; gorduras: number; fibras: number; aguaMl: number;
+}
 export interface Triagem {
   id: string; idCliente: string; status: StatusTriagem; nome: string; tier: string; idade: number | null; pesoKg: number | null; alturaCm: number | null;
-  objetivo: string; restricoes: string[]; rotina: string; condicoesSaude: string[]; criadoEm: string; iniciadaEm: string | null;
+  sexo?: string | null; nivelAtividade?: string | null;
+  objetivo: string; calculoBasal?: CalculoBasalTriagem | null;
+  restricoes: string[]; rotina: string; condicoesSaude: string[]; criadoEm: string; iniciadaEm: string | null;
   concluidaEm: string | null; observacoes: string | null;
 }
 export interface ListaTriagens {

@@ -24,7 +24,8 @@ import java.util.UUID;
 public class CadastroClienteService {
 
     public record DadosCliente(String nome, String telefone, ObjetivoNutricional objetivo, List<String> restricoes,
-                               BigDecimal pesoKg, BigDecimal alturaCm, Integer idade, OffsetDateTime aceiteTermosEm) {}
+                               BigDecimal pesoKg, BigDecimal alturaCm, Integer idade, String sexo,
+                               NivelAtividade nivelAtividade, OffsetDateTime aceiteTermosEm) {}
 
     private final UsuarioService usuarioService;
     private final PerfilClienteRepository perfilClienteRepository;
@@ -46,14 +47,16 @@ public class CadastroClienteService {
         perfil.setPesoKg(dados.pesoKg());
         perfil.setAlturaCm(dados.alturaCm());
         if (dados.idade() != null) perfil.setDataNascimento(LocalDate.now().minusYears(dados.idade()).withDayOfYear(1));
-        perfil.setNivelAtividade(NivelAtividade.MODERADO);
-        var metas = MetasIniciais.para(dados.objetivo());
-        perfil.setMetaCalorias(metas.calorias());
-        perfil.setMetaProteinas(metas.proteinas());
-        perfil.setMetaCarboidratos(metas.carboidratos());
-        perfil.setMetaGorduras(metas.gorduras());
-        perfil.setMetaFibras(metas.fibras());
-        perfil.setMetaAguaMl(MetasIniciais.aguaMl(dados.pesoKg()));
+        if (dados.sexo() != null && java.util.Set.of("F", "M", "O").contains(dados.sexo())) perfil.setSexo(dados.sexo());
+        var nivel = dados.nivelAtividade() == null ? NivelAtividade.MODERADO : dados.nivelAtividade();
+        perfil.setNivelAtividade(nivel);
+        var calc = MetasIniciais.calcular(dados.objetivo(), dados.pesoKg(), dados.alturaCm(), dados.idade(), dados.sexo(), nivel);
+        perfil.setMetaCalorias(calc.calorias());
+        perfil.setMetaProteinas(calc.proteinas());
+        perfil.setMetaCarboidratos(calc.carboidratos());
+        perfil.setMetaGorduras(calc.gorduras());
+        perfil.setMetaFibras(calc.fibras());
+        perfil.setMetaAguaMl(calc.aguaMl());
         perfilClienteRepository.save(perfil);
 
         if (dados.restricoes() != null && !dados.restricoes().isEmpty()) {

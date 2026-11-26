@@ -6,11 +6,11 @@ import { ErroApi } from '../../../services/api';
 import { baixarArquivo, buscarRelatorios, type RelatorioGerado, type TipoRelatorio } from '../../../services/restaurante';
 import s from './Gestao.module.css';
 
-const TIPOS: { tipo: TipoRelatorio; titulo: string; descricao: string; formato: 'PDF' | 'CSV'; icone: typeof FileText; tom: string }[] = [
+const TIPOS: { tipo: TipoRelatorio; titulo: string; descricao: string; formato: 'PDF'; icone: typeof FileText; tom: string }[] = [
   { tipo: 'VENDAS', titulo: 'Relatório de vendas', descricao: 'Detalhamento por prato, categoria e período com volume e receita.', formato: 'PDF', icone: BarChart3, tom: 'coral' },
   { tipo: 'FINANCEIRO', titulo: 'Relatório financeiro', descricao: 'Receita bruta/líquida e comissões por semana.', formato: 'PDF', icone: DollarSign, tom: 'verde' },
   { tipo: 'AVALIACOES', titulo: 'Relatório de avaliações', descricao: 'Notas por prato e comentários publicados.', formato: 'PDF', icone: Star, tom: 'azul' },
-  { tipo: 'CLIENTES', titulo: 'Relatório de clientes', descricao: 'Clientes, frequência de compra e recorrência.', formato: 'CSV', icone: Users, tom: 'laranja' },
+  { tipo: 'CLIENTES', titulo: 'Relatório de clientes', descricao: 'Clientes, frequência de compra e recorrência.', formato: 'PDF', icone: Users, tom: 'laranja' },
   { tipo: 'CARDAPIO', titulo: 'Relatório de cardápio', descricao: 'Performance por prato, status e itens sem venda.', formato: 'PDF', icone: ClipboardList, tom: 'coral' },
   { tipo: 'OPERACIONAL', titulo: 'Relatório operacional', descricao: 'Tempo médio de preparo, cancelamentos e picos por dia.', formato: 'PDF', icone: Gauge, tom: 'verde' },
 ];
@@ -71,8 +71,8 @@ export default function RelatoriosPage() {
             <table className={s.tabela}><thead><tr><th>Relatório</th><th>Período</th><th>Gerado em</th><th>Formato</th><th><span className="sr-only">Ação</span></th></tr></thead>
               <tbody>{historico.data.map((r) => (
                 <tr key={r.id}><td><b>{nomeHistorico(r)}</b></td><td>{br(r.inicio).slice(0, 5)} — {br(r.fim).slice(0, 5)}</td><td>{new Date(r.geradoEm).toLocaleDateString('pt-BR')}</td>
-                  <td><span className={s.formato}>{r.formato}</span></td>
-                  <td><button type="button" className={s.botaoClaro} onClick={() => gerar.mutate({ tipo: r.tipo, formato: r.formato, de: r.inicio, ate: r.fim, registrar: false })} disabled={gerar.isPending}><Download size={14} aria-hidden /> Baixar</button></td></tr>
+                  <td><span className={s.formato}>PDF</span></td>
+                  <td><button type="button" className={s.botaoClaro} onClick={() => gerar.mutate({ tipo: r.tipo, formato: 'PDF', de: r.inicio, ate: r.fim, registrar: false })} disabled={gerar.isPending}><Download size={14} aria-hidden /> Baixar PDF</button></td></tr>
               ))}</tbody></table>
           )}
       </section>

@@ -1,0 +1,211 @@
+.pagina { max-width: 1440px; margin: 0 auto; padding: 32px var(--page-pad-x, 64px) 100px; }
+
+.heroi {
+  background: linear-gradient(135deg, var(--green-bg) 0%, var(--green-bg-deep) 100%);
+  border-radius: 28px;
+  padding: 36px 44px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--green-dark);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+.titulo { font-size: 42px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.06; margin-bottom: 12px; }
+.sub { font-size: 15px; color: var(--gray-700); line-height: 1.55; max-width: 620px; }
+
+.seloObjetivo {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--white);
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  color: var(--ink);
+  box-shadow: 0 4px 12px rgba(26, 46, 26, 0.06);
+}
+.seloObjetivo svg { color: var(--green-primary); flex-shrink: 0; }
+
+.heroiResumo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  gap: 12px;
+}
+.heroiResumo > div {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 18px 16px;
+  text-align: center;
+}
+.heroiResumo span { display: block; font-size: 24px; font-weight: 800; color: var(--green-dark); }
+.heroiResumo small { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.filtros {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.pilulas { display: flex; gap: 8px; flex-wrap: wrap; }
+.pilula {
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--line-strong);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+.pilula:hover { border-color: var(--green-primary); color: var(--green-dark); }
+.pilulaAtiva { background: var(--green-primary); border-color: var(--green-primary); color: var(--white); }
+
+.ordenar { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--gray-700); }
+.ordenar select {
+  background: var(--white);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  padding: 9px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+
+.card {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 24px;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform var(--dur), border-color var(--dur), box-shadow var(--dur);
+}
+.card:hover { transform: translateY(-4px); border-color: var(--green-primary); box-shadow: 0 16px 32px rgba(26, 46, 26, 0.07); }
+.cardAtual { border-color: var(--green-primary); background: linear-gradient(180deg, #F6FBF2 0%, var(--white) 45%); }
+
+.cardTopo { display: flex; align-items: flex-start; gap: 16px; }
+.avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: var(--green-primary);
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.identidade { flex: 1; min-width: 0; }
+.selosTopo { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+.seloAtual, .seloMatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+.seloAtual { background: var(--green-primary); color: var(--white); }
+.seloMatch { background: #FEF3E5; color: #A8571C; }
+
+.nome { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+.crn { font-size: 12px; font-weight: 700; color: var(--blue-dark, #2D5A75); margin-top: 3px; }
+
+.nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--ink);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.nota svg { color: var(--orange); }
+
+.especialidades { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  background: var(--green-bg);
+  color: var(--green-dark);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bio { font-size: 14px; color: var(--gray-700); line-height: 1.55; flex: 1; }
+
+.metaLinha {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line-strong);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gray-700);
+}
+.metaLinha span { display: inline-flex; align-items: center; gap: 6px; }
+.metaLinha svg { color: var(--green-primary); }
+
+.rodape { margin-top: 4px; }
+.btnEscolher, .btnAtual {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all var(--dur-fast);
+}
+.btnEscolher { background: var(--green-primary); color: var(--white); }
+.btnEscolher:hover:not(:disabled) { background: var(--green-dark); }
+.btnEscolher:disabled { opacity: 0.5; cursor: not-allowed; }
+.btnAtual { background: var(--green-bg); color: var(--green-dark); border: 1.5px solid var(--green-primary); }
+.btnAtual:hover { background: var(--green-bg-deep); }
+
+@media (max-width: 1023px) {
+  .heroi { grid-template-columns: minmax(0, 1fr); padding: 28px; }
+  .grade { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  .pagina { padding: 20px 16px 100px; }
+  .titulo { font-size: 30px; }
+  .heroiResumo { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

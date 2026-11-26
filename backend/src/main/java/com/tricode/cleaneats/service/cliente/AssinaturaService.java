@@ -10,6 +10,8 @@ import com.tricode.cleaneats.repository.AssinaturaRepository;
 import com.tricode.cleaneats.repository.FaturaRepository;
 import com.tricode.cleaneats.repository.UsuarioRepository;
 import com.tricode.cleaneats.service.NotificacaoService;
+import com.tricode.cleaneats.service.PdfEstiloCleanEats.Tema;
+import com.tricode.cleaneats.service.RelatorioTabelaPdf;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +38,12 @@ public class AssinaturaService {
                          int percentualDesconto, LocalDate semanaPlano) {}
     public record FaturaDto(UUID id, String referencia, BigDecimal valor, String status, LocalDate vencimento,
                             OffsetDateTime pagaEm, String tier, String ciclo, String formaPagamento) {}
-    public record NutriDto(String nome, String crn) {}
+    public record NutriDto(UUID id, String nome, String crn, List<String> especialidades, BigDecimal notaMedia, String avatarUrl) {}
     public record AssinaturaDto(String tier, String status, String ciclo, BigDecimal valor, String formaPagamento,
                                 OffsetDateTime membroDesde, OffsetDateTime inicioEm, OffsetDateTime renovacaoEm,
                                 OffsetDateTime encerraEm, OffsetDateTime pausadaAte, BigDecimal totalEconomizado,
                                 UsoDto uso, List<FaturaDto> faturas, NutriDto nutricionista) {}
-    public record AssinarReq(String tier, String ciclo, String formaPagamento) {}
+    public record AssinarReq(String tier, String ciclo, String formaPagamento, UUID idNutricionista) {}
 
     private static final ZoneId FUSO = ZoneId.of("America/Recife");
     private static final Set<StatusAssinatura> VIGENTES =
@@ -102,9 +104,17 @@ public class AssinaturaService {
         var semanaPlano = jdbc.sql("select semana_inicio from plano_alimentar where id_usuario = :u and ativo order by semana_inicio desc limit 1")
                 .param("u", idUsuario).query(LocalDate.class).optional().orElse(null);
         var nutri = jdbc.sql("""
-                select u.nome, n.crn from perfil_cliente pc join nutricionista n on n.id = pc.id_nutricionista
+                select n.id, u.nome, n.crn, n.especialidades, n.nota_media, u.avatar_url
+                from perfil_cliente pc join nutricionista n on n.id = pc.id_nutricionista
                 join usuario u on u.id = n.id_usuario where pc.id_usuario = :u""")
-                .param("u", idUsuario).query((rs, i) -> new NutriDto(rs.getString("nome"), rs.getString("crn"))).optional().orElse(null);
+                .param("u", idUsuario).query((rs, i) -> new NutriDto(
+                        rs.getObject("id", UUID.class),
+                        rs.getString("nome"),
+                        rs.getString("crn"),
+                        CatalogoService.textos(rs.getArray("especialidades")),
+                        rs.getBigDecimal("nota_media"),
+                        rs.getString("avatar_url")
+                )).optional().orElse(null);
         var listaFaturas = jdbc.sql("""
                 select f.id, f.referencia, f.valor, f.status, f.vencimento, f.paga_em, a.id_tier, a.ciclo, a.forma_pagamento
                 from fatura f join assinatura a on a.id = f.id_assinatura
@@ -147,7 +157,7 @@ public class AssinaturaService {
         nova = assinaturas.save(nova);
         faturas.save(Fatura.pagaAgora(nova.getId(), LocalDate.now(FUSO).format(DateTimeFormatter.ofPattern("MM/yyyy")), nova.getValor()));
         definirTier(idUsuario, tier);
-        if (tier.temNutricionistaDedicado()) vincularNutricionista(idUsuario);
+        if (tier.temNutricionistaDedicado()) vincularNutricionista(idUsuario, req.idNutricionista());
 
         var anterior = atual.map(Assinatura::getTier).orElse(TierAssinatura.FREE);
         notificacoes.notificar(idUsuario, TipoNotificacao.ASSINATURA,
@@ -194,6 +204,45 @@ public class AssinaturaService {
         return consultar(idUsuario);
     }
 
+    /** Extrato de faturas da assinatura do cliente em PDF estilizado CleanEats. */
+    @Transactional
+    public byte[] faturasPdf(UUID idUsuario) {
+        var dto = consultar(idUsuario);
+        var nomeCliente = jdbc.sql("select nome from usuario where id = :u").param("u", idUsuario)
+                .query(String.class).optional().orElse("Cliente CleanEats");
+        var fmtData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        var nf = java.text.NumberFormat.getNumberInstance(java.util.Locale.forLanguageTag("pt-BR"));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+
+        long pagas = dto.faturas().stream().filter(f -> "PAGA".equals(f.status())).count();
+        var kpis = List.of(
+                "Plano atual: " + nomeTier(TierAssinatura.valueOf(dto.tier())),
+                "Faturas pagas: " + pagas,
+                "Total economizado: R$ " + nf.format(dto.totalEconomizado() == null ? BigDecimal.ZERO : dto.totalEconomizado())
+        );
+        var cab = List.of("Referência", "Vencimento", "Plano", "Ciclo", "Pagamento", "Status", "Valor (R$)");
+        var linhas = dto.faturas().stream().map(f -> List.of(
+                f.referencia(),
+                f.vencimento() == null ? "—" : f.vencimento().format(fmtData),
+                nomeTier(TierAssinatura.valueOf(f.tier())),
+                "ANUAL".equals(f.ciclo()) ? "Anual" : "Mensal",
+                "PIX".equals(f.formaPagamento()) ? "PIX" : "Cartão",
+                "PAGA".equals(f.status()) ? "Paga" : f.status(),
+                nf.format(f.valor() == null ? BigDecimal.ZERO : f.valor())
+        )).toList();
+
+        return RelatorioTabelaPdf.gerar(
+                Tema.PADRAO,
+                nomeCliente,
+                "Área do Cliente · Assinatura",
+                "Histórico de Faturas",
+                "Últimas " + dto.faturas().size() + " faturas",
+                "CleanEats · Extrato de Assinatura · " + nomeCliente,
+                kpis, cab, linhas, false
+        );
+    }
+
     // ---------- internos ----------
 
     private Assinatura exigirVigente(UUID idUsuario) {
@@ -211,28 +260,65 @@ public class AssinaturaService {
         usuarios.save(u);
     }
 
-    /** Pro/Premium sem nutri: vincula a nutri aprovada com menos clientes e abre a triagem (frente B atende). */
-    private void vincularNutricionista(UUID idUsuario) {
-        var temNutri = jdbc.sql("select id_nutricionista is not null from perfil_cliente where id_usuario = :u")
-                .param("u", idUsuario).query(Boolean.class).optional().orElse(false);
-        if (temNutri) return;
-        var escolhida = jdbc.sql("""
-                select n.id, n.id_usuario from nutricionista n
-                where n.status_aprovacao = 'APROVADO'
-                order by (select count(*) from perfil_cliente pc where pc.id_nutricionista = n.id), n.nota_media desc
-                limit 1""")
-                .query((rs, i) -> new UUID[]{rs.getObject("id", UUID.class), rs.getObject("id_usuario", UUID.class)}).optional();
-        if (escolhida.isEmpty()) return;
-        var idNutri = escolhida.get()[0];
-        jdbc.sql("update perfil_cliente set id_nutricionista = :n where id_usuario = :u").param("n", idNutri).param("u", idUsuario).update();
+    /**
+     * Pro/Premium: vincula o nutricionista escolhido pelo cliente (se informado e com vaga) ou,
+     * caso contrário, distribui automaticamente para o nutricionista aprovado com vaga disponível,
+     * menor carga de pacientes e melhor avaliação, abrindo a triagem (AGUARDANDO).
+     */
+    private void vincularNutricionista(UUID idUsuario, UUID idDesejado) {
+        UUID idNutriAtual = jdbc.sql("select id_nutricionista from perfil_cliente where id_usuario = :u")
+                .param("u", idUsuario).query(UUID.class).optional().orElse(null);
+
+        UUID idNutri = null;
+        UUID idUsuarioNutri = null;
+
+        if (idDesejado != null) {
+            if (idDesejado.equals(idNutriAtual)) return;
+            var escolhido = jdbc.sql("""
+                    select n.id, n.id_usuario, coalesce(n.max_clientes, 30) as max_c,
+                           (select count(*) from perfil_cliente pc where pc.id_nutricionista = n.id) as ativos
+                    from nutricionista n
+                    where n.id = :id and n.status_aprovacao = 'APROVADO'""")
+                    .param("id", idDesejado)
+                    .query((rs, i) -> new Object[]{
+                            rs.getObject("id", UUID.class),
+                            rs.getObject("id_usuario", UUID.class),
+                            rs.getInt("max_c"),
+                            rs.getInt("ativos")
+                    }).optional()
+                    .orElseThrow(() -> new IllegalArgumentException("O nutricionista escolhido não está disponível."));
+            if ((int) escolhido[3] >= (int) escolhido[2]) {
+                throw new IllegalArgumentException("Este nutricionista está com a agenda cheia no momento. Escolha outro profissional.");
+            }
+            idNutri = (UUID) escolhido[0];
+            idUsuarioNutri = (UUID) escolhido[1];
+        } else {
+            if (idNutriAtual != null) return;
+            var auto = jdbc.sql("""
+                    select n.id, n.id_usuario from nutricionista n
+                    where n.status_aprovacao = 'APROVADO'
+                    order by
+                      case when (select count(*) from perfil_cliente pc where pc.id_nutricionista = n.id) < coalesce(n.max_clientes, 30) then 0 else 1 end,
+                      (select count(*) from perfil_cliente pc where pc.id_nutricionista = n.id) asc,
+                      n.nota_media desc
+                    limit 1""")
+                    .query((rs, i) -> new UUID[]{rs.getObject("id", UUID.class), rs.getObject("id_usuario", UUID.class)}).optional();
+            if (auto.isEmpty()) return;
+            idNutri = auto.get()[0];
+            idUsuarioNutri = auto.get()[1];
+        }
+
+        jdbc.sql("update perfil_cliente set id_nutricionista = :n where id_usuario = :u")
+                .param("n", idNutri).param("u", idUsuario).update();
         jdbc.sql("""
                 insert into triagem (id_cliente, id_nutricionista)
                 select :u, :n where not exists (
                   select 1 from triagem where id_cliente = :u and id_nutricionista = :n and status <> 'CONCLUIDA')""")
                 .param("u", idUsuario).param("n", idNutri).update();
         var nomeCliente = jdbc.sql("select nome from usuario where id = :u").param("u", idUsuario).query(String.class).single();
-        notificacoes.notificar(escolhida.get()[1], TipoNotificacao.NUTRICIONISTA, "Nova triagem aguardando",
-                nomeCliente + " assinou um plano com nutricionista e foi vinculado a você.", "/nutri/triagens");
+        notificacoes.notificar(idUsuarioNutri, TipoNotificacao.NUTRICIONISTA, "Nova triagem aguardando",
+                nomeCliente + (idDesejado != null ? " escolheu você ao assinar o plano e aguarda triagem." : " assinou um plano com nutricionista e foi vinculado a você."),
+                "/nutri/triagens");
     }
 
     static String nomeTier(TierAssinatura t) {

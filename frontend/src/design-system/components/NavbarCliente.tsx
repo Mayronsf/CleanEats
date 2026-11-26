@@ -8,6 +8,7 @@ import s from './NavbarCliente.module.css';
 const LINKS = [
   { para: '/app', rotulo: 'Home', fim: true },
   { para: '/app/marketplace', rotulo: 'Marketplace' },
+  { para: '/app/nutricionistas', rotulo: 'Nutricionistas' },
   { para: '/app/meu-plano', rotulo: 'Meu plano' },
   { para: '/app/pedidos', rotulo: 'Pedidos' },
   { para: '/app/nutribot', rotulo: 'NutriBot' },

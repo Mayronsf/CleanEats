@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tricode.cleaneats.domain.CalculoFinanceiro;
+import com.tricode.cleaneats.service.PdfEstiloCleanEats.Tema;
+import com.tricode.cleaneats.service.RelatorioTabelaPdf;
 import com.tricode.cleaneats.service.SupabaseServicoClient;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
@@ -122,6 +124,42 @@ public class PainelNutriService {
         for(var a:f.assinantes()) linhas.append(csvCampo(a.nome())).append(';').append(a.tier()).append(';').append(a.mensalidade()).append(';')
                 .append(a.repasse()).append(';').append(a.inicioEm().toLocalDate()).append(';').append(a.status()).append('\n');
         return linhas.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    /** Relatório financeiro e repasses da nutricionista em PDF estilizado CleanEats (tema clínico azul). */
+    public byte[] financeiroPdf(UUID idUsuario) {
+        var n = contexto.atual(idUsuario);
+        var f = financeiro(idUsuario);
+        var nf = java.text.NumberFormat.getNumberInstance(Locale.forLanguageTag("pt-BR"));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        var fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        var kpis = List.of(
+                "Receita bruta: R$ " + nf.format(f.bruto()),
+                "Repasse líquido (60%): R$ " + nf.format(f.liquido()),
+                "Clientes pagantes: " + f.clientesPagantes(),
+                "Ticket médio: R$ " + nf.format(f.ticketMedio())
+        );
+        var cab = List.of("Cliente", "Plano", "Mensalidade (R$)", "Repasse 60% (R$)", "Início", "Status");
+        var linhas = f.assinantes().stream().map(a -> List.of(
+                a.nome(),
+                a.tier(),
+                nf.format(a.mensalidade()),
+                nf.format(a.repasse()),
+                a.inicioEm() == null ? "—" : a.inicioEm().toLocalDate().format(fmt),
+                "ATIVA".equalsIgnoreCase(a.status()) ? "Ativa" : a.status()
+        )).toList();
+
+        return RelatorioTabelaPdf.gerar(
+                Tema.NUTRI,
+                n.nome() + " · " + n.crn(),
+                "Nutricionista Parceiro · Financeiro",
+                "Extrato Financeiro e Repasses",
+                "Assinantes vigentes",
+                "CleanEats · Painel do Nutricionista · " + n.nome(),
+                kpis, cab, linhas, false
+        );
     }
     private static String csvCampo(String valor){return "\""+valor.replace("\"","\"\"")+"\"";}
 

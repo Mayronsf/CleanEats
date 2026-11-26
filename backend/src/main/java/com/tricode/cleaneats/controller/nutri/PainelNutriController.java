@@ -25,6 +25,10 @@ public class PainelNutriController {
     @GetMapping("/financeiro") public Financeiro financeiro(){return servico.financeiro(UsuarioLogado.id());}
     @GetMapping("/financeiro/csv") public ResponseEntity<byte[]> csv(){return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=financeiro-nutri.csv")
             .contentType(new MediaType("text","csv",StandardCharsets.UTF_8)).body(servico.csv(UsuarioLogado.id()));}
+    @GetMapping("/financeiro/pdf") public ResponseEntity<byte[]> financeiroPdf(){return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=financeiro-nutri.pdf")
+            .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+            .contentType(MediaType.APPLICATION_PDF).body(servico.financeiroPdf(UsuarioLogado.id()));}
     @GetMapping("/perfil") public Perfil perfil(){return servico.perfil(UsuarioLogado.id());}
     @PutMapping("/perfil") public Perfil salvar(@RequestBody PerfilEdicao dados){return servico.salvarPerfil(UsuarioLogado.id(),dados);}
     @PostMapping(path="/perfil/assinatura",consumes=MediaType.MULTIPART_FORM_DATA_VALUE)

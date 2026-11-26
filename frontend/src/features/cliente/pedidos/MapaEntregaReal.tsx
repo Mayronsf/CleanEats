@@ -14,7 +14,16 @@ const COORDS_RESTAURANTES: Record<string, Coord> = {
   'Mar & Terra': [-8.0912, -34.8842],
   'Açaí Club': [-8.0525, -34.9041],
   'Rota Proteica': [-8.1088, -34.8918],
+  'Raízes Fit': [-8.0628, -34.8992],
 };
+
+function distanciaKmEntre(a: Coord, b: Coord): number {
+  const rad = (g: number) => (g * Math.PI) / 180;
+  const dLat = rad(b[0] - a[0]);
+  const dLng = rad(b[1] - a[1]);
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+}
 
 function hashTexto(texto: string): number {
   let h = 0;
@@ -110,9 +119,35 @@ export function MapaEntregaReal({ pedido, agora }: { pedido: PedidoDetalhe; agor
   const rotaAndadaRef = useRef<L.Polyline | null>(null);
   const motoRef = useRef<L.Marker | null>(null);
 
-  const { origem, destino } = useMemo(() => pontosDaEntrega(pedido), [pedido.id, pedido.restaurante.nome, pedido.endereco?.cidade, pedido.endereco?.logradouro, pedido.endereco?.numero]);
-  const [rota, setRota] = useState<Coord[]>(() => rotaCurvaFallback(origem, destino));
+  const { origem, destino: destinoBase } = useMemo(() => pontosDaEntrega(pedido), [pedido.id, pedido.restaurante.nome, pedido.endereco?.cidade, pedido.endereco?.logradouro, pedido.endereco?.numero]);
+  const [destino, setDestino] = useState<Coord>(destinoBase);
+  const [rota, setRota] = useState<Coord[]>(() => rotaCurvaFallback(origem, destinoBase));
   const [distanciaKm, setDistanciaKm] = useState<string | null>(null);
+
+  // Geocodifica o endereço real do cliente via Nominatim (OpenStreetMap) com fallback seguro
+  useEffect(() => {
+    setDestino(destinoBase);
+    const end = pedido.endereco;
+    if (!end?.logradouro || !end?.cidade) return;
+    const ctrl = new AbortController();
+    const q = encodeURIComponent(`${end.logradouro} ${end.numero ?? ''}, ${end.bairro ?? ''}, ${end.cidade}, ${end.uf ?? 'PE'}, Brasil`);
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=${q}`, {
+      signal: ctrl.signal,
+      headers: { Accept: 'application/json' },
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((lista) => {
+        const hit = Array.isArray(lista) ? lista[0] : null;
+        if (!hit?.lat || !hit?.lon) return;
+        const candidato: Coord = [Number(hit.lat), Number(hit.lon)];
+        const dist = distanciaKmEntre(origem, candidato);
+        if (Number.isFinite(dist) && dist >= 0.25 && dist <= 35) {
+          setDestino(candidato);
+        }
+      })
+      .catch(() => { /* mantém coordenada de fallback da cidade */ });
+    return () => ctrl.abort();
+  }, [destinoBase, origem, pedido.endereco]);
 
   // Busca rota real pelas ruas via OSRM (gratuito, sem chave)
   useEffect(() => {

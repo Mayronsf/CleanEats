@@ -35,3 +35,5 @@ services:
         sync: false
       - key: EMAIL_REDIRECIONAR_PARA
         sync: false
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        sync: false

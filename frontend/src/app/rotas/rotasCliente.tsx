@@ -18,6 +18,7 @@ const AvaliarPage = lazy(() => import('../../features/cliente/avaliar/AvaliarPag
 const MonteSuaMarmitaPage = lazy(() => import('../../features/cliente/monte/MonteSuaMarmitaPage'));
 const NutriBotPage = lazy(() => import('../../features/cliente/nutribot/NutriBotPage'));
 const MeuPlanoPage = lazy(() => import('../../features/cliente/plano/MeuPlanoPage'));
+const NutricionistasPage = lazy(() => import('../../features/cliente/nutricionistas/NutricionistasPage'));
 
 /**
  * Rotas do cliente (/app) — DONA: FRENTE A (telas 10–25).
@@ -42,6 +43,7 @@ export const rotasCliente: RouteObject[] = [
       { path: 'perfil', element: <PerfilPage /> },
       { path: 'perfil/editar', element: <EditarPerfilPage /> },
       { path: 'assinatura', element: <AssinaturaPage /> },
+      { path: 'nutricionistas', element: <NutricionistasPage /> },
       { path: 'meu-plano', element: <MeuPlanoPage /> },
       { path: 'nutribot', element: <NutriBotPage /> },
     ],

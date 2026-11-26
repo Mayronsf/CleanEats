@@ -38,6 +38,9 @@ public class GestaoRestauranteController {
     @GetMapping("/financeiro/csv")
     public ResponseEntity<byte[]> financeiroCsv(@RequestParam(required = false) String mes) { return baixar(servico.financeiroCsv(UsuarioLogado.id(), mes)); }
 
+    @GetMapping("/financeiro/pdf")
+    public ResponseEntity<byte[]> financeiroPdf(@RequestParam(required = false) String mes) { return baixar(servico.financeiroPdf(UsuarioLogado.id(), mes)); }
+
     @GetMapping("/relatorios")
     public List<RelatorioGerado> historico() { return servico.historico(UsuarioLogado.id()); }
 

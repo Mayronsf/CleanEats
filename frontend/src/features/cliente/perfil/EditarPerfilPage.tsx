@@ -10,7 +10,7 @@ import { formatarNumero, iniciais } from '../../../lib/formato';
 import { useAuth } from '../../../hooks/useAuth';
 import { ErroApi } from '../../../services/api';
 import { supabase } from '../../../services/supabase';
-import { buscarMetasIniciais, buscarRestricoes } from '../../../services/cadastro';
+import { buscarMetasIniciais, buscarRestricoes, calcularMetabolismoBasal } from '../../../services/cadastro';
 import {
   atualizarPerfil, buscarPerfil, enviarAvatar, excluirConta, excluirEndereco, listarEnderecos, removerAvatar, ROTULO_OBJETIVO,
   type AtualizarPerfil, type Endereco, type NivelAtividade, type Objetivo, type PerfilCliente,
@@ -154,6 +154,12 @@ export default function EditarPerfilPage() {
   const imc = peso && altura ? peso / ((altura / 100) ** 2) : null;
   const classe = imc ? classificar(imc) : null;
   const idade = idadeDe(form.dataNascimento ?? '');
+  const basalAtual = calcularMetabolismoBasal({
+    objetivo: form.objetivo, pesoKg: peso, alturaCm: altura, idade, sexo: form.sexo, nivelAtividade: form.nivelAtividade,
+  });
+  const basalObjetivo = (obj: Objetivo) => calcularMetabolismoBasal({
+    objetivo: obj, pesoKg: peso, alturaCm: altura, idade, sexo: form.sexo, nivelAtividade: form.nivelAtividade,
+  });
   const senhaFraca = senha.nova.length > 0 && senha.nova.length < 8;
   const senhaDiferente = senha.confirmar.length > 0 && senha.nova !== senha.confirmar;
 
@@ -246,21 +252,35 @@ export default function EditarPerfilPage() {
               </select>
             </Campo>
             <div className={s.imc} aria-live="polite">
-              <div><p className={s.imcRotulo}>Seu IMC calculado</p><p className={s.imcValor}>{imc ? imc.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) : '—'} <small>{classe ? `· ${classe.texto}` : '· informe peso e altura'}</small></p></div>
+              <div>
+                <p className={s.imcRotulo}>Seu IMC e cálculo metabólico basal (Mifflin-St Jeor)</p>
+                <p className={s.imcValor}>{imc ? imc.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) : '—'} <small>{classe ? `· ${classe.texto}` : '· informe peso e altura'}</small></p>
+                {basalAtual && (
+                  <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--green-dark)', marginTop: 4 }}>
+                    TMB: {formatarNumero(basalAtual.tmb)} kcal · GET: {formatarNumero(basalAtual.get)} kcal/dia · {basalAtual.protocolo} ({basalAtual.ajusteKcal > 0 ? `+${basalAtual.ajusteKcal}` : basalAtual.ajusteKcal} kcal → {formatarNumero(basalAtual.calorias)} kcal)
+                  </p>
+                )}
+              </div>
               {classe && <span className={`${s.faixa} ${classe.tom}`}><span className={s.ponto} aria-hidden />{classe.faixa}</span>}
             </div>
           </Secao>
 
-          <Secao id="objetivo" icone={<Target size={18} />} titulo="Objetivo nutricional" sub="Define o cálculo de calorias e macros recomendados" tom="coral">
+          <Secao id="objetivo" icone={<Target size={18} />} titulo="Objetivo nutricional" sub="Define o protocolo (Cutting, Bulking ou Manutenção) e suas metas diárias" tom="coral">
             <div className={s.objetivos} role="radiogroup" aria-label="Objetivo nutricional">
-              {OBJETIVOS.map((o) => (
-                <button key={o.valor} type="button" role="radio" aria-checked={form.objetivo === o.valor} className={`${s.objetivo} ${form.objetivo === o.valor ? s.objetivoAtivo : ''}`} onClick={() => set('objetivo', o.valor)}>
-                  <span className={`${s.objetivoIcone} ${s[o.cor]}`} aria-hidden><o.icone size={18} /></span>
-                  <strong>{ROTULO_OBJETIVO[o.valor].replace('Dieta equilibrada', 'Equilíbrio')}</strong>
-                  <small>{metas.data ? `~${formatarNumero(metas.data[o.valor].calorias)} kcal/dia` : '…'}</small>
-                  <span className={s.radio} aria-hidden />
-                </button>
-              ))}
+              {OBJETIVOS.map((o) => {
+                const cObj = basalObjetivo(o.valor);
+                const subRotulo = o.valor === 'EMAGRECIMENTO' ? 'Cutting · Déficit' : o.valor === 'GANHO_MASSA' ? 'Bulking · Superávit' : 'Manutenção · GET';
+                const kcal = cObj?.calorias ?? metas.data?.[o.valor].calorias;
+                return (
+                  <button key={o.valor} type="button" role="radio" aria-checked={form.objetivo === o.valor} className={`${s.objetivo} ${form.objetivo === o.valor ? s.objetivoAtivo : ''}`} onClick={() => set('objetivo', o.valor)}>
+                    <span className={`${s.objetivoIcone} ${s[o.cor]}`} aria-hidden><o.icone size={18} /></span>
+                    <strong>{ROTULO_OBJETIVO[o.valor].replace('Dieta equilibrada', 'Equilíbrio')}</strong>
+                    <small style={{ color: 'var(--green-dark)', fontWeight: 700 }}>{subRotulo}</small>
+                    <small>{kcal ? `${formatarNumero(kcal)} kcal/dia` : '…'}</small>
+                    <span className={s.radio} aria-hidden />
+                  </button>
+                );
+              })}
             </div>
             {original && form.objetivo !== original.objetivo && <p className={s.avisoMetas}>Ao salvar, suas metas diárias voltam para as do novo objetivo. Sua nutricionista pode ajustá-las depois.</p>}
             <div className={s.campos2}>

@@ -162,9 +162,62 @@ export interface MinhaAssinatura {
   formaPagamento: 'PIX' | 'CARTAO' | null; membroDesde: string | null; inicioEm: string | null; renovacaoEm: string | null;
   encerraEm: string | null; pausadaAte: string | null; totalEconomizado: number;
   uso: { nutribotMes: number; limiteNutribotDia: number; mensagensNutriSemana: number; descontoMes: number; percentualDesconto: number; semanaPlano: string | null };
-  faturas: FaturaAssinatura[]; nutricionista: { nome: string; crn: string } | null;
+  faturas: FaturaAssinatura[];
+  nutricionista: { id: string; nome: string; crn: string; especialidades: string[]; notaMedia: number | null; avatarUrl: string | null } | null;
 }
+
+// ---------- Descoberta e escolha de nutricionistas ----------
+export interface NutricionistaCard {
+  id: string;
+  nome: string;
+  crn: string;
+  crnUf: string;
+  avatarUrl: string | null;
+  especialidades: string[];
+  anosExperiencia: number | null;
+  bio: string | null;
+  notaMedia: number | null;
+  clientesAtivos: number;
+  maxClientes: number;
+  vagasDisponiveis: number;
+  disponivel: boolean;
+  atual: boolean;
+  compativelObjetivo: boolean;
+}
+export interface CatalogoNutricionistas {
+  itens: NutricionistaCard[];
+  especialidades: string[];
+  idNutricionistaAtual: string | null;
+  objetivoCliente: Objetivo | null;
+  tierCliente: CodigoTierCliente | null;
+}
+export const listarNutricionistas = (f: { especialidade?: string; ordenar?: string } = {}) =>
+  chamarApi<CatalogoNutricionistas>(`/nutricionistas${query({ ...f })}`);
+export const escolherNutricionista = (id: string) =>
+  chamarApi<NutricionistaCard>(`/nutricionistas/${id}/escolher`, { method: 'PUT' });
 export const buscarAssinatura = () => chamarApi<MinhaAssinatura>('/assinatura');
+export const baixarFaturasPdf = async () => {
+  const { data } = await supabase.auth.getSession();
+  const resposta = await fetch(`${API_URL}/assinatura/faturas/pdf`, {
+    headers: data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {},
+  });
+  if (!resposta.ok) throw new Error('Não foi possível gerar o PDF das faturas.');
+  const url = URL.createObjectURL(await resposta.blob());
+  const a = document.createElement('a');
+  a.href = url; a.download = 'cleaneats-faturas.pdf'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+export const baixarHistoricoPedidosPdf = async () => {
+  const { data } = await supabase.auth.getSession();
+  const resposta = await fetch(`${API_URL}/historico-pedidos/pdf`, {
+    headers: data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {},
+  });
+  if (!resposta.ok) throw new Error('Não foi possível gerar o PDF do histórico.');
+  const url = URL.createObjectURL(await resposta.blob());
+  const a = document.createElement('a');
+  a.href = url; a.download = 'cleaneats-historico-pedidos.pdf'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
 const acaoAssinatura = (caminho: string) => () => chamarApi<MinhaAssinatura>(`/assinatura/${caminho}`, { method: 'POST' });
 export const cancelarAssinatura = acaoAssinatura('cancelamento');
 export const reativarAssinatura = acaoAssinatura('reativacao');
@@ -180,7 +233,9 @@ export interface PerfilCliente {
   id: string; nome: string; email: string; telefone: string | null; avatarUrl: string | null; capaUrl: string | null;
   username: string | null; bio: string | null; membroDesde: string; tier: CodigoTierCliente; sexo: 'F' | 'M' | 'O' | null;
   dataNascimento: string | null; idade: number | null; pesoKg: number | null; alturaCm: number | null; nivelAtividade: NivelAtividade | null;
-  imc: number | null; classificacaoImc: string | null; objetivo: Objetivo;
+  imc: number | null; classificacaoImc: string | null;
+  tmb: number | null; get: number | null; protocolo: string | null;
+  objetivo: Objetivo;
   metas: { calorias: number | null; proteinas: number | null; carboidratos: number | null; gorduras: number | null; fibras: number | null; aguaMl: number | null };
   metaPesoKg: number | null; prazoMetaMeses: number | null; restricoes: { id: number; slug: string; nome: string }[];
   observacoesAlimentares: string | null; cidade: string | null; totalEnderecos: number; preferencias: Record<string, boolean>;

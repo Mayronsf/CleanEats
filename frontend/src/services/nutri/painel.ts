@@ -17,7 +17,7 @@ export const salvarPerfilNutri = (dados: PerfilEdicaoNutri) => chamarApi<PerfilN
 export const enviarAssinaturaNutri = (arquivo: File) => { const form=new FormData(); form.append('arquivo',arquivo); return chamarApi<{url:string}>('/nutri/perfil/assinatura',{method:'POST',body:form}); };
 export const baixarFinanceiroNutri = async () => {
   const { data } = await supabase.auth.getSession();
-  const resposta = await fetch(`${API_URL}/nutri/financeiro/csv`, { headers: data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {} });
-  if (!resposta.ok) { const erro=await resposta.json().catch(()=>null); throw new ErroApi(resposta.status,erro?.codigo??'ERRO',erro?.mensagem??'Não foi possível exportar o financeiro.'); }
-  const url=URL.createObjectURL(await resposta.blob()); const a=document.createElement('a'); a.href=url; a.download='financeiro-nutri.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const resposta = await fetch(`${API_URL}/nutri/financeiro/pdf`, { headers: data.session ? { Authorization: `Bearer ${data.session.access_token}` } : {} });
+  if (!resposta.ok) { const erro=await resposta.json().catch(()=>null); throw new ErroApi(resposta.status,erro?.codigo??'ERRO',erro?.mensagem??'Não foi possível exportar o financeiro em PDF.'); }
+  const url=URL.createObjectURL(await resposta.blob()); const a=document.createElement('a'); a.href=url; a.download='financeiro-nutri.pdf'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 };

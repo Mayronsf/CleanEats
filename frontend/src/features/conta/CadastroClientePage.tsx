@@ -8,15 +8,26 @@ import {
 import { Botao, ErroCarregamento, Logo, Skeleton, Stepper, useToast } from '../../design-system';
 import { useAuth } from '../../hooks/useAuth';
 import { ErroApi, HOME_DO_PERFIL } from '../../services/api';
-import { buscarMetasIniciais, buscarRestricoes, cadastrarCliente, calcularImc, type ObjetivoNutricional } from '../../services/cadastro';
+import {
+  buscarMetasIniciais, buscarRestricoes, cadastrarCliente, calcularImc, calcularMetabolismoBasal,
+  type NivelAtividadeCadastro, type ObjetivoNutricional,
+} from '../../services/cadastro';
 import { CarregandoPagina } from '../../app/CarregandoPagina';
 import { ETAPAS_CADASTRO, lerRascunho, limparRascunho } from './rascunhoCadastro';
 import s from './CadastroClientePage.module.css';
 
-const OBJETIVOS: { valor: ObjetivoNutricional; classe: string; titulo: string; descricao: string; icone: LucideIcon }[] = [
-  { valor: 'EMAGRECIMENTO', classe: 'emagrecer', titulo: 'Emagrecimento', descricao: 'Reduzir percentual de gordura mantendo massa muscular.', icone: TrendingDown },
-  { valor: 'GANHO_MASSA', classe: 'massa', titulo: 'Ganho de Massa', descricao: 'Aumentar massa muscular com superávit calórico controlado.', icone: Dumbbell },
-  { valor: 'EQUILIBRIO', classe: 'equilibrio', titulo: 'Dieta Equilibrada', descricao: 'Manter peso atual com alimentação saudável e balanceada.', icone: Scale },
+const OBJETIVOS: { valor: ObjetivoNutricional; classe: string; titulo: string; protocolo: string; descricao: string; icone: LucideIcon }[] = [
+  { valor: 'EMAGRECIMENTO', classe: 'emagrecer', titulo: 'Emagrecimento', protocolo: 'Cutting · Déficit calórico', descricao: 'Reduzir gordura corporal com déficit calórico controlado e proteína alta (2,0 g/kg).', icone: TrendingDown },
+  { valor: 'GANHO_MASSA', classe: 'massa', titulo: 'Ganho de Massa', protocolo: 'Bulking · Superávit calórico', descricao: 'Hipertrofia com superávit calórico limpo (~12%) e carboidratos ajustados pro treino.', icone: Dumbbell },
+  { valor: 'EQUILIBRIO', classe: 'equilibrio', titulo: 'Dieta Equilibrada', protocolo: 'Manutenção · Normocalórica', descricao: 'Manter peso atual com ingestão igual ao seu gasto energético total (GET).', icone: Scale },
+];
+
+const NIVEIS_ATIVIDADE: { valor: NivelAtividadeCadastro; rotulo: string }[] = [
+  { valor: 'SEDENTARIO', rotulo: 'Sedentário · pouco exercício (1,2×)' },
+  { valor: 'LEVE', rotulo: 'Leve · 1–2× por semana (1,375×)' },
+  { valor: 'MODERADO', rotulo: 'Moderado · 3–5× por semana (1,55×)' },
+  { valor: 'INTENSO', rotulo: 'Intenso · 6–7× por semana (1,725×)' },
+  { valor: 'ATLETA', rotulo: 'Atleta · treino 2× ao dia (1,9×)' },
 ];
 
 const ICONE_RESTRICAO: Record<string, LucideIcon> = {
@@ -38,6 +49,8 @@ export default function CadastroClientePage() {
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
   const [idade, setIdade] = useState('');
+  const [sexo, setSexo] = useState<'' | 'F' | 'M' | 'O'>('');
+  const [nivelAtividade, setNivelAtividade] = useState<NivelAtividadeCadastro>('MODERADO');
   const [erros, setErros] = useState<Partial<Record<'peso' | 'altura' | 'idade' | 'geral', string>>>({});
   const [enviando, setEnviando] = useState(false);
 
@@ -46,7 +59,15 @@ export default function CadastroClientePage() {
   if (usuario) return <Navigate to={HOME_DO_PERFIL[usuario.perfil]} replace />;
 
   const imc = calcularImc(Number(peso), Number(altura));
-  const meta = metas.data?.[objetivo];
+  const basal = calcularMetabolismoBasal({
+    objetivo, pesoKg: Number(peso), alturaCm: Number(altura), idade: Number(idade),
+    sexo: sexo || null, nivelAtividade,
+  });
+  const basalPorObjetivo = (obj: ObjetivoNutricional) => calcularMetabolismoBasal({
+    objetivo: obj, pesoKg: Number(peso), alturaCm: Number(altura), idade: Number(idade),
+    sexo: sexo || null, nivelAtividade,
+  });
+  const meta = basal ?? metas.data?.[objetivo];
   const alternar = (slug: string) => setEscolhidas((l) => (l.includes(slug) ? l.filter((x) => x !== slug) : [...l, slug]));
 
   async function concluir() {
@@ -65,6 +86,7 @@ export default function CadastroClientePage() {
     try {
       await cadastrarCliente({
         nome, objetivo, restricoes: escolhidas, pesoKg: p, alturaCm: a, idade: i,
+        sexo: sexo || null, nivelAtividade,
         aceiteTermosEm: rascunho.aceiteTermosEm ?? new Date().toISOString(),
       });
       limparRascunho();
@@ -97,8 +119,10 @@ export default function CadastroClientePage() {
         <section className={s.secao} aria-labelledby="sec-objetivo">
           <CabecaSecao id="sec-objetivo" icone={Target} titulo="Qual seu objetivo principal?" sub="Escolha um — você pode mudar a qualquer momento no seu perfil." selo="Obrigatório" />
           <div className={s.objetivos} role="radiogroup" aria-labelledby="sec-objetivo">
-            {OBJETIVOS.map(({ valor, classe, titulo, descricao, icone: Icone }) => {
+            {OBJETIVOS.map(({ valor, classe, titulo, protocolo, descricao, icone: Icone }) => {
               const ativo = objetivo === valor;
+              const calcObj = basalPorObjetivo(valor);
+              const kcalExibir = calcObj?.calorias ?? metas.data?.[valor].calorias;
               return (
                 <button key={valor} type="button" role="radio" aria-checked={ativo}
                   className={`${s.objetivo} ${s[classe]} ${ativo ? s.selecionado : ''}`} onClick={() => setObjetivo(valor)}>
@@ -106,9 +130,10 @@ export default function CadastroClientePage() {
                   <span className={s.objetivoIcone} aria-hidden><Icone size={26} /></span>
                   <span className={s.objetivoTexto}>
                     <span className={s.objetivoTitulo}>{titulo}</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--green-dark)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{protocolo}</span>
                     <span className={s.objetivoDesc}>{descricao}</span>
                     <span className={s.objetivoKcal}><span className={s.pontoKcal} aria-hidden />
-                      {metas.data ? `~${metas.data[valor].calorias.toLocaleString('pt-BR')} kcal/dia` : <Skeleton altura={12} largura={90} />}
+                      {kcalExibir ? `~${kcalExibir.toLocaleString('pt-BR')} kcal/dia${calcObj ? (calcObj.ajusteKcal > 0 ? ` (+${calcObj.ajusteKcal})` : calcObj.ajusteKcal < 0 ? ` (${calcObj.ajusteKcal})` : ' (GET)') : ''}` : <Skeleton altura={12} largura={90} />}
                     </span>
                   </span>
                 </button>
@@ -141,21 +166,49 @@ export default function CadastroClientePage() {
           <div className={s.fisico}>
             <CampoUnidade id="peso" rotulo="Peso atual" unidade="KG" placeholder="72" ajuda="Valor aproximado é o suficiente" valor={peso} onChange={setPeso} erro={erros.peso} />
             <CampoUnidade id="altura" rotulo="Altura" unidade="CM" placeholder="170" ajuda="Em centímetros (ex: 178)" valor={altura} onChange={setAltura} erro={erros.altura} />
-            <CampoUnidade id="idade" rotulo="Idade" unidade="ANOS" placeholder="28" ajuda="Pra cálculo metabólico basal" valor={idade} onChange={setIdade} erro={erros.idade} />
+            <CampoUnidade id="idade" rotulo="Idade" unidade="ANOS" placeholder="28" ajuda="Pra cálculo metabólico basal (TMB)" valor={idade} onChange={setIdade} erro={erros.idade} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginTop: 16 }}>
+            <div>
+              <label htmlFor="sexo" className={s.rotuloCampo}>Sexo biológico (para TMB Mifflin-St Jeor)</label>
+              <select id="sexo" className={s.entrada} style={{ paddingRight: 16 }} value={sexo} onChange={(e) => setSexo(e.target.value as '' | 'F' | 'M' | 'O')}>
+                <option value="">Neutro / prefiro não informar</option>
+                <option value="F">Feminino</option>
+                <option value="M">Masculino</option>
+                <option value="O">Outro</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="nivelAtividade" className={s.rotuloCampo}>Nível de atividade física (GET)</label>
+              <select id="nivelAtividade" className={s.entrada} style={{ paddingRight: 16 }} value={nivelAtividade} onChange={(e) => setNivelAtividade(e.target.value as NivelAtividadeCadastro)}>
+                {NIVEIS_ATIVIDADE.map((n) => <option key={n.valor} value={n.valor}>{n.rotulo}</option>)}
+              </select>
+            </div>
           </div>
           <div className={s.imc} aria-live="polite">
             <div className={s.imcInfo}>
-              <p className={s.imcRotulo}>Seu IMC calculado</p>
-              <p className={s.imcValor}>{imc ? <>{imc.imc.toLocaleString('pt-BR')} <small>· {imc.classe}</small></> : <small>Preencha peso e altura</small>}</p>
+              <p className={s.imcRotulo}>Seu IMC e gasto basal (Mifflin-St Jeor)</p>
+              <p className={s.imcValor}>
+                {imc ? <>{imc.imc.toLocaleString('pt-BR')} <small>· {imc.classe}</small></> : <small>Preencha peso e altura</small>}
+              </p>
+              {basal && (
+                <p style={{ fontSize: 13, color: 'var(--green-dark)', fontWeight: 700, marginTop: 4 }}>
+                  TMB: {basal.tmb.toLocaleString('pt-BR')} kcal · GET: {basal.get.toLocaleString('pt-BR')} kcal/dia · {basal.protocolo}
+                </p>
+              )}
             </div>
             {imc && <span className={`${s.imcStatus} ${s[`imc-${imc.tom}`]}`}><span className={s.imcPonto} aria-hidden />{imc.status}</span>}
           </div>
         </section>
 
         <section className={s.previa} aria-labelledby="sec-previa">
-          <p className={s.previaRotulo}><Sparkles size={14} aria-hidden /> Seu plano inicial</p>
-          <h2 id="sec-previa" className={s.previaTitulo}>Com base nos seus dados,<br />preparamos um <span className="script">plano</span> pra você</h2>
-          <p className={s.previaDesc}>Essas metas diárias são iniciais e podem ser ajustadas por um nutricionista quando você assinar um plano Pro ou Premium.</p>
+          <p className={s.previaRotulo}><Sparkles size={14} aria-hidden /> {basal ? basal.protocolo : 'Seu plano inicial'}</p>
+          <h2 id="sec-previa" className={s.previaTitulo}>Com base na sua <span className="script">TMB</span>,<br />calculamos seu plano inicial</h2>
+          <p className={s.previaDesc}>
+            {basal
+              ? `${basal.descricaoProtocolo} TMB de ${basal.tmb.toLocaleString('pt-BR')} kcal e GET de ${basal.get.toLocaleString('pt-BR')} kcal/dia (${basal.ajusteKcal > 0 ? `+${basal.ajusteKcal}` : basal.ajusteKcal} kcal).`
+              : 'Preencha peso, altura e idade acima para calcular sua Taxa Metabólica Basal (Mifflin-St Jeor) e ajustar automaticamente Bulking ou Cutting.'}
+          </p>
           <div className={s.previaMacros}>
             {[['Calorias', meta?.calorias, 'kcal'], ['Proteína', meta?.proteinas, 'g'], ['Carbs', meta?.carboidratos, 'g'], ['Gordura', meta?.gorduras, 'g']].map(([rotulo, valor, un]) => (
               <div key={rotulo as string} className={s.previaMacro}>

@@ -9,7 +9,9 @@ import com.tricode.cleaneats.dto.cliente.CatalogoDtos.PratoDto;
 import com.tricode.cleaneats.repository.ConsumoDiarioRepository;
 import com.tricode.cleaneats.repository.PedidoRepository;
 import com.tricode.cleaneats.service.NotificacaoService;
+import com.tricode.cleaneats.service.PdfEstiloCleanEats.Tema;
 import com.tricode.cleaneats.service.RecursoNaoEncontradoException;
+import com.tricode.cleaneats.service.RelatorioTabelaPdf;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -231,5 +233,50 @@ public class PedidoConsultaService {
             else indisponiveis.add(i.nome());
         }
         return new Repetir(itens, indisponiveis);
+    }
+
+    /** Exportação do histórico de pedidos do cliente em PDF com identidade visual CleanEats. */
+    public byte[] historicoPdf(UUID idUsuario) {
+        var nomeCliente = jdbc.sql("select nome from usuario where id = :u").param("u", idUsuario)
+                .query(String.class).optional().orElse("Cliente CleanEats");
+        var res = resumo(idUsuario);
+        var todos = new ArrayList<PedidoResumo>();
+        for (int p = 0; p < 10; p++) {
+            var pag = historico(idUsuario, null, null, "recentes", p, 30);
+            todos.addAll(pag.itens());
+            if (p + 1 >= pag.totalPaginas()) break;
+        }
+        var nf = java.text.NumberFormat.getNumberInstance(Locale.forLanguageTag("pt-BR"));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        var fmt = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        var kpis = List.of(
+                "Total de pedidos: " + res.total(),
+                "Entregues: " + res.entregues(),
+                "Gasto total: R$ " + nf.format(res.gastoTotal() == null ? BigDecimal.ZERO : res.gastoTotal()),
+                "Calorias acumuladas: " + String.format(Locale.forLanguageTag("pt-BR"), "%,d kcal", res.kcalTotal())
+        );
+        var cab = List.of("Data", "Pedido", "Status", "Restaurante", "Itens", "Kcal", "Prot (g)", "Total (R$)");
+        var linhas = todos.stream().map(p -> List.of(
+                p.criadoEm().atZoneSameInstant(AcompanhamentoService.FUSO).format(fmt),
+                p.codigo(),
+                p.status(),
+                p.restaurante(),
+                p.itens() == null ? "—" : (p.itens().length() > 48 ? p.itens().substring(0, 45) + "..." : p.itens()),
+                String.valueOf(p.calorias()),
+                String.valueOf(Math.round(p.proteinas() == null ? 0 : p.proteinas().doubleValue())),
+                nf.format(p.total() == null ? BigDecimal.ZERO : p.total())
+        )).toList();
+
+        return RelatorioTabelaPdf.gerar(
+                Tema.PADRAO,
+                nomeCliente,
+                "Área do Cliente · Histórico",
+                "Histórico de Pedidos",
+                "Todos os pedidos",
+                "CleanEats · Histórico de Pedidos · " + nomeCliente,
+                kpis, cab, linhas, true
+        );
     }
 }

@@ -40,9 +40,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/saude").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/contatos-suporte").permitAll()
-                // Catálogo público (marketplace, restaurantes, ficha técnica via QR Code)
-                .requestMatchers(HttpMethod.GET, "/api/marmitas/**", "/api/restaurantes/**",
-                        "/api/fichas-tecnicas/**", "/api/tiers", "/api/restricoes", "/api/vitrine").permitAll()
+                // Catálogo público (marketplace, restaurantes, nutricionistas, ficha técnica via QR Code)
+                .requestMatchers(HttpMethod.GET, "/api/marmitas/**", "/api/restaurantes/**", "/api/nutricionistas/**",
+                        "/api/fichas-tecnicas/**", "/api/tiers", "/api/restricoes", "/api/vitrine",
+                        "/api/cadastro/metas-iniciais", "/api/cadastro/calculo-basal").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/nutri/**").hasRole("NUTRICIONISTA")
                 .requestMatchers("/api/painel-restaurante/**").hasRole("RESTAURANTE")

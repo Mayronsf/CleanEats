@@ -9,7 +9,11 @@ import s from './TriagensPage.module.css';
 const ABAS: { status: StatusTriagem; titulo: string }[] = [
   { status: 'AGUARDANDO', titulo: 'Pendentes' }, { status: 'EM_ANDAMENTO', titulo: 'Em andamento' }, { status: 'CONCLUIDA', titulo: 'Concluídas' },
 ];
-const OBJETIVOS: Record<string, string> = { EMAGRECIMENTO: 'Emagrecimento', GANHO_MASSA: 'Ganho de massa', EQUILIBRIO: 'Equilíbrio' };
+const OBJETIVOS: Record<string, string> = {
+  EMAGRECIMENTO: 'Cutting · Déficit calórico',
+  GANHO_MASSA: 'Bulking · Superávit calórico',
+  EQUILIBRIO: 'Manutenção · Equilíbrio',
+};
 
 export default function TriagensPage() {
   const [status, setStatus] = useState<StatusTriagem>('AGUARDANDO');
@@ -76,7 +80,10 @@ function CartaoTriagem({ triagem, editando, iniciando, salvando, aoIniciar, aoEd
     <div className={s.avatar} aria-hidden>{triagem.nome.split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase()}</div>
     <div className={s.detalhes}>
       <div className={s.nomeLinha}><Link className={s.nome} to={`/nutri/clientes/${triagem.idCliente}`}>{triagem.nome}</Link><span className={`${s.tier} ${triagem.tier === 'PREMIUM' ? s.premium : ''}`}>{rotuloTier(triagem.tier)}</span></div>
-      <p className={s.dados}>{triagem.idade != null ? `${triagem.idade} anos` : 'Idade não informada'} <b>·</b> {triagem.pesoKg != null ? `${formatar(triagem.pesoKg)} kg` : 'Peso não informado'} <b>·</b> {triagem.alturaCm != null ? `${formatar(triagem.alturaCm / 100, 2)} m` : 'Altura não informada'}</p>
+      <p className={s.dados}>
+        {triagem.idade != null ? `${triagem.idade} anos` : 'Idade não informada'} <b>·</b> {triagem.pesoKg != null ? `${formatar(triagem.pesoKg)} kg` : 'Peso não informado'} <b>·</b> {triagem.alturaCm != null ? `${formatar(triagem.alturaCm / 100, 2)} m` : 'Altura não informada'}
+        {triagem.calculoBasal && <> <b>·</b> TMB {triagem.calculoBasal.tmb} kcal <b>·</b> GET {triagem.calculoBasal.get} kcal</>}
+      </p>
       <div className={s.tags}><span className={`${s.tag} ${s.objetivo}`}>{OBJETIVOS[triagem.objetivo] ?? triagem.objetivo}</span>
         {triagem.restricoes.map((r) => <span key={r} className={`${s.tag} ${s.restricao}`}>{r}</span>)}
         {triagem.rotina && <span className={s.tag}><HeartPulse size={13} aria-hidden />{triagem.rotina}</span>}
@@ -94,7 +101,15 @@ function CartaoTriagem({ triagem, editando, iniciando, salvando, aoIniciar, aoEd
 }
 
 function FormMetas({ inicial, salvando, aoConcluir }: { inicial: Triagem; salvando: boolean; aoConcluir: (metas: MetasTriagem) => void }) {
-  const [valores, setValores] = useState({ kcal: '', proteinas: '', carboidratos: '', gorduras: '', fibras: '', aguaMl: '' });
+  const b = inicial.calculoBasal;
+  const [valores, setValores] = useState({
+    kcal: b ? String(b.calorias) : '',
+    proteinas: b ? String(b.proteinas) : '',
+    carboidratos: b ? String(b.carboidratos) : '',
+    gorduras: b ? String(b.gorduras) : '',
+    fibras: b ? String(b.fibras) : '',
+    aguaMl: b ? String(b.aguaMl) : '',
+  });
   const [observacoes, setObservacoes] = useState(inicial.observacoes ?? '');
   function enviar(e: FormEvent) {
     e.preventDefault();
@@ -102,7 +117,14 @@ function FormMetas({ inicial, salvando, aoConcluir }: { inicial: Triagem; salvan
       gorduras: Number(valores.gorduras), fibras: Number(valores.fibras), aguaMl: Number(valores.aguaMl), observacoes });
   }
   return <form className={s.formMetas} onSubmit={enviar}>
-    <h3>Metas diárias de {inicial.nome.split(' ')[0]}</h3>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 8 }}>
+      <h3>Metas diárias de {inicial.nome.split(' ')[0]}</h3>
+      {b && (
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#2D5A75', background: '#EBF5FC', padding: '4px 10px', borderRadius: 999 }}>
+          Sugestão Mifflin-St Jeor · {b.protocolo} (TMB {b.tmb} / GET {b.get} kcal)
+        </span>
+      )}
+    </div>
     <div className={s.camposMetas}>{([['kcal', 'Calorias', 'kcal'], ['proteinas', 'Proteínas', 'g'], ['carboidratos', 'Carboidratos', 'g'], ['gorduras', 'Gorduras', 'g'], ['fibras', 'Fibras', 'g'], ['aguaMl', 'Água', 'ml']] as const).map(([chave, rotulo, unidade]) =>
       <label key={chave}>{rotulo} <span>({unidade})</span><input type="number" min={chave === 'kcal' ? 800 : chave === 'aguaMl' ? 500 : 0} max={chave === 'kcal' || chave === 'aguaMl' ? 6000 : undefined} required value={valores[chave]} onChange={(e) => setValores({ ...valores, [chave]: e.target.value })} /></label>)}</div>
     <label className={s.campoObs}>Observações da triagem<textarea rows={3} maxLength={2000} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} /></label>

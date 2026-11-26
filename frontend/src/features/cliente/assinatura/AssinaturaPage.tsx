@@ -10,7 +10,7 @@ import { formatarData, formatarMoeda, partesPreco } from '../../../lib/formato';
 import { ErroApi } from '../../../services/api';
 import { buscarTiers, type Ciclo, type Tier } from '../../../services/planos';
 import {
-  buscarAssinatura, cancelarAssinatura, pausarAssinatura, reativarAssinatura, retomarAssinatura, trocarFormaPagamento,
+  baixarFaturasPdf, buscarAssinatura, cancelarAssinatura, pausarAssinatura, reativarAssinatura, retomarAssinatura, trocarFormaPagamento,
   type FaturaAssinatura, type MinhaAssinatura,
 } from '../../../services/cliente';
 import { ConfirmarAssinatura } from '../../planos/ConfirmarAssinatura';
@@ -80,15 +80,13 @@ export default function AssinaturaPage() {
     setEscolhido(t);
   }
 
-  function baixarFaturas() {
-    const linhas = [['Referência', 'Vencimento', 'Plano', 'Ciclo', 'Forma de pagamento', 'Status', 'Valor (R$)'],
-      ...a.faturas.map((f) => [f.referencia, formatarData(f.vencimento), NOME[f.tier], f.ciclo === 'ANUAL' ? 'Anual' : 'Mensal',
-        f.formaPagamento === 'PIX' ? 'PIX' : 'Cartão', f.status === 'PAGA' ? 'Paga' : f.status, f.valor.toFixed(2).replace('.', ',')])];
-    const csv = '﻿' + linhas.map((l) => l.map((c) => `"${c}"`).join(';')).join('\n');
-    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-    const link = document.createElement('a');
-    link.href = url; link.download = 'cleaneats-faturas.csv'; link.click();
-    URL.revokeObjectURL(url);
+  async function baixarFaturas() {
+    try {
+      await baixarFaturasPdf();
+      toast('Histórico de faturas baixado em PDF.', 'sucesso');
+    } catch {
+      toast('Não foi possível gerar o PDF das faturas agora.', 'erro');
+    }
   }
 
   const linhaHeroi = free ? 'Você está no plano gratuito · faça upgrade quando quiser'
@@ -139,6 +137,8 @@ export default function AssinaturaPage() {
                 valor={a.uso.limiteNutribotDia === -1 ? <span className={s.destaque}>Ilimitado<small>{NOME[a.tier]}</small></span> : a.uso.limiteNutribotDia === 0 ? <span className={s.indisponivel}>Indisponível</span> : <>{a.uso.limiteNutribotDia}<small>/dia</small></>} />
               <Uso icone={<MessageCircle size={18} />} tom="coral" titulo="Mensagens com nutri" detalhe={a.nutricionista ? `${a.uso.mensagensNutriSemana} enviadas esta semana para ${a.nutricionista.nome}` : 'Disponível nos planos Pro e Premium'}
                 barra={a.nutricionista ? Math.min(100, a.uso.mensagensNutriSemana * 10) : 0} valor={a.nutricionista ? <>{a.uso.mensagensNutriSemana}<small>/sem</small></> : <span className={s.indisponivel}>—</span>} />
+              <Uso icone={<UserCheck size={18} />} tom="verde" titulo="Nutricionista dedicado" detalhe={a.nutricionista ? `${a.nutricionista.nome} · ${a.nutricionista.crn}` : 'Escolha o profissional ideal para seu objetivo'}
+                barra={a.nutricionista ? 100 : 0} valor={<Link to="/app/nutricionistas" className={s.cabecaLink}>{a.nutricionista ? 'Trocar' : 'Escolher'} <ArrowRight size={13} aria-hidden /></Link>} />
               <Uso icone={<DollarSign size={18} />} tom="verde" titulo={`Desconto ${NOME[a.tier]} em pedidos`} detalhe={a.uso.percentualDesconto ? `−${formatarMoeda(a.uso.descontoMes)} economizado este mês` : 'Pro tem 5% e Premium 15% em todos os pedidos'}
                 barra={a.uso.percentualDesconto ? 100 : 0} valor={<span className={a.uso.percentualDesconto ? s.destaque : s.indisponivel}>{a.uso.percentualDesconto}%</span>} />
               <Uso icone={<CalendarDays size={18} />} tom="azul" titulo="Plano alimentar semanal" detalhe={a.uso.semanaPlano ? `Plano da semana de ${curto(a.uso.semanaPlano)} ativo` : a.nutricionista ? 'Sua nutricionista ainda não montou o plano' : 'Disponível nos planos Pro e Premium'}
@@ -161,7 +161,7 @@ export default function AssinaturaPage() {
             <div className={s.cabeca}>
               <div><h2 id="historico-titulo" className={s.cartaoTitulo}><FileText size={18} aria-hidden /> Histórico de cobranças</h2>
                 <p className={s.cartaoSub}>{a.faturas.length ? `Últimas ${Math.min(5, a.faturas.length)} faturas · clique pra ver detalhes` : 'Nenhuma cobrança ainda'}</p></div>
-              {a.faturas.length > 0 && <button type="button" className={s.cabecaLink} onClick={baixarFaturas}>Baixar todas <ArrowRight size={14} aria-hidden /></button>}
+              {a.faturas.length > 0 && <button type="button" className={s.cabecaLink} onClick={() => void baixarFaturas()}>Baixar PDF <ArrowRight size={14} aria-hidden /></button>}
             </div>
             <ul className={s.faturas}>
               {cobrando && a.renovacaoEm && (

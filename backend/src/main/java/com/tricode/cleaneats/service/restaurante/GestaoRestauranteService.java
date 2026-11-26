@@ -183,6 +183,41 @@ public class GestaoRestauranteService {
         return new Arquivo("financeiro-" + mes + ".csv", "text/csv; charset=utf-8", csv);
     }
 
+    /** CE-17: Extrato financeiro mensal do restaurante em PDF personalizado CleanEats (tema coral). */
+    public Arquivo financeiroPdf(UUID idUsuario, String mesTexto) {
+        var rest = painel.restaurante(idUsuario);
+        var mes = mesTexto == null || mesTexto.isBlank() ? YearMonth.now(FUSO) : YearMonth.parse(mesTexto);
+        var ini = mes.atDay(1);
+        var fim = mes.atEndOfMonth();
+        var linhas = jdbc.sql("""
+                select p.codigo, (p.criado_em at time zone 'America/Recife') as quando, p.status, p.forma_pagamento, p.subtotal, p.desconto,
+                       p.subtotal - p.desconto as bruto, p.comissao_percentual, p.valor_comissao, p.subtotal - p.desconto - p.valor_comissao as liquido
+                from pedido p where p.id_restaurante = :r and (p.criado_em at time zone 'America/Recife')::date between :ini and :fim order by p.criado_em""")
+                .param("r", rest.id()).param("ini", ini).param("fim", fim)
+                .query((rs, i) -> List.of(rs.getString(1), rs.getTimestamp(2).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                        rs.getString(3), rs.getString(4), br(rs.getBigDecimal(5)), br(rs.getBigDecimal(6)), br(rs.getBigDecimal(7)),
+                        br(rs.getBigDecimal(8)) + "%", br(rs.getBigDecimal(9)), br(rs.getBigDecimal(10)))).list();
+        var soma = somaMes(rest.id(), ini, fim);
+        var kpis = List.of(
+                "Pedidos no mês: " + linhas.size(),
+                "Bruto entregue: R$ " + br(soma[0]),
+                "Comissão retida: R$ " + br(soma[1]),
+                "Líquido a receber: R$ " + br(soma[0].subtract(soma[1]))
+        );
+        var cab = List.of("Pedido", "Data", "Status", "Pagamento", "Subtotal", "Desconto", "Bruto", "Com. (%)", "Com. (R$)", "Líquido");
+        var fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        var bytes = com.tricode.cleaneats.service.RelatorioTabelaPdf.gerar(
+                com.tricode.cleaneats.service.PdfEstiloCleanEats.Tema.RESTAURANTE,
+                rest.nome(),
+                "Restaurante Parceiro · Financeiro",
+                "Extrato Financeiro Mensal",
+                ini.format(fmt) + " a " + fim.format(fmt),
+                "CleanEats · Painel do Restaurante · " + rest.nome(),
+                kpis, cab, linhas, true
+        );
+        return new Arquivo("financeiro-" + mes + ".pdf", "application/pdf", bytes);
+    }
+
     // ---------- 43 · Relatórios ----------
 
     public List<RelatorioGerado> historico(UUID idUsuario) {

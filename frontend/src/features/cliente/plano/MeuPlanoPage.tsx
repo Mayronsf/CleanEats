@@ -57,8 +57,8 @@ export default function MeuPlanoPage() {
       <div className={s.pagina}>
         <EmptyState icone={<ClipboardList size={28} aria-hidden />}
           titulo={semNutri ? 'O plano alimentar vem com o plano Pro' : 'Sua nutricionista ainda não montou o plano'}
-          descricao={semNutri ? 'No Pro e no Premium, uma nutricionista monta sua semana com pratos reais dos restaurantes parceiros.' : 'Assim que a semana estiver pronta, você recebe uma notificação e os pratos aparecem aqui com o botão de pedir.'}
-          acao={semNutri ? { rotulo: 'Conhecer o plano Pro', onClick: () => navegar('/app/assinatura') } : { rotulo: 'Explorar marketplace', onClick: () => navegar('/app/marketplace') }} />
+          descricao={semNutri ? 'No Pro e no Premium, você escolhe um nutricionista com CRN para montar sua semana com pratos reais dos restaurantes parceiros.' : 'Assim que a triagem for concluída e a semana estiver pronta, você recebe uma notificação e os pratos aparecem aqui.'}
+          acao={semNutri ? { rotulo: 'Ver nutricionistas disponíveis', onClick: () => navegar('/app/nutricionistas') } : { rotulo: 'Ver / trocar nutricionista', onClick: () => navegar('/app/nutricionistas') }} />
       </div>
     );
   }
@@ -95,6 +95,7 @@ export default function MeuPlanoPage() {
             <div><p className={s.nutriRotulo}>Plano elaborado por</p><p className={s.nutriNome}>{p.nutricionista.nome}</p><p className={s.nutriCrn}>{p.nutricionista.crn}</p></div>
           </div>
           <Link to="/app/nutribot" className={s.nutriCta}><MessageCircle size={14} aria-hidden /> Tirar dúvidas do plano</Link>
+          <Link to="/app/nutricionistas" style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.85)', textAlign: 'center', marginTop: 8, textDecoration: 'underline' }}>Trocar nutricionista</Link>
         </div>
       </section>
 

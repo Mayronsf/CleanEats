@@ -2,7 +2,10 @@ package com.tricode.cleaneats.service.nutri;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tricode.cleaneats.domain.Enums.ObjetivoNutricional;
 import com.tricode.cleaneats.domain.Enums.TipoNotificacao;
+import com.tricode.cleaneats.domain.MetasIniciais;
+import com.tricode.cleaneats.domain.MetasIniciais.CalculoMetabolico;
 import com.tricode.cleaneats.dto.PaginaDto;
 import com.tricode.cleaneats.service.NotificacaoService;
 import com.tricode.cleaneats.service.RecursoNaoEncontradoException;
@@ -19,7 +22,8 @@ import java.util.*;
 @Service
 public class TriagemNutriService {
     public record TriagemLinha(UUID id, UUID idCliente, String status, String nome, String tier, Integer idade, java.math.BigDecimal pesoKg,
-                               java.math.BigDecimal alturaCm, String objetivo, List<String> restricoes, String rotina,
+                               java.math.BigDecimal alturaCm, String sexo, String nivelAtividade, String objetivo,
+                               CalculoMetabolico calculoBasal, List<String> restricoes, String rotina,
                                List<String> condicoesSaude, OffsetDateTime criadoEm, OffsetDateTime iniciadaEm,
                                OffsetDateTime concluidaEm, String observacoes) {}
     public record ListaTriagens(PaginaDto<TriagemLinha> pagina, Map<String, Long> contagens) {}
@@ -57,7 +61,7 @@ public class TriagemNutriService {
         int offset = pagina * limite;
         var itens = jdbc.sql("""
                 select t.id, t.status, c.id id_cliente, c.nome, c.id_tier tier, pc.data_nascimento,
-                       pc.peso_kg, pc.altura_cm, pc.objetivo_nutricional objetivo,
+                       pc.peso_kg, pc.altura_cm, pc.sexo, pc.nivel_atividade, pc.objetivo_nutricional objetivo,
                        coalesce(r.restricoes, array[]::text[]) restricoes, t.respostas::text respostas,
                        t.criado_em, t.iniciada_em, t.concluida_em, t.observacoes
                 from triagem t
@@ -76,14 +80,22 @@ public class TriagemNutriService {
                     try { respostas = json.readValue(rs.getString("respostas"), new TypeReference<>() {}); }
                     catch (Exception e) { respostas = Map.of(); }
                     var nascimento = rs.getObject("data_nascimento", LocalDate.class);
+                    Integer idade = nascimento == null ? null : Period.between(nascimento, LocalDate.now()).getYears();
+                    var peso = rs.getBigDecimal("peso_kg");
+                    var altura = rs.getBigDecimal("altura_cm");
+                    var sexo = rs.getString("sexo");
+                    var nivel = rs.getString("nivel_atividade");
+                    var objStr = rs.getString("objetivo");
+                    ObjetivoNutricional objEnum;
+                    try { objEnum = ObjetivoNutricional.valueOf(objStr); } catch (Exception e) { objEnum = ObjetivoNutricional.EQUILIBRIO; }
+                    var basal = MetasIniciais.calcular(objEnum, peso, altura, idade, sexo, MetasIniciais.lerNivel(nivel));
                     var restricoes = rs.getArray("restricoes");
                     List<String> nomes = List.of();
                     if (restricoes != null) try { nomes = List.of((String[]) restricoes.getArray()); } catch (Exception ignored) { }
                     var condicoes = respostas.get("condicoes_saude");
                     List<String> condicaoLista = condicoes instanceof List<?> lista ? lista.stream().map(String::valueOf).toList() : List.of();
                     return new TriagemLinha(rs.getObject("id", UUID.class), rs.getObject("id_cliente", UUID.class), rs.getString("status"), rs.getString("nome"),
-                            rs.getString("tier"), nascimento == null ? null : Period.between(nascimento, LocalDate.now()).getYears(),
-                            rs.getBigDecimal("peso_kg"), rs.getBigDecimal("altura_cm"), rs.getString("objetivo"), nomes,
+                            rs.getString("tier"), idade, peso, altura, sexo, nivel, objStr, basal, nomes,
                             Objects.toString(respostas.get("rotina"), ""), condicaoLista,
                             rs.getObject("criado_em", OffsetDateTime.class), rs.getObject("iniciada_em", OffsetDateTime.class),
                             rs.getObject("concluida_em", OffsetDateTime.class), rs.getString("observacoes"));

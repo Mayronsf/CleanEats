@@ -10,6 +10,7 @@ import {
   buscarPlano, confirmarPedido, formatarCep, listarEnderecos, previaPedido, type Endereco, type PedidoReq,
 } from '../../../services/cliente';
 import { EnderecoDialog } from '../componentes/EnderecoDialog';
+import { PagamentoPixDialog } from '../componentes/PagamentoPixDialog';
 import { agoraEmRecife, hojeIso } from '../tempo';
 import s from './CarrinhoPage.module.css';
 
@@ -50,6 +51,7 @@ export default function CarrinhoPage() {
   const [cupom, setCupom] = useState<string | undefined>(undefined);
   const [dialogoEndereco, setDialogoEndereco] = useState<{ aberto: boolean; endereco: Endereco | null }>({ aberto: false, endereco: null });
   const [confirmando, setConfirmando] = useState(false);
+  const [pixAberto, setPixAberto] = useState(false);
   const [limpando, setLimpando] = useState(false);
   const horarios = useMemo(horariosAgendamento, []);
 
@@ -78,12 +80,15 @@ export default function CarrinhoPage() {
       observacao: forma === 'DINHEIRO' && troco.trim() ? `Troco para R$ ${troco.trim()}` : undefined,
     }),
     onSuccess: (r) => {
+      setPixAberto(false);
+      setConfirmando(false);
       carrinho.limpar();
       void qc.invalidateQueries({ queryKey: ['cliente'] });
       navegar(`/app/pedidos/${r.id}/confirmado`, { replace: true });
     },
     onError: (e) => {
       setConfirmando(false);
+      setPixAberto(false);
       toast(e instanceof ErroApi ? e.message : 'Não foi possível confirmar o pedido. Tente de novo.', 'erro');
     },
   });
@@ -222,7 +227,7 @@ export default function CarrinhoPage() {
             </div>
             <div className={s.opcoes} role="radiogroup" aria-label="Forma de pagamento">
               {([
-                { v: 'PIX', icone: <span className={`${s.pagIcone} ${s.pix}`}>Pix</span>, nome: 'Pix', meta: 'Aprovação instantânea · sem taxas', selo: '+ Rápido' },
+                { v: 'PIX', icone: <span className={`${s.pagIcone} ${s.pix}`}>Pix</span>, nome: 'Pix', meta: 'Gera QR Code e Copia e Cola · via Mercado Pago', selo: '+ Rápido' },
                 { v: 'CREDITO', icone: <span className={`${s.pagIcone} ${s.cartao}`}><CreditCard size={16} aria-hidden /></span>, nome: 'Cartão de crédito', meta: 'Aprovado na hora (simulado) · até 3x sem juros', selo: null },
                 { v: 'DINHEIRO', icone: <span className={`${s.pagIcone} ${s.dinheiro}`}><Banknote size={16} aria-hidden /></span>, nome: 'Dinheiro na entrega', meta: 'Informe o valor para troco', selo: null },
               ] as const).map((o) => (
@@ -296,10 +301,11 @@ export default function CarrinhoPage() {
               <p className={s.cupomErro} role="alert">{previa.error instanceof ErroApi ? previa.error.message : 'Não foi possível calcular o pedido.'}</p>
             ) : <Skeleton altura={280} raio={18} />}
             {problemas.length > 0 && <ul className={s.problemas}>{problemas.map((x) => <li key={x}>{x}</li>)}</ul>}
-            <button type="button" className={s.confirmar} disabled={!p || problemas.length > 0 || pedir.isPending} onClick={() => setConfirmando(true)}>
-              Confirmar pedido <ArrowRight size={16} aria-hidden />
+            <button type="button" className={s.confirmar} disabled={!p || problemas.length > 0 || pedir.isPending}
+              onClick={() => (forma === 'PIX' ? setPixAberto(true) : setConfirmando(true))}>
+              {forma === 'PIX' ? 'Pagar com Pix' : 'Confirmar pedido'} <ArrowRight size={16} aria-hidden />
             </button>
-            <p className={s.aviso}>Ao confirmar, você concorda com os <Link to="/termos">Termos de Uso</Link> e <Link to="/privacidade">Política de Privacidade</Link>. Pagamento simulado (ambiente acadêmico).</p>
+            <p className={s.aviso}>Ao confirmar, você concorda com os <Link to="/termos">Termos de Uso</Link> e <Link to="/privacidade">Política de Privacidade</Link>. Gateway Pix pronto para Mercado Pago.</p>
           </div>
           <div className={s.confianca}>
             <p><span className={s.confiancaIcone} aria-hidden><ShieldCheck size={14} /></span><span><strong>Pagamento 100% seguro</strong> · Criptografia SSL e PCI DSS</span></p>
@@ -308,6 +314,19 @@ export default function CarrinhoPage() {
           </div>
         </aside>
       </div>
+
+      {p && (
+        <PagamentoPixDialog
+          aberto={pixAberto}
+          valor={Number(p.total)}
+          descricao={`Pedido · ${p.restaurante}`}
+          detalhe={`${p.quantidadeItens} ${p.quantidadeItens === 1 ? 'item' : 'itens'} · ${quando === 'agora' ? 'entrega imediata' : 'entrega agendada'}`}
+          referencia={`pedido-${p.idRestaurante}`}
+          finalizando={pedir.isPending}
+          onFechar={() => setPixAberto(false)}
+          onAprovado={() => pedir.mutate()}
+        />
+      )}
 
       <Confirmacao aberto={confirmando} titulo="Confirmar pedido?" rotuloConfirmar={`Confirmar ${p ? formatarMoeda(Number(p.total)) : ''}`}
         carregando={pedir.isPending} onCancelar={() => setConfirmando(false)} onConfirmar={() => pedir.mutate()}>

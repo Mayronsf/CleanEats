@@ -146,7 +146,7 @@ export default function LandingPage() {
                   <button type="button" className={s.pratoAdd} onClick={() => navegar(`/app/marmitas/${p.id}`)} aria-label={`Pedir ${p.nome}`}><Plus size={18} aria-hidden /></button>
                 </div>
                 <span className={s.pratoTag}>{p.categoria}</span>
-                <h3 className={s.pratoNome}><Link to={`/ficha/${p.id}`}>{p.nome}</Link></h3>
+                <h3 className={s.pratoNome}><Link to={usuario?.perfil === 'CLIENTE' ? `/app/marmitas/${p.id}` : `/ficha/${p.id}`}>{p.nome}</Link></h3>
                 <p className={s.pratoRest}>{p.restaurante} · {p.cidade}</p>
                 <div className={s.pratoStats}>
                   <span><strong>{p.calorias}</strong>kcal</span>

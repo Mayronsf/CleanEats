@@ -13,15 +13,15 @@ const nomeMes = (ym: string) => { const [a, m] = ym.split('-'); return `${MESES[
 const dia = (iso: string) => iso.slice(0, 10).split('-').reverse().join('/');
 const curto = (v: number) => (Math.abs(v) >= 1000 ? `R$${(v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}k` : formatarMoeda(v));
 
-/** Tela 42 — Financeiro (CE-17): bruto, comissão congelada nos pedidos, líquido, repasses e exportação CSV por mês. */
+/** Tela 42 — Financeiro (CE-17): bruto, comissão congelada nos pedidos, líquido, repasses e exportação PDF por mês. */
 export default function FinanceiroPage() {
   const toast = useToast();
   const [mes, setMes] = useState<string | undefined>();
   const dados = useQuery({ queryKey: ['restaurante', 'financeiro', mes], queryFn: () => buscarFinanceiro(mes) });
   const exportar = useMutation({
-    mutationFn: () => baixarArquivo(`/painel-restaurante/financeiro/csv?mes=${dados.data!.mes}`, `financeiro-${dados.data!.mes}.csv`),
-    onSuccess: () => toast('CSV do mês baixado.', 'sucesso'),
-    onError: (e) => toast(e instanceof ErroApi ? e.message : 'Não foi possível exportar.', 'erro'),
+    mutationFn: () => baixarArquivo(`/painel-restaurante/financeiro/pdf?mes=${dados.data!.mes}`, `financeiro-${dados.data!.mes}.pdf`),
+    onSuccess: () => toast('Relatório financeiro do mês baixado em PDF.', 'sucesso'),
+    onError: (e) => toast(e instanceof ErroApi ? e.message : 'Não foi possível exportar o PDF.', 'erro'),
   });
   const d = dados.data;
   const variacaoBruto = d && Number(d.brutoAnterior) > 0 ? Math.round(((Number(d.bruto) - Number(d.brutoAnterior)) / Number(d.brutoAnterior)) * 100) : null;
@@ -35,7 +35,7 @@ export default function FinanceiroPage() {
           <select className={s.seletor} value={d?.mes ?? ''} onChange={(e) => setMes(e.target.value)} aria-label="Mês" disabled={!d}>
             {(d?.mesesDisponiveis.includes(d.mes) ? d.mesesDisponiveis : [d?.mes ?? '', ...(d?.mesesDisponiveis ?? [])]).filter(Boolean).map((m) => <option key={m} value={m}>{nomeMes(m)}</option>)}
           </select>
-          <button type="button" className={s.botao} onClick={() => exportar.mutate()} disabled={!d || exportar.isPending}><Download size={16} aria-hidden /> {exportar.isPending ? 'Gerando…' : 'Exportar CSV'}</button>
+          <button type="button" className={s.botao} onClick={() => exportar.mutate()} disabled={!d || exportar.isPending}><Download size={16} aria-hidden /> {exportar.isPending ? 'Gerando PDF…' : 'Exportar PDF'}</button>
         </div>
       </header>
       {dados.isError ? <ErroCarregamento onTentarNovamente={() => dados.refetch()} /> : !d ? <><Skeleton altura={80} raio={18} /><div style={{ height: 20 }} /><Skeleton altura={420} raio={22} /></> : <>

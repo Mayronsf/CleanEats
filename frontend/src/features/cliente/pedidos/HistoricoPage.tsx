@@ -6,7 +6,7 @@ import { Confirmacao, EmptyState, ErroCarregamento, Skeleton, useToast } from '.
 import { useCarrinho } from '../../../hooks/cliente/useCarrinho';
 import { formatarHora, formatarMoeda, formatarNumero, partesPreco } from '../../../lib/formato';
 import { ErroApi } from '../../../services/api';
-import { buscarResumoHistorico, listarHistorico, pedirNovamente, type PedidoResumo } from '../../../services/cliente';
+import { baixarHistoricoPedidosPdf, buscarResumoHistorico, listarHistorico, pedirNovamente, type PedidoResumo } from '../../../services/cliente';
 import { emAndamento } from './tempoPedido';
 import s from './HistoricoPage.module.css';
 
@@ -59,24 +59,9 @@ export default function HistoricoPage() {
   });
 
   const exportar = useMutation({
-    mutationFn: async () => {
-      const linhas: PedidoResumo[] = [];
-      for (let pagina = 0; pagina < 20; pagina++) {
-        const r = await listarHistorico({ pagina, tamanho: 30 });
-        linhas.push(...r.itens);
-        if (pagina + 1 >= r.totalPaginas) break;
-      }
-      const csv = ['Data;Pedido;Status;Restaurante;Itens;Kcal;Proteínas (g);Total (R$)',
-        ...linhas.map((p) => [new Date(p.criadoEm).toLocaleString('pt-BR', { timeZone: 'America/Recife' }), p.codigo, p.status, p.restaurante,
-          `"${p.itens.replace(/"/g, '""')}"`, p.calorias, um(p.proteinas), String(Number(p.total).toFixed(2)).replace('.', ',')].join(';'))].join('\n');
-      const url = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
-      const a = document.createElement('a');
-      a.href = url; a.download = 'cleaneats-historico-pedidos.csv'; a.click();
-      URL.revokeObjectURL(url);
-      return linhas.length;
-    },
-    onSuccess: (n) => toast(`${n} pedidos exportados`, 'sucesso'),
-    onError: () => toast('Não foi possível exportar agora.', 'erro'),
+    mutationFn: baixarHistoricoPedidosPdf,
+    onSuccess: () => toast('Histórico de pedidos baixado em PDF.', 'sucesso'),
+    onError: () => toast('Não foi possível exportar o PDF agora.', 'erro'),
   });
 
   const r = resumo.data;
@@ -97,7 +82,7 @@ export default function HistoricoPage() {
           <p>Histórico completo de tudo que você já pediu no CleanEats</p>
         </div>
         <button type="button" className={s.exportar} onClick={() => exportar.mutate()} disabled={exportar.isPending || !r?.total}>
-          <Download size={16} aria-hidden /> {exportar.isPending ? 'Exportando…' : 'Exportar histórico'}
+          <Download size={16} aria-hidden /> {exportar.isPending ? 'Gerando PDF…' : 'Exportar PDF'}
         </button>
       </div>
 

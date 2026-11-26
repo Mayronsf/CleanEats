@@ -43,22 +43,25 @@
 .nutri img, .nutriInicial { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid var(--white); flex-shrink: 0; }
 .nutriInicial { background: var(--green-primary); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
 .refeicoes { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.refeicao { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px; background: #FAFCF7; border-radius: 16px; border: 1.5px solid transparent; transition: background var(--dur-fast); }
+.refeicao { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px; background: #FAFCF7; border-radius: 16px; border: 1.5px solid transparent; transition: background var(--dur-fast); }
 .refeicao:hover { background: var(--green-bg); }
+.refeicao:has(.refeicaoNome:focus-visible) { box-shadow: var(--ring-focus); }
 .refeicaoAgora { background: var(--green-bg); border-color: var(--green-primary); }
 .refeicaoAgora .refeicaoHora { color: var(--green-dark); }
 .refeicaoImg { width: 60px; height: 60px; border-radius: 14px; background: var(--green-bg-deep); overflow: hidden; flex-shrink: 0; display: block; }
 .refeicaoImg img { width: 100%; height: 100%; object-fit: cover; }
 .refeicaoHora { font-size: 11px; color: var(--gray-500); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
 .refeicaoNome { font-size: 15px; font-weight: 700; text-decoration: none; }
+.refeicaoNome::after { content: ''; position: absolute; inset: 0; border-radius: 16px; }
 .refeicaoNome:hover { color: var(--green-dark); }
+.refeicaoNome:focus-visible { outline: none; }
 .refeicaoMacros { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
 .refeicaoStatus { display: flex; align-items: center; gap: 8px; }
 .consumido { font-size: 12px; color: var(--fiber); font-weight: 700; }
 .check { width: 28px; height: 28px; border-radius: 50%; background: var(--fiber); color: var(--white); display: flex; align-items: center; justify-content: center; }
-.pedir { padding: 8px 16px; background: var(--green-primary); color: var(--white); border: none; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+.pedir { position: relative; z-index: 2; padding: 8px 16px; background: var(--green-primary); color: var(--white); border: none; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 .pedir:hover { background: var(--green-dark); }
-.pedirLinha { padding: 7px 14px; background: var(--white); color: var(--green-dark); border: 1.5px solid var(--green-primary); border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; cursor: pointer; }
+.pedirLinha { position: relative; z-index: 2; padding: 7px 14px; background: var(--white); color: var(--green-dark); border: 1.5px solid var(--green-primary); border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; cursor: pointer; }
 .pedir:focus-visible, .pedirLinha:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 .pendente { font-size: 12px; font-weight: 700; color: var(--gray-500); white-space: nowrap; }
 
@@ -92,25 +95,28 @@
 .secaoTitulo { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
 .secaoLink { color: var(--green-primary); font-weight: 700; text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .gradeRec { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
-.rec { background: var(--white); border-radius: 22px; padding: 20px; border: 1.5px solid var(--line); transition: all var(--dur); display: flex; flex-direction: column; }
+.rec { position: relative; background: var(--white); border-radius: 22px; padding: 20px; border: 1.5px solid var(--line); transition: all var(--dur); display: flex; flex-direction: column; cursor: pointer; }
 .rec:hover { transform: translateY(-6px); border-color: var(--green-primary); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06); }
+.rec:has(.recNome a:focus-visible) { box-shadow: var(--ring-focus); }
 .recImg { width: 100%; aspect-ratio: 1; border-radius: 18px; overflow: hidden; background: var(--green-bg); position: relative; margin-bottom: 16px; }
 .recImg img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--ease); }
 .rec:hover .recImg img { transform: scale(1.05); }
 .recTag { position: absolute; top: 12px; left: 12px; background: var(--white); padding: 4px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 700; color: var(--green-dark); letter-spacing: 0.05em; text-transform: uppercase; }
-.recFav { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-500); cursor: pointer; border: none; transition: color var(--dur-fast); }
+.recFav { position: absolute; z-index: 2; top: 12px; right: 12px; width: 36px; height: 36px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gray-500); cursor: pointer; border: none; transition: color var(--dur-fast); }
 .recFav:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 .recFavAtivo { color: var(--fat); }
 .recRest { font-size: 12px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
 .recNome { font-size: 18px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
 .recNome a { text-decoration: none; }
+.recNome a::after { content: ''; position: absolute; inset: 0; border-radius: 22px; }
 .recNome a:hover { color: var(--green-dark); }
+.recNome a:focus-visible { outline: none; }
 .recMacros { display: flex; gap: 12px; margin-bottom: 14px; padding: 10px 0; border-top: 1px dashed #E0E0E0; border-bottom: 1px dashed #E0E0E0; flex-wrap: wrap; font-size: 12px; font-weight: 700; }
 .recMacros > span { display: flex; align-items: center; gap: 6px; }
 .recRodape { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
 .recPreco { font-size: 22px; font-weight: 800; }
 .recPreco small { font-size: 14px; }
-.recAdd { width: 40px; height: 40px; background: var(--green-primary); color: var(--white); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--dur-fast); }
+.recAdd { position: relative; z-index: 2; width: 40px; height: 40px; background: var(--green-primary); color: var(--white); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--dur-fast); }
 .recAdd:hover { background: var(--green-dark); transform: scale(1.1); }
 .recAdd:focus-visible { outline: none; box-shadow: var(--ring-focus); }
 

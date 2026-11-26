@@ -33,6 +33,7 @@ public class PerfilClienteService {
     public record PerfilDto(UUID id, String nome, String email, String telefone, String avatarUrl, String capaUrl, String username,
                             String bio, OffsetDateTime membroDesde, String tier, String sexo, LocalDate dataNascimento, Integer idade,
                             BigDecimal pesoKg, BigDecimal alturaCm, String nivelAtividade, BigDecimal imc, String classificacaoImc,
+                            Integer tmb, Integer get, String protocolo,
                             String objetivo, MetasDto metas, BigDecimal metaPesoKg, Integer prazoMetaMeses, List<RestricaoDto> restricoes,
                             String observacoesAlimentares, String cidade, int totalEnderecos, Map<String, Boolean> preferencias, NutriDto nutricionista) {}
     public record AtualizarPerfilReq(String nome, String telefone, String username, String bio, LocalDate dataNascimento, String sexo,
@@ -76,11 +77,21 @@ public class PerfilClienteService {
                     var peso = rs.getBigDecimal("peso_kg");
                     var altura = rs.getBigDecimal("altura_cm");
                     var imc = imc(peso, altura);
+                    Integer idade = nascimento == null ? null : Period.between(nascimento, LocalDate.now(FUSO)).getYears();
+                    var objStr = rs.getString("objetivo_nutricional");
+                    var objEnum = objStr == null ? ObjetivoNutricional.EQUILIBRIO : ObjetivoNutricional.valueOf(objStr);
+                    var nivelStr = rs.getString("nivel_atividade");
+                    var calcBasal = (peso != null && altura != null && idade != null)
+                            ? MetasIniciais.calcular(objEnum, peso, altura, idade, rs.getString("sexo"), MetasIniciais.lerNivel(nivelStr))
+                            : null;
                     return new PerfilDto(rs.getObject("id", UUID.class), rs.getString("nome"), rs.getString("email"), rs.getString("telefone"),
                             rs.getString("avatar_url"), rs.getString("capa_url"), rs.getString("username"), rs.getString("bio"),
                             rs.getObject("criado_em", OffsetDateTime.class), rs.getString("id_tier"), rs.getString("sexo"), nascimento,
-                            nascimento == null ? null : Period.between(nascimento, LocalDate.now(FUSO)).getYears(),
-                            peso, altura, rs.getString("nivel_atividade"), imc, MetasIniciais.classificarImc(imc), rs.getString("objetivo_nutricional"),
+                            idade, peso, altura, nivelStr, imc, MetasIniciais.classificarImc(imc),
+                            calcBasal == null ? null : calcBasal.tmb(),
+                            calcBasal == null ? null : calcBasal.get(),
+                            MetasIniciais.nomeProtocolo(objEnum),
+                            objStr,
                             new MetasDto(inteiro(rs, "meta_calorias"), inteiro(rs, "meta_proteinas"), inteiro(rs, "meta_carboidratos"),
                                     inteiro(rs, "meta_gorduras"), inteiro(rs, "meta_fibras"), inteiro(rs, "meta_agua_ml")),
                             rs.getBigDecimal("meta_peso_kg"), inteiro(rs, "prazo_meta_meses"), lista, rs.getString("observacoes_alimentares"),
@@ -117,8 +128,12 @@ public class PerfilClienteService {
         if (r.prazoMetaMeses() != null && (r.prazoMetaMeses() < 1 || r.prazoMetaMeses() > 24)) throw new IllegalArgumentException("Prazo da meta inválido");
         if (r.observacoesAlimentares() != null && r.observacoesAlimentares().length() > 1000) throw new IllegalArgumentException("Observações: no máximo 1.000 caracteres");
 
-        var antes = jdbc.sql("select objetivo_nutricional, peso_kg from perfil_cliente where id_usuario = :u").param("u", idUsuario)
-                .query((rs, i) -> new Object[]{rs.getString(1), rs.getBigDecimal(2)}).single();
+        var antes = jdbc.sql("select objetivo_nutricional, peso_kg, altura_cm, data_nascimento, sexo, nivel_atividade from perfil_cliente where id_usuario = :u")
+                .param("u", idUsuario)
+                .query((rs, i) -> new Object[]{
+                        rs.getString(1), rs.getBigDecimal(2), rs.getBigDecimal(3),
+                        rs.getObject(4, LocalDate.class), rs.getString(5), rs.getString(6)
+                }).single();
         jdbc.sql("update usuario set nome = :n, telefone = :t, atualizado_em = now() where id = :u")
                 .param("n", nome).param("t", telefone).param("u", idUsuario).update();
         try {
@@ -134,14 +149,19 @@ public class PerfilClienteService {
         } catch (DuplicateKeyException e) {
             throw new IllegalArgumentException("Esse username já está em uso");
         }
-        if (!objetivo.name().equals(antes[0])) {
-            var m = MetasIniciais.para(objetivo);
-            jdbc.sql("update perfil_cliente set meta_calorias = :c, meta_proteinas = :p, meta_carboidratos = :cb, meta_gorduras = :g, meta_fibras = :f where id_usuario = :u")
-                    .param("c", m.calorias()).param("p", m.proteinas()).param("cb", m.carboidratos()).param("g", m.gorduras()).param("f", m.fibras())
+        boolean mudouMetabolismo = !objetivo.name().equals(antes[0])
+                || antes[1] == null || ((BigDecimal) antes[1]).compareTo(r.pesoKg()) != 0
+                || antes[2] == null || ((BigDecimal) antes[2]).compareTo(r.alturaCm()) != 0
+                || !Objects.equals(antes[3], r.dataNascimento())
+                || !Objects.equals(antes[4], r.sexo())
+                || !Objects.equals(antes[5], r.nivelAtividade());
+        if (mudouMetabolismo) {
+            Integer idade = r.dataNascimento() == null ? null : Period.between(r.dataNascimento(), LocalDate.now(FUSO)).getYears();
+            var calc = MetasIniciais.calcular(objetivo, r.pesoKg(), r.alturaCm(), idade, r.sexo(), MetasIniciais.lerNivel(r.nivelAtividade()));
+            jdbc.sql("update perfil_cliente set meta_calorias = :c, meta_proteinas = :p, meta_carboidratos = :cb, meta_gorduras = :g, meta_fibras = :f, meta_agua_ml = :a where id_usuario = :u")
+                    .param("c", calc.calorias()).param("p", calc.proteinas()).param("cb", calc.carboidratos())
+                    .param("g", calc.gorduras()).param("f", calc.fibras()).param("a", calc.aguaMl())
                     .param("u", idUsuario).update();
-        }
-        if (antes[1] == null || ((BigDecimal) antes[1]).compareTo(r.pesoKg()) != 0) {
-            jdbc.sql("update perfil_cliente set meta_agua_ml = :a where id_usuario = :u").param("a", MetasIniciais.aguaMl(r.pesoKg())).param("u", idUsuario).update();
         }
         if (r.restricoes() != null) {
             restricoes.limparDoCliente(idUsuario);

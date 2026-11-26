@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Star, Store, X } from 'lucide-react';
 import { EmptyState, ErroCarregamento, Skeleton } from '../../../design-system';
 import { formatarMoeda } from '../../../lib/formato';
@@ -103,28 +105,66 @@ export default function RestaurantesPage() {
 
       <dialog ref={mapaRef} className={s.dialogo} aria-labelledby="mapa-dialogo" onClose={() => setMapa(false)}>
         <div className={s.dialogoCabeca}>
-          <h2 id="mapa-dialogo">Parceiros por bairro</h2>
+          <h2 id="mapa-dialogo">Parceiros no mapa</h2>
           <button type="button" onClick={fecharMapa} aria-label="Fechar"><X size={18} aria-hidden /></button>
         </div>
-        <p className={s.dialogoAviso}>Visão ilustrativa — o mapa interativo com geolocalização fica para uma próxima versão.</p>
+        <p className={s.dialogoAviso}>Mapa interativo OpenStreetMap com os restaurantes parceiros aprovados em Recife.</p>
         {mapa && <MapaBairros />}
       </dialog>
     </div>
   );
 }
 
+const COORDS_PARCEIROS: Record<string, [number, number]> = {
+  'Sabor Natural': [-8.1185, -34.8995],
+  'Verde Vida': [-8.0402, -34.9128],
+  'FitFood': [-8.0468, -34.8955],
+  'Mar & Terra': [-8.0912, -34.8842],
+  'Açaí Club': [-8.0525, -34.9041],
+  'Rota Proteica': [-8.1088, -34.8918],
+  'Raízes Fit': [-8.0628, -34.8992],
+};
+
 function MapaBairros() {
   const todos = useQuery({ queryKey: ['restaurantes', 'todos'], queryFn: () => listarRestaurantes({ tamanho: 24 }) });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    const itens = todos.data?.itens;
+    if (!el || !itens?.length) return;
+    const mapa = L.map(el, { scrollWheelZoom: false }).setView([-8.072, -34.898], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 18,
+    }).addTo(mapa);
+    const pontos: [number, number][] = [];
+    itens.forEach((x, idx) => {
+      const coord = COORDS_PARCEIROS[x.nome] ?? [-8.065 + (idx % 4) * 0.014, -34.905 + Math.floor(idx / 4) * 0.012];
+      pontos.push(coord);
+      L.circleMarker(coord, { radius: 9, color: '#2D6A1F', fillColor: '#5BB033', fillOpacity: 0.92, weight: 2.5 })
+        .addTo(mapa)
+        .bindPopup(`<strong>${x.nome.replace(/[<>&"]/g, '')}</strong><br/>${x.bairro ?? 'Recife'} · ${x.tempoEntregaMin}-${x.tempoEntregaMax} min`);
+    });
+    if (pontos.length > 1) mapa.fitBounds(L.latLngBounds(pontos), { padding: [32, 32], maxZoom: 14 });
+    setTimeout(() => mapa.invalidateSize(), 120);
+    return () => { mapa.remove(); };
+  }, [todos.data]);
+
   const porBairro = new Map<string, Restaurante[]>();
   todos.data?.itens.forEach((x) => { const b = x.bairro ?? 'Recife'; porBairro.set(b, [...(porBairro.get(b) ?? []), x]); });
   return (
-    <ul className={s.bairros}>
-      {[...porBairro.entries()].map(([bairro, lista]) => (
-        <li key={bairro}><p className={s.bairroNome}><MapPin size={14} aria-hidden /> {bairro}</p>
-          <ul>{lista.map((x) => <li key={x.id}><Link to={`/app/restaurantes/${x.id}`}>{x.nome}</Link> <span>· {x.tempoEntregaMin}-{x.tempoEntregaMax}min</span></li>)}</ul>
-        </li>
-      ))}
-    </ul>
+    <>
+      <div ref={containerRef} style={{ width: '100%', height: 280, borderRadius: 16, overflow: 'hidden', marginBottom: 16, border: '1.5px solid var(--line)' }} aria-label="Mapa dos restaurantes parceiros" />
+      <ul className={s.bairros}>
+        {[...porBairro.entries()].map(([bairro, lista]) => (
+          <li key={bairro}><p className={s.bairroNome}><MapPin size={14} aria-hidden /> {bairro}</p>
+            <ul>{lista.map((x) => <li key={x.id}><Link to={`/app/restaurantes/${x.id}`}>{x.nome}</Link> <span>· {x.tempoEntregaMin}-{x.tempoEntregaMax}min</span></li>)}</ul>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 

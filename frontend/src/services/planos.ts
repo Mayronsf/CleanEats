@@ -23,9 +23,9 @@ export const buscarTiers = () => chamarApi<Tier[]>('/tiers');
  * POST /api/assinatura — implementado pela FRENTE A (tela 23). Contrato: assina ou troca de plano com
  * pagamento SIMULADO (aprova na hora, gera fatura PAGA) e atualiza usuario.id_tier imediatamente (CE-15).
  */
-export const assinarPlano = (tier: CodigoTier, ciclo: Ciclo, formaPagamento: FormaPagamento) =>
+export const assinarPlano = (tier: CodigoTier, ciclo: Ciclo, formaPagamento: FormaPagamento, idNutricionista?: string | null) =>
   chamarApi<{ tier: CodigoTier; ciclo: Ciclo; renovacaoEm: string }>('/assinatura', {
-    method: 'POST', body: JSON.stringify({ tier, ciclo, formaPagamento }),
+    method: 'POST', body: JSON.stringify({ tier, ciclo, formaPagamento, idNutricionista: idNutricionista || undefined }),
   });
 
 /** Economia anual máxima entre os planos (selo "Economize até R$ X/ano"). */

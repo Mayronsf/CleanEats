@@ -4,8 +4,13 @@ import com.tricode.cleaneats.dto.PaginaDto;
 import com.tricode.cleaneats.security.UsuarioLogado;
 import com.tricode.cleaneats.service.cliente.PedidoConsultaService;
 import com.tricode.cleaneats.service.cliente.PedidoConsultaService.*;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
@@ -45,5 +50,14 @@ public class PedidoConsultaController {
     @GetMapping("/historico-pedidos/resumo")
     public ResumoHistorico resumo() {
         return servico.resumo(UsuarioLogado.id());
+    }
+
+    @GetMapping("/historico-pedidos/pdf")
+    public ResponseEntity<byte[]> historicoPdf() {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename("cleaneats-historico-pedidos.pdf", StandardCharsets.UTF_8).build().toString())
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(servico.historicoPdf(UsuarioLogado.id()));
     }
 }
