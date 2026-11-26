@@ -53,9 +53,33 @@ Diferente de um app comum de delivery, a plataforma integra **nutrição clínic
       <img src="./.github/screenshots/02-cliente-home.png" alt="Home do Cliente" width="100%" />
     </td>
     <td width="50%" valign="top">
+      <strong>Marketplace de Pratos Saudáveis</strong><br />
+      Busca e filtros por objetivo, restrições (Alta Proteína, Vegano, Low Carb, Sem Glúten/Lactose) e pratos aprovados por nutricionistas.<br /><br />
+      <img src="./.github/screenshots/08-marketplace.png" alt="Marketplace CleanEats" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Meu Plano Alimentar Semanal</strong><br />
+      Refeições organizadas por dia da semana com pratos reais do catálogo, pedido com 1 clique e controle diário de água.<br /><br />
+      <img src="./.github/screenshots/10-meu-plano.png" alt="Meu Plano Alimentar" width="100%" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>NutriBot (Assistente com IA)</strong><br />
+      Chat inteligente contextualizado com suas metas diárias, plano ativo, restrições e atalho direto para falar com sua nutricionista.<br /><br />
+      <img src="./.github/screenshots/09-nutribot.png" alt="NutriBot IA" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
       <strong>Escolha de Nutricionista com CRN</strong><br />
       Catálogo com especialidades (Cutting, Bulking, Clínica, Vegana), avaliações reais e destaque de compatibilidade por objetivo.<br /><br />
       <img src="./.github/screenshots/05-nutricionistas.png" alt="Catálogo de Nutricionistas" width="100%" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Histórico de Pedidos & Exportação PDF</strong><br />
+      Total de pedidos, calorias consumidas, filtros por período, avaliação de entregas e relatório completo em PDF.<br /><br />
+      <img src="./.github/screenshots/11-meus-pedidos.png" alt="Histórico de Pedidos" width="100%" />
     </td>
   </tr>
 </table>
@@ -76,18 +100,34 @@ Diferente de um app comum de delivery, a plataforma integra **nutrição clínic
   </tr>
 </table>
 
-### Painéis Profissionais (Nutricionista & Restaurante)
+### Painel da Nutricionista
 <table>
   <tr>
     <td width="50%" valign="top">
-      <strong>Painel da Nutricionista</strong><br />
-      Gestão de triagens com cálculo basal pré-preenchido, editor de plano alimentar semanal, prescrições em PDF com envio por e-mail, chat e financeiro.<br /><br />
+      <strong>Dashboard Clínico</strong><br />
+      Visão consolidada de clientes ativos, triagens aguardando, mensagens recentes e taxa de adesão ao plano alimentar.<br /><br />
       <img src="./.github/screenshots/06-painel-nutri.png" alt="Painel da Nutricionista" width="100%" />
     </td>
     <td width="50%" valign="top">
-      <strong>Painel do Restaurante</strong><br />
-      Fila de pedidos em tempo real, gestão de cardápio com curadoria nutricional, analytics de vendas, financeiro e relatórios em PDF.<br /><br />
+      <strong>Triagens com Cálculo Basal (TMB/GET)</strong><br />
+      Fila de novos clientes com metas pré-calculadas (Cutting, Bulking, Manutenção), restrições e início rápido da avaliação.<br /><br />
+      <img src="./.github/screenshots/12-nutri-triagens.png" alt="Triagens da Nutricionista" width="100%" />
+    </td>
+  </tr>
+</table>
+
+### Painel do Restaurante
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Dashboard Operacional</strong><br />
+      Resumo de pedidos em andamento, receita bruta, avaliação média, tempo de preparo e ações rápidas do cardápio.<br /><br />
       <img src="./.github/screenshots/07-painel-restaurante.png" alt="Painel do Restaurante" width="100%" />
+    </td>
+    <td width="50%" valign="top">
+      <strong>Analytics & Desempenho de Vendas</strong><br />
+      Gráficos de pedidos por dia, ranking dos pratos mais vendidos, distribuição de avaliações e filtros de período.<br /><br />
+      <img src="./.github/screenshots/15-restaurante-analytics.png" alt="Analytics do Restaurante" width="100%" />
     </td>
   </tr>
 </table>
