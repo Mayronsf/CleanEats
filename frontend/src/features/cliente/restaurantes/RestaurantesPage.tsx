@@ -1,11 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import { ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Star, Store, X } from 'lucide-react';
+import * as maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Navigation, Star, Store, X } from 'lucide-react';
 import { EmptyState, ErroCarregamento, Skeleton } from '../../../design-system';
 import { formatarMoeda } from '../../../lib/formato';
+import {
+  aplicarTemaCleanEats,
+  CENTRO_VITORIA_LNG_LAT,
+  COORDS_VITORIA_RESTAURANTES,
+  ENDERECOS_VITORIA_RESTAURANTES,
+  ESTILO_MAPA_VETORIAL,
+  SVG_LOJA_IFOOD,
+} from '../../../lib/mapaEstilo';
 import { buscarResumoRestaurantes, listarRestaurantes, type Restaurante } from '../../../services/cliente';
 import s from './RestaurantesPage.module.css';
 
@@ -103,72 +111,191 @@ export default function RestaurantesPage() {
         </div>
       </section>
 
-      <dialog ref={mapaRef} className={s.dialogo} aria-labelledby="mapa-dialogo" onClose={() => setMapa(false)}>
-        <div className={s.dialogoCabeca}>
-          <h2 id="mapa-dialogo">Parceiros no mapa</h2>
-          <button type="button" onClick={fecharMapa} aria-label="Fechar"><X size={18} aria-hidden /></button>
-        </div>
-        <p className={s.dialogoAviso}>Mapa interativo com os restaurantes parceiros em Vitória de Santo Antão - PE.</p>
-        {mapa && <MapaBairros />}
+      <dialog ref={mapaRef} className={s.dialogoMapa} aria-labelledby="mapa-dialogo" onClose={() => setMapa(false)}>
+        {mapa && <MapaBairros onFechar={fecharMapa} />}
       </dialog>
     </div>
   );
 }
 
-const COORDS_PARCEIROS: Record<string, [number, number]> = {
-  'Sabor Natural': [-8.116169, -35.270785],  // Vitória Park Shopping · Redenção
-  'Verde Vida': [-8.116282, -35.292347],     // Praça da Matriz · Matriz
-  'Mar & Terra': [-8.120137, -35.295750],    // Av. Mariana Amália · Centro
-  'FitFood': [-8.118306, -35.290311],        // Rua do Estudante (UNIFACOL) · Universitário
-  'Açaí Club': [-8.114345, -35.281293],      // Av. Henrique de Holanda · Redenção
-  'Rota Proteica': [-8.118237, -35.312249],  // Rua Eurico Valois · Maués
-  'Raízes Fit': [-8.113530, -35.292649],     // Av. Silva Jardim · Matriz
-};
+type FiltroMapa = 'todos' | 'abertos' | 'gratis' | 'fitness' | 'bowls';
 
-function MapaBairros() {
+function MapaBairros({ onFechar }: { onFechar: () => void }) {
   const todos = useQuery({ queryKey: ['restaurantes', 'todos'], queryFn: () => listarRestaurantes({ tamanho: 24 }) });
   const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const markersRef = useRef<maplibregl.Marker[]>([]);
+  const [filtro, setFiltro] = useState<FiltroMapa>('todos');
+  const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
+
+  const filtrados = useMemo(() => {
+    const lista = todos.data?.itens ?? [];
+    switch (filtro) {
+      case 'abertos': return lista.filter((x) => x.aberto);
+      case 'gratis': return lista.filter((x) => Number(x.taxaEntrega) === 0);
+      case 'fitness': return lista.filter((x) => x.cozinhas.some((c) => c.toLowerCase().includes('fitness') || c.toLowerCase().includes('low')));
+      case 'bowls': return lista.filter((x) => x.cozinhas.some((c) => c.toLowerCase().includes('bowl') || c.toLowerCase().includes('vegan')));
+      default: return lista;
+    }
+  }, [todos.data?.itens, filtro]);
+
+  const coordDe = useCallback((x: Restaurante, idx: number): [number, number] => {
+    const c = COORDS_VITORIA_RESTAURANTES[x.nome];
+    if (c) return c;
+    return [-8.1162 + (idx % 3) * 0.0028, -35.2920 + Math.floor(idx / 3) * 0.0035];
+  }, []);
+
+  const centralizarTodos = useCallback(() => {
+    const map = mapRef.current;
+    if (!map || !filtrados.length) return;
+    if (filtrados.length === 1) {
+      const [lat, lng] = coordDe(filtrados[0]!, 0);
+      map.flyTo({ center: [lng, lat], zoom: 15.5, duration: 500 });
+      return;
+    }
+    const bounds = new maplibregl.LngLatBounds();
+    filtrados.forEach((x, idx) => {
+      const [lat, lng] = coordDe(x, idx);
+      bounds.extend([lng, lat]);
+    });
+    map.fitBounds(bounds, { padding: { top: 86, bottom: 42, left: 48, right: 48 }, maxZoom: 15, duration: 500 });
+  }, [filtrados, coordDe]);
 
   useEffect(() => {
     const el = containerRef.current;
-    const itens = todos.data?.itens;
-    if (!el || !itens?.length) return;
-    const mapa = L.map(el, { scrollWheelZoom: false }).setView([-8.1165, -35.2900], 14);
-    const camadaRuas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap',
-      maxZoom: 19,
-    }).addTo(mapa);
-    const camadaSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '&copy; Esri Satélite',
-      maxZoom: 19,
-    });
-    L.control.layers({ Mapa: camadaRuas, Satélite: camadaSat }, undefined, { position: 'topright' }).addTo(mapa);
-    const pontos: [number, number][] = [];
-    itens.forEach((x, idx) => {
-      const coord = COORDS_PARCEIROS[x.nome] ?? [-8.1162 + (idx % 3) * 0.0028, -35.2920 + Math.floor(idx / 3) * 0.0035];
-      pontos.push(coord);
-      L.circleMarker(coord, { radius: 9, color: '#1557B0', fillColor: '#1A73E8', fillOpacity: 0.92, weight: 2.5 })
-        .addTo(mapa)
-        .bindPopup(`<strong>${x.nome.replace(/[<>&"]/g, '')}</strong><br/>${x.bairro ?? 'Vitória de Santo Antão'} · ${x.tempoEntregaMin}-${x.tempoEntregaMax} min`);
-    });
-    if (pontos.length > 1) mapa.fitBounds(L.latLngBounds(pontos), { padding: [32, 32], maxZoom: 15 });
-    setTimeout(() => mapa.invalidateSize(), 120);
-    return () => { mapa.remove(); };
-  }, [todos.data]);
+    if (!el || mapRef.current) return;
 
-  const porBairro = new Map<string, Restaurante[]>();
-  todos.data?.itens.forEach((x) => { const b = x.bairro ?? 'Vitória de Santo Antão'; porBairro.set(b, [...(porBairro.get(b) ?? []), x]); });
+    const map = new maplibregl.Map({
+      container: el,
+      style: ESTILO_MAPA_VETORIAL,
+      center: CENTRO_VITORIA_LNG_LAT,
+      zoom: 13.8,
+      attributionControl: false,
+      pitchWithRotate: false,
+    });
+    map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+    map.on('style.load', () => {
+      aplicarTemaCleanEats(map);
+      map.resize();
+    });
+    mapRef.current = map;
+    const t = setTimeout(() => map.resize(), 160);
+    return () => {
+      clearTimeout(t);
+      markersRef.current.forEach((m) => m.remove());
+      markersRef.current = [];
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  // Atualiza pinos em gota branca estilo iFood conforme o filtro / seleção
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current = [];
+
+    const bounds = new maplibregl.LngLatBounds();
+    filtrados.forEach((x, idx) => {
+      const [lat, lng] = coordDe(x, idx);
+      bounds.extend([lng, lat]);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `${s.pinoGota} ${selecionadoId === x.id ? s.pinoGotaAtivo : ''}`;
+      btn.setAttribute('aria-label', `${x.nome} em ${x.bairro ?? 'Vitória de Santo Antão'}`);
+      btn.innerHTML = `<span class="${s.pinoGotaCorpo}">${SVG_LOJA_IFOOD}<span class="${s.pinoGotaSelo}">${x.sigla.slice(0, 1)}</span></span><span class="${s.pinoGotaPonta}"></span>`;
+      btn.addEventListener('click', () => {
+        setSelecionadoId(x.id);
+        map.flyTo({ center: [lng, lat], zoom: 15.6, duration: 480 });
+      });
+
+      const marker = new maplibregl.Marker({ element: btn, anchor: 'bottom' })
+        .setLngLat([lng, lat])
+        .addTo(map);
+      markersRef.current.push(marker);
+    });
+
+    if (filtrados.length > 1 && !selecionadoId) {
+      map.fitBounds(bounds, { padding: { top: 86, bottom: 42, left: 48, right: 48 }, maxZoom: 15, duration: 450 });
+    }
+  }, [filtrados, selecionadoId, coordDe]);
+
+  function focarRestaurante(x: Restaurante, idx: number) {
+    setSelecionadoId(x.id);
+    const [lat, lng] = coordDe(x, idx);
+    mapRef.current?.flyTo({ center: [lng, lat], zoom: 15.8, duration: 500 });
+  }
+
   return (
-    <>
-      <div ref={containerRef} style={{ width: '100%', height: 280, borderRadius: 16, overflow: 'hidden', marginBottom: 16, border: '1.5px solid var(--line)' }} aria-label="Mapa dos restaurantes parceiros" />
-      <ul className={s.bairros}>
-        {[...porBairro.entries()].map(([bairro, lista]) => (
-          <li key={bairro}><p className={s.bairroNome}><MapPin size={14} aria-hidden /> {bairro}</p>
-            <ul>{lista.map((x) => <li key={x.id}><Link to={`/app/restaurantes/${x.id}`}>{x.nome}</Link> <span>· {x.tempoEntregaMin}-{x.tempoEntregaMax}min</span></li>)}</ul>
-          </li>
-        ))}
-      </ul>
-    </>
+    <div className={s.mapaModalWrap}>
+      <div className={s.mapaTopoArea}>
+        <div ref={containerRef} className={s.mapaCanvas} aria-label="Mapa personalizado dos restaurantes em Vitória de Santo Antão" />
+
+        <div className={s.mapaBarraSuperior}>
+          <button type="button" className={s.mapaBotaoVoltar} onClick={onFechar} aria-label="Fechar mapa">
+            <X size={18} aria-hidden />
+          </button>
+          <h2 id="mapa-dialogo" className={s.mapaTituloFlutuante}>Vitória de Santo Antão</h2>
+          <button type="button" className={s.mapaBotaoVoltar} onClick={centralizarTodos} aria-label="Centralizar restaurantes" title="Centralizar mapa">
+            <Navigation size={16} aria-hidden />
+          </button>
+        </div>
+
+        <div className={s.mapaPilulasFlutuantes} role="group" aria-label="Filtrar restaurantes no mapa">
+          {([
+            ['todos', 'Todos'],
+            ['abertos', 'Abertos agora'],
+            ['gratis', 'Entrega grátis'],
+            ['fitness', 'Fitness'],
+            ['bowls', 'Bowls'],
+          ] as [FiltroMapa, string][]).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              className={`${s.mapaPilula} ${filtro === id ? s.mapaPilulaAtiva : ''}`}
+              aria-pressed={filtro === id}
+              onClick={() => { setFiltro(id); setSelecionadoId(null); }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className={s.mapaSheet}>
+        <span className={s.mapaSheetAlca} aria-hidden />
+        {filtrados.length === 0 ? (
+          <p className={s.mapaVazio}>Nenhum restaurante encontrado com este filtro.</p>
+        ) : (
+          <ul className={s.mapaLista}>
+            {filtrados.map((x, idx) => {
+              const ativo = selecionadoId === x.id;
+              const end = ENDERECOS_VITORIA_RESTAURANTES[x.nome] ?? `${x.bairro ?? 'Centro'}, Vitória de Santo Antão`;
+              return (
+                <li key={x.id} className={`${s.mapaItem} ${ativo ? s.mapaItemAtivo : ''}`}>
+                  <button type="button" className={s.mapaItemFoco} onClick={() => focarRestaurante(x, idx)}>
+                    <span className={s.mapaItemNome}>{x.nome}</span>
+                    <span className={s.mapaItemEnd}>{end}</span>
+                    <span className={s.mapaItemBadges}>
+                      <span className={x.aberto ? s.badgeAberto : s.badgeFechado}>
+                        {x.aberto ? `Aberto · ${x.tempoEntregaMin}-${x.tempoEntregaMax} min` : x.abreAs ? `Abre às ${x.abreAs}` : 'Fechado agora'}
+                      </span>
+                      <span className={s.badgeNota}>★ {Number(x.nota).toFixed(1)}</span>
+                    </span>
+                  </button>
+                  <Link to={`/app/restaurantes/${x.id}`} className={s.mapaItemIr} onClick={onFechar} aria-label={`Abrir cardápio de ${x.nome}`}>
+                    <ChevronRight size={18} aria-hidden />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
 

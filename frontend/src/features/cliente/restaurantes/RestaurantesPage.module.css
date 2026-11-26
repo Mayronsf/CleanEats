@@ -82,17 +82,47 @@
 .mapaPrevia { background: var(--green-bg); border-radius: 18px; height: 220px; position: relative; overflow: hidden; background-image: radial-gradient(circle at 30% 30%, rgba(91, 176, 51, 0.2), transparent 40%), radial-gradient(circle at 70% 70%, rgba(143, 195, 74, 0.2), transparent 40%); }
 .mapaPrevia::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px); background-size: 30px 30px; }
 .pino { position: absolute; width: 36px; height: 36px; background: var(--green-primary); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
-.dialogo { border: none; border-radius: var(--radius-xl); padding: 24px 28px 28px; width: min(560px, calc(100vw - 32px)); box-shadow: var(--shadow-pop); color: var(--ink); }
-.dialogo::backdrop { background: rgba(26, 46, 26, 0.45); }
-.dialogoCabeca { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.dialogoCabeca h2 { font-size: 20px; font-weight: 800; }
-.dialogoCabeca button { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--gray-100); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.dialogoAviso { font-size: 12px; color: var(--gray-500); margin-bottom: 16px; }
-.bairros { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-.bairroNome { font-weight: 800; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; color: var(--green-dark); }
-.bairros ul { list-style: none; display: flex; flex-direction: column; gap: 4px; padding-left: 20px; font-size: 14px; }
-.bairros a { font-weight: 700; color: var(--ink); }
-.bairros span { color: var(--gray-500); font-size: 12px; }
+.dialogoMapa { border: none; border-radius: 26px; padding: 0; width: min(560px, calc(100vw - 24px)); max-height: min(760px, calc(100vh - 32px)); overflow: hidden; box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28); color: var(--ink); background: #FFFFFF; margin: auto; }
+.dialogoMapa::backdrop { background: rgba(15, 23, 42, 0.48); backdrop-filter: blur(3px); }
+.mapaModalWrap { display: flex; flex-direction: column; height: min(740px, calc(100vh - 32px)); background: #F5F4EF; }
+.mapaTopoArea { position: relative; flex: 0 0 330px; width: 100%; overflow: hidden; }
+.mapaCanvas { width: 100%; height: 100%; }
+.mapaBarraSuperior { position: absolute; top: 14px; left: 14px; right: 14px; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 10px; pointer-events: none; }
+.mapaBotaoVoltar { pointer-events: auto; width: 40px; height: 40px; border-radius: 50%; border: none; background: #FFFFFF; color: #1A2E1A; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16); transition: transform 0.15s ease; }
+.mapaBotaoVoltar:hover { transform: scale(1.05); }
+.mapaTituloFlutuante { pointer-events: auto; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(6px); padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 800; color: #1A2E1A; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12); margin: 0; }
+.mapaPilulasFlutuantes { position: absolute; left: 14px; right: 14px; bottom: 28px; z-index: 10; display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: none; }
+.mapaPilula { flex-shrink: 0; padding: 8px 15px; border-radius: 999px; border: none; background: #FFFFFF; color: #1A2E1A; font-size: 12.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14); transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease; }
+.mapaPilula:hover { transform: translateY(-1px); }
+.mapaPilulaAtiva { background: #3D8B24; color: #FFFFFF; }
+
+/* Pinos em formato gota branca estilo iFood */
+.pinoGota { border: none; background: transparent; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 6px 12px rgba(15, 23, 42, 0.22)); transition: transform 0.18s ease; }
+.pinoGota:hover, .pinoGotaAtivo { transform: scale(1.14); z-index: 5; }
+.pinoGotaCorpo { position: relative; width: 42px; height: 42px; border-radius: 50%; background: #FFFFFF; color: #1A2E1A; display: flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF; z-index: 2; }
+.pinoGotaAtivo .pinoGotaCorpo { background: #3D8B24; color: #FFFFFF; border-color: #FFFFFF; }
+.pinoGotaSelo { position: absolute; right: 3px; bottom: 3px; width: 15px; height: 15px; border-radius: 50%; background: #3D8B24; color: #FFFFFF; font-size: 8.5px; font-weight: 900; display: flex; align-items: center; justify-content: center; border: 1.5px solid #FFFFFF; }
+.pinoGotaAtivo .pinoGotaSelo { background: #1A2E1A; }
+.pinoGotaPonta { width: 13px; height: 13px; background: #FFFFFF; transform: rotate(45deg); margin-top: -8px; border-radius: 2px; z-index: 1; }
+.pinoGotaAtivo .pinoGotaPonta { background: #3D8B24; }
+
+/* Sheet inferior arredondado estilo iFood */
+.mapaSheet { position: relative; flex: 1; min-height: 0; background: #FFFFFF; border-radius: 24px 24px 0 0; margin-top: -18px; z-index: 12; display: flex; flex-direction: column; box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.1); overflow: hidden; }
+.mapaSheetAlca { width: 40px; height: 4px; border-radius: 999px; background: #D1D5DB; margin: 10px auto 6px; flex-shrink: 0; }
+.mapaLista { list-style: none; margin: 0; padding: 4px 16px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; }
+.mapaItem { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F1F5F9; padding: 12px 6px; border-radius: 14px; transition: background 0.15s ease; }
+.mapaItem:last-child { border-bottom: none; }
+.mapaItemAtivo { background: #F0F9EB; }
+.mapaItemFoco { flex: 1; min-width: 0; border: none; background: transparent; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 3px; padding: 0; }
+.mapaItemNome { font-size: 15px; font-weight: 800; color: #0F172A; }
+.mapaItemEnd { font-size: 12.5px; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mapaItemBadges { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.badgeAberto { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 6px; background: #DCFCE7; color: #166534; font-size: 11.5px; font-weight: 700; }
+.badgeFechado { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 6px; background: #F1F5F9; color: #475569; font-size: 11.5px; font-weight: 700; }
+.badgeNota { font-size: 11.5px; font-weight: 800; color: #D97706; }
+.mapaItemIr { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; transition: background 0.15s ease, color 0.15s ease; }
+.mapaItemIr:hover { background: #E8F5D8; color: #2D6A1F; }
+.mapaVazio { padding: 28px 20px; text-align: center; font-size: 13.5px; color: #64748B; }
 
 @media (max-width: 1023px) {
   .pagina { padding: 24px 32px 100px; }
