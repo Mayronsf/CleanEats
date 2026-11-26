@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./frontend/public/img/logo-cleaneats.png" alt="CleanEats" height="64" />
+  <img src="./.github/screenshots/logo-banner.png" alt="CleanEats" height="86" />
 
   <h3>Coma bem, viva melhor.</h3>
 
