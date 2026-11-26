@@ -71,7 +71,7 @@ export default function RestaurantesPage() {
       </div>
 
       <div className={s.resultadosCabeca}>
-        <h2 className={s.resultadosTitulo}>Exibindo restaurantes <span>{cozinha ? `de ${cozinha.toLowerCase()}` : 'em Recife'}</span></h2>
+        <h2 className={s.resultadosTitulo}>Exibindo restaurantes <span>{cozinha ? `de ${cozinha.toLowerCase()}` : 'em Vitória de Santo Antão'}</span></h2>
         <p className={s.resultadosContagem} aria-live="polite">{lista.data ? `${lista.data.totalItens} ${lista.data.totalItens === 1 ? 'restaurante' : 'restaurantes'}` : '…'} · entrega em até {Math.max(45, ...(lista.data?.itens.map((x) => x.tempoEntregaMax) ?? [45]))}min</p>
       </div>
 
@@ -108,7 +108,7 @@ export default function RestaurantesPage() {
           <h2 id="mapa-dialogo">Parceiros no mapa</h2>
           <button type="button" onClick={fecharMapa} aria-label="Fechar"><X size={18} aria-hidden /></button>
         </div>
-        <p className={s.dialogoAviso}>Mapa interativo OpenStreetMap com os restaurantes parceiros aprovados em Recife.</p>
+        <p className={s.dialogoAviso}>Mapa interativo com os restaurantes parceiros em Vitória de Santo Antão - PE.</p>
         {mapa && <MapaBairros />}
       </dialog>
     </div>
@@ -116,13 +116,13 @@ export default function RestaurantesPage() {
 }
 
 const COORDS_PARCEIROS: Record<string, [number, number]> = {
-  'Sabor Natural': [-8.1185, -34.8995],
-  'Verde Vida': [-8.0402, -34.9128],
-  'FitFood': [-8.0468, -34.8955],
-  'Mar & Terra': [-8.0912, -34.8842],
-  'Açaí Club': [-8.0525, -34.9041],
-  'Rota Proteica': [-8.1088, -34.8918],
-  'Raízes Fit': [-8.0628, -34.8992],
+  'Sabor Natural': [-8.116169, -35.270785],  // Vitória Park Shopping · Redenção
+  'Verde Vida': [-8.116282, -35.292347],     // Praça da Matriz · Matriz
+  'Mar & Terra': [-8.120137, -35.295750],    // Av. Mariana Amália · Centro
+  'FitFood': [-8.118306, -35.290311],        // Rua do Estudante (UNIFACOL) · Universitário
+  'Açaí Club': [-8.114345, -35.281293],      // Av. Henrique de Holanda · Redenção
+  'Rota Proteica': [-8.118237, -35.312249],  // Rua Eurico Valois · Maués
+  'Raízes Fit': [-8.113530, -35.292649],     // Av. Silva Jardim · Matriz
 };
 
 function MapaBairros() {
@@ -133,27 +133,31 @@ function MapaBairros() {
     const el = containerRef.current;
     const itens = todos.data?.itens;
     if (!el || !itens?.length) return;
-    const mapa = L.map(el, { scrollWheelZoom: false }).setView([-8.072, -34.898], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 18,
+    const mapa = L.map(el, { scrollWheelZoom: false }).setView([-8.1165, -35.2900], 14);
+    const camadaRuas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 19,
     }).addTo(mapa);
+    const camadaSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri Satélite',
+      maxZoom: 19,
+    });
+    L.control.layers({ Mapa: camadaRuas, Satélite: camadaSat }, undefined, { position: 'topright' }).addTo(mapa);
     const pontos: [number, number][] = [];
     itens.forEach((x, idx) => {
-      const coord = COORDS_PARCEIROS[x.nome] ?? [-8.065 + (idx % 4) * 0.014, -34.905 + Math.floor(idx / 4) * 0.012];
+      const coord = COORDS_PARCEIROS[x.nome] ?? [-8.1162 + (idx % 3) * 0.0028, -35.2920 + Math.floor(idx / 3) * 0.0035];
       pontos.push(coord);
-      L.circleMarker(coord, { radius: 9, color: '#2D6A1F', fillColor: '#5BB033', fillOpacity: 0.92, weight: 2.5 })
+      L.circleMarker(coord, { radius: 9, color: '#1557B0', fillColor: '#1A73E8', fillOpacity: 0.92, weight: 2.5 })
         .addTo(mapa)
-        .bindPopup(`<strong>${x.nome.replace(/[<>&"]/g, '')}</strong><br/>${x.bairro ?? 'Recife'} · ${x.tempoEntregaMin}-${x.tempoEntregaMax} min`);
+        .bindPopup(`<strong>${x.nome.replace(/[<>&"]/g, '')}</strong><br/>${x.bairro ?? 'Vitória de Santo Antão'} · ${x.tempoEntregaMin}-${x.tempoEntregaMax} min`);
     });
-    if (pontos.length > 1) mapa.fitBounds(L.latLngBounds(pontos), { padding: [32, 32], maxZoom: 14 });
+    if (pontos.length > 1) mapa.fitBounds(L.latLngBounds(pontos), { padding: [32, 32], maxZoom: 15 });
     setTimeout(() => mapa.invalidateSize(), 120);
     return () => { mapa.remove(); };
   }, [todos.data]);
 
   const porBairro = new Map<string, Restaurante[]>();
-  todos.data?.itens.forEach((x) => { const b = x.bairro ?? 'Recife'; porBairro.set(b, [...(porBairro.get(b) ?? []), x]); });
+  todos.data?.itens.forEach((x) => { const b = x.bairro ?? 'Vitória de Santo Antão'; porBairro.set(b, [...(porBairro.get(b) ?? []), x]); });
   return (
     <>
       <div ref={containerRef} style={{ width: '100%', height: 280, borderRadius: 16, overflow: 'hidden', marginBottom: 16, border: '1.5px solid var(--line)' }} aria-label="Mapa dos restaurantes parceiros" />

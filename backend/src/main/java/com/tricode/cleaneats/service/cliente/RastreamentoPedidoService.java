@@ -57,25 +57,40 @@ public class RastreamentoPedidoService {
 
     private static final ZoneId FUSO = ZoneId.of("America/Recife");
 
-    private static final Map<String, double[]> COORDS_RESTAURANTES = Map.of(
-            "Sabor Natural", new double[]{-8.1185, -34.8995},
-            "Verde Vida", new double[]{-8.0402, -34.9128},
-            "FitFood", new double[]{-8.0468, -34.8955},
-            "Mar & Terra", new double[]{-8.0912, -34.8842},
-            "Açaí Club", new double[]{-8.0525, -34.9041},
-            "Rota Proteica", new double[]{-8.1088, -34.8918},
-            "Raízes Fit", new double[]{-8.0628, -34.8992}
+    /** Coordenadas reais dos restaurantes parceiros em Vitória de Santo Antão - PE. */
+    static final Map<String, double[]> COORDS_RESTAURANTES = Map.of(
+            "Sabor Natural", new double[]{-8.116169, -35.270785},   // Vitória Park Shopping · Redenção
+            "Verde Vida", new double[]{-8.116282, -35.292347},      // Praça da Matriz · Matriz
+            "Mar & Terra", new double[]{-8.120137, -35.295750},     // Av. Mariana Amália · Centro
+            "FitFood", new double[]{-8.118306, -35.290311},         // Rua do Estudante (UNIFACOL) · Universitário
+            "Açaí Club", new double[]{-8.114345, -35.281293},       // Av. Henrique de Holanda · Redenção
+            "Rota Proteica", new double[]{-8.118237, -35.312249},   // Rua Eurico Valois · Maués
+            "Raízes Fit", new double[]{-8.113530, -35.292649}       // Av. Silva Jardim · Matriz
     );
+
+    /** Pontos residenciais reais em Vitória de Santo Antão - PE para fallback determinístico. */
+    private static final double[][] PONTOS_DESTINO_VITORIA = {
+            {-8.116215, -35.294658}, // Rua Melo Verçosa · Centro
+            {-8.111612, -35.291116}, // Rua Queiroz Pedroso · Bela Vista
+            {-8.118306, -35.290311}, // Rua do Estudante · Universitário
+            {-8.123500, -35.297200}, // Livramento
+            {-8.114950, -35.283800}, // Redenção
+            {-8.117900, -35.308500}, // Maués
+            {-8.113530, -35.292649}  // Av. Silva Jardim · Matriz
+    };
 
     private static final String[] ENTREGADORES = {
             "Carlos Eduardo", "Lucas Ferreira", "Gabriel Santos", "Matheus Lima", "João Pedro"
     };
 
-    private static final String[][] VEICULOS = {
-            {"Honda CG 160 Fan", "PEQ-4B82"},
-            {"Yamaha Fazer 150", "PEX-9D14"},
-            {"Honda Biz 125", "PER-2F67"},
-            {"Yamaha Factor 150", "PEK-7H31"}
+    /** Motos com placas no padrão Mercosul brasileiro (LLLNLNN — 3 letras, 1 número, 1 letra, 2 números). */
+    static final String[][] VEICULOS = {
+            {"Honda CG 160 Fan · Preta", "PEQ4B82"},
+            {"Yamaha Fazer 150 · Azul", "PEX9D14"},
+            {"Honda Biz 125 · Vermelha", "PER2F67"},
+            {"Yamaha Factor 150 · Azul", "PEK7H31"},
+            {"Honda Pop 110i · Vermelha", "QYA3C58"},
+            {"Honda CG 160 Start · Prata", "RZA8M24"}
     };
 
     private final JdbcClient jdbc;
@@ -221,11 +236,12 @@ public class RastreamentoPedidoService {
     private RotaCache montarRota(UUID idPedido, String restNome, String restBairro, String restCidade,
                                  BigDecimal restLat, BigDecimal restLng,
                                  String logradouro, String numero, String bairro, String cidade, String uf) {
-        String cidadeEfetiva = (cidade == null || cidade.isBlank()) ? "Recife" : cidade.trim();
-        double[] coordOrig = resolverOrigem(restNome, restLat, restLng, cidadeEfetiva);
+        String cidadeRest = (restCidade == null || restCidade.isBlank()) ? "Vitória de Santo Antão" : restCidade.trim();
+        String cidadeEfetiva = (cidade == null || cidade.isBlank()) ? cidadeRest : cidade.trim();
+        double[] coordOrig = resolverOrigem(restNome, restLat, restLng);
         double[] coordDest = resolverDestino(idPedido, coordOrig, logradouro, numero, bairro, cidadeEfetiva, uf);
 
-        String detOrig = restBairro != null ? restBairro + " · " + (restCidade != null ? restCidade : "Recife") : (restCidade != null ? restCidade : "Recife");
+        String detOrig = restBairro != null ? restBairro + " · " + cidadeRest : cidadeRest;
         String detDest = logradouro != null ? logradouro + (numero != null ? ", " + numero : "") + (bairro != null ? " · " + bairro : "") : cidadeEfetiva;
         var origem = new LocalDto(coordOrig[0], coordOrig[1], restNome, detOrig);
         var destino = new LocalDto(coordDest[0], coordDest[1], "Sua casa", detDest);
@@ -255,46 +271,58 @@ public class RastreamentoPedidoService {
         return new RotaCache(origem, destino, ptsFallback, distKm, "FALLBACK");
     }
 
-    private double[] resolverOrigem(String restNome, BigDecimal restLat, BigDecimal restLng, String cidadeCliente) {
-        if (cidadeCliente.toLowerCase(Locale.ROOT).contains("vitória") || cidadeCliente.toLowerCase(Locale.ROOT).contains("vitoria")) {
-            return new double[]{-8.1182, -35.2918};
-        }
+    private double[] resolverOrigem(String restNome, BigDecimal restLat, BigDecimal restLng) {
         if (restLat != null && restLng != null) {
             return new double[]{restLat.doubleValue(), restLng.doubleValue()};
         }
-        return COORDS_RESTAURANTES.getOrDefault(restNome, new double[]{-8.1145, -34.8980});
+        return COORDS_RESTAURANTES.getOrDefault(restNome, new double[]{-8.116282, -35.292347});
     }
 
     private double[] resolverDestino(UUID idPedido, double[] origem, String logradouro, String numero, String bairro, String cidade, String uf) {
+        String ufEfetiva = (uf == null || uf.isBlank()) ? "PE" : uf.trim();
         if (logradouro != null && !logradouro.isBlank()) {
-            try {
-                String busca = logradouro + (numero != null ? " " + numero : "")
-                        + (bairro != null ? ", " + bairro : "")
-                        + ", " + cidade + ", " + (uf != null ? uf : "PE") + ", Brasil";
-                String url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q="
-                        + URLEncoder.encode(busca, StandardCharsets.UTF_8);
-                String resp = http.get().uri(url)
-                        .header("User-Agent", "CleanEats-API/1.0 (academico@cleaneats.app)")
-                        .retrieve().body(String.class);
-                JsonNode arr = json.readTree(resp);
-                if (arr.isArray() && !arr.isEmpty()) {
-                    double lat = Double.parseDouble(arr.get(0).path("lat").asText());
-                    double lng = Double.parseDouble(arr.get(0).path("lon").asText());
-                    double dist = distanciaKm(origem[0], origem[1], lat, lng);
-                    if (dist >= 0.25 && dist <= 35.0) {
-                        return new double[]{lat, lng};
-                    }
-                }
-            } catch (Exception ignored) { }
+            List<String> tentativas = new ArrayList<>();
+            tentativas.add(logradouro + (numero != null && !numero.isBlank() ? " " + numero : "")
+                    + (bairro != null && !bairro.isBlank() ? ", " + bairro : "")
+                    + ", " + cidade + ", " + ufEfetiva + ", Brasil");
+            tentativas.add(logradouro + ", " + cidade + ", " + ufEfetiva + ", Brasil");
+            if (bairro != null && !bairro.isBlank()) {
+                tentativas.add(bairro + ", " + cidade + ", " + ufEfetiva + ", Brasil");
+            }
+            for (String busca : tentativas) {
+                double[] achado = geocodificarNominatim(busca, origem);
+                if (achado != null) return achado;
+            }
         }
 
         int h = Math.abs((idPedido.toString() + Objects.toString(logradouro, "")).hashCode());
-        if (cidade.toLowerCase(Locale.ROOT).contains("vitória") || cidade.toLowerCase(Locale.ROOT).contains("vitoria")) {
-            return new double[]{-8.1268 + ((h % 7) - 3) * 0.0012, -35.2804 + (((h >> 3) % 7) - 3) * 0.0014};
+        for (int offset = 0; offset < PONTOS_DESTINO_VITORIA.length; offset++) {
+            double[] candidato = PONTOS_DESTINO_VITORIA[(h + offset) % PONTOS_DESTINO_VITORIA.length];
+            if (distanciaKm(origem[0], origem[1], candidato[0], candidato[1]) >= 0.45) {
+                return candidato;
+            }
         }
-        double dLat = ((h % 2 == 0 ? 1 : -1) * (0.012 + (h % 9) * 0.0012));
-        double dLng = (((h >> 2) % 2 == 0 ? 1 : -1) * (0.011 + ((h >> 4) % 8) * 0.0011));
-        return new double[]{origem[0] + dLat, Math.min(-34.885, origem[1] + dLng)};
+        return new double[]{origem[0] - 0.0065, origem[1] - 0.0085};
+    }
+
+    private double[] geocodificarNominatim(String busca, double[] origem) {
+        try {
+            String url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q="
+                    + URLEncoder.encode(busca, StandardCharsets.UTF_8);
+            String resp = http.get().uri(url)
+                    .header("User-Agent", "CleanEats-API/1.0 (academico@cleaneats.app)")
+                    .retrieve().body(String.class);
+            JsonNode arr = json.readTree(resp);
+            if (arr.isArray() && !arr.isEmpty()) {
+                double lat = Double.parseDouble(arr.get(0).path("lat").asText());
+                double lng = Double.parseDouble(arr.get(0).path("lon").asText());
+                double dist = distanciaKm(origem[0], origem[1], lat, lng);
+                if (dist >= 0.15 && dist <= 35.0) {
+                    return new double[]{lat, lng};
+                }
+            }
+        } catch (Exception ignored) { }
+        return null;
     }
 
     static List<PontoDto> rotaCurvaFallback(double[] a, double[] b) {

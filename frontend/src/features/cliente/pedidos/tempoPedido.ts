@@ -29,12 +29,19 @@ export function minutosParaChegar(p: PedidoDetalhe, agora = Date.now()) {
 
 export const emAndamento = (s: StatusPedido) => !['ENTREGUE', 'CANCELADO', 'RECUSADO'].includes(s);
 
-/** Dados do entregador (SIMULADO — tela 18): derivados do pedido, sempre os mesmos para o mesmo pedido. */
+/** Dados do entregador (SIMULADO — tela 18): derivados do pedido, sempre no padrão Mercosul (LLLNLNN). */
 export function veiculoSimulado(idPedido: string) {
-  const motos = ['Honda Biz 110 · Vermelha', 'Honda CG 160 · Preta', 'Yamaha Factor · Azul', 'Honda Pop 110 · Branca'];
-  let h = 0;
-  for (const c of idPedido) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const motos = ['Honda Biz 125 · Vermelha', 'Honda CG 160 Fan · Preta', 'Yamaha Factor 150 · Azul', 'Honda Pop 110i · Branca'];
+  const prefixos = ['PE', 'PF', 'PG', 'QY', 'RZ'];
   const letras = 'ABCDEFGHJKLMNPRSTUVWXYZ';
-  const placa = `P${letras[h % 23]}${letras[(h >> 5) % 23]}-${(h % 10)}${letras[(h >> 9) % 23]}${(h >> 3) % 10}${(h >> 7) % 10}`;
+  let h = 2166136261;
+  for (const c of idPedido) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
+  const pref = prefixos[h % prefixos.length]!;
+  const l3 = letras[(h >>> 4) % letras.length]!;
+  const n1 = (h >>> 9) % 10;
+  const l4 = letras[(h >>> 13) % letras.length]!;
+  const n2 = (h >>> 18) % 10;
+  const n3 = (h >>> 22) % 10;
+  const placa = `${pref}${l3}${n1}${l4}${n2}${n3}`;
   return { veiculo: motos[h % motos.length]!, placa, nota: (4.6 + (h % 4) / 10).toFixed(1), entregas: 300 + (h % 1500) };
 }

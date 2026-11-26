@@ -71,7 +71,14 @@ export default function AcompanhamentoPage() {
   const ehHoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Recife' }).format(new Date(p.criadoEm)) === hojeIso();
   const total = partesPreco(Number(p.total));
   const nomeEntregador = p.entregadorNome?.split(' ')[0];
-  const v = veiculoSimulado(p.id);
+  const fallbackVeiculo = veiculoSimulado(p.id);
+  const entregadorApi = rastreamento.data?.entregador;
+  const v = {
+    veiculo: entregadorApi?.veiculo ?? fallbackVeiculo.veiculo,
+    placa: (entregadorApi?.placa ?? fallbackVeiculo.placa).replace(/[^A-Z0-9]/gi, '').toUpperCase(),
+    nota: entregadorApi ? Number(entregadorApi.nota).toFixed(1) : fallbackVeiculo.nota,
+    entregas: entregadorApi?.entregas ?? fallbackVeiculo.entregas,
+  };
 
   return (
     <div className={s.pagina}>
@@ -134,7 +141,17 @@ export default function AcompanhamentoPage() {
                 </div>
               )}
             </div>
-            {p.entregadorNome && <p className={s.veiculo}><span className={s.veiculoIcone} aria-hidden><Bike size={18} /></span><strong>{v.veiculo}</strong><span>·</span><span>Placa <strong>{v.placa}</strong></span></p>}
+            {p.entregadorNome && (
+              <div className={s.veiculo}>
+                <span className={s.veiculoIcone} aria-hidden><Bike size={18} /></span>
+                <strong>{v.veiculo}</strong>
+                <span>·</span>
+                <span className={s.placaMercosul} aria-label={`Placa Mercosul ${v.placa}`}>
+                  <span className={s.placaTopo}>BRASIL</span>
+                  <span className={s.placaCodigo}>{v.placa}</span>
+                </span>
+              </div>
+            )}
           </section>
         </div>
 

@@ -99,16 +99,67 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
 }
 
-.barraProgresso {
+.controlesTopo {
   position: absolute;
   left: 16px;
+  top: 96px;
+  z-index: 450;
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 10px;
+  padding: 3px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.botaoModo {
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.botaoModo:hover {
+  background: #F1F5F9;
+}
+
+.botaoModoAtivo {
+  background: #1A73E8;
+  color: #FFFFFF;
+}
+
+.botaoModoAtivo:hover {
+  background: #1557B0;
+}
+
+.barraInferior {
+  position: absolute;
+  left: 16px;
+  right: 58px;
   bottom: 14px;
   z-index: 450;
-  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+.barraProgresso {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(8px);
   padding: 8px 14px;
   border-radius: 999px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
   font-size: 12px;
   font-weight: 700;
   color: var(--ink);
@@ -117,11 +168,30 @@
   gap: 8px;
 }
 
+.linkGoogleMaps {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.96);
+  color: #1A73E8;
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  font-size: 11.5px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.linkGoogleMaps:hover {
+  background: #E8F0FE;
+}
+
 .barraPonto {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--green-primary);
+  background: #1A73E8;
 }
 
 @media (max-width: 767px) {

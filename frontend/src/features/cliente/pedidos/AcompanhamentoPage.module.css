@@ -54,6 +54,9 @@
 .veiculo { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: #FAFCF7; border-radius: 14px; margin-top: 18px; font-size: 13px; flex-wrap: wrap; color: var(--gray-700); }
 .veiculo strong { font-weight: 800; color: var(--ink); }
 .veiculoIcone { width: 36px; height: 36px; background: var(--white); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--green-dark); }
+.placaMercosul { display: inline-flex; flex-direction: column; align-items: stretch; border: 1.5px solid #1E293B; border-radius: 6px; overflow: hidden; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); min-width: 92px; }
+.placaTopo { background: #003399; color: #FFFFFF; font-size: 7px; font-weight: 800; letter-spacing: 0.14em; text-align: center; padding: 1px 6px; line-height: 1.3; }
+.placaCodigo { font-family: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', monospace; font-size: 13px; font-weight: 900; letter-spacing: 0.12em; color: #0F172A; text-align: center; padding: 2px 8px; line-height: 1.25; }
 
 .card { background: var(--white); border-radius: 24px; padding: 26px; border: 1.5px solid var(--line); }
 .cardTitulo { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }

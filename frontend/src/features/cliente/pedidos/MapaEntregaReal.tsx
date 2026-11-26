@@ -1,53 +1,99 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { ExternalLink, Layers } from 'lucide-react';
 import type { PedidoDetalhe, RastreamentoPedido } from '../../../services/cliente';
 import s from './MapaEntregaReal.module.css';
 
 type Coord = [number, number]; // [lat, lng]
+type EstiloMapa = 'mapa' | 'satelite';
 
-/** Coordenadas realistas em Pernambuco para os restaurantes parceiros e cidades atendidas. */
+/** Coordenadas reais em Vitória de Santo Antão - PE para os restaurantes parceiros. */
 const COORDS_RESTAURANTES: Record<string, Coord> = {
-  'Sabor Natural': [-8.1185, -34.8995],
-  'Verde Vida': [-8.0402, -34.9128],
-  'FitFood': [-8.0468, -34.8955],
-  'Mar & Terra': [-8.0912, -34.8842],
-  'Açaí Club': [-8.0525, -34.9041],
-  'Rota Proteica': [-8.1088, -34.8918],
-  'Raízes Fit': [-8.0628, -34.8992],
+  'Sabor Natural': [-8.116169, -35.270785],  // Vitória Park Shopping · Redenção
+  'Verde Vida': [-8.116282, -35.292347],     // Praça da Matriz · Matriz
+  'Mar & Terra': [-8.120137, -35.295750],    // Av. Mariana Amália · Centro
+  'FitFood': [-8.118306, -35.290311],        // Rua do Estudante (UNIFACOL) · Universitário
+  'Açaí Club': [-8.114345, -35.281293],      // Av. Henrique de Holanda · Redenção
+  'Rota Proteica': [-8.118237, -35.312249],  // Rua Eurico Valois · Maués
+  'Raízes Fit': [-8.113530, -35.292649],     // Av. Silva Jardim · Matriz
 };
 
+const DESTINOS_VITORIA: Coord[] = [
+  [-8.116215, -35.294658], // Rua Melo Verçosa · Centro
+  [-8.111612, -35.291116], // Rua Queiroz Pedroso · Bela Vista
+  [-8.118306, -35.290311], // Rua do Estudante · Universitário
+  [-8.123500, -35.297200], // Livramento
+  [-8.114950, -35.283800], // Redenção
+  [-8.117900, -35.308500], // Maués
+];
+
+const GOOGLE_MAPS_KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined)?.trim() || '';
+
+let promessaGoogleMaps: Promise<typeof google> | null = null;
+function carregarGoogleMaps(chave: string): Promise<typeof google> {
+  const g = (window as unknown as { google?: typeof google }).google;
+  if (g?.maps) return Promise.resolve(g);
+  if (promessaGoogleMaps) return promessaGoogleMaps;
+  promessaGoogleMaps = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(chave)}&language=pt-BR&region=BR`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      const carregado = (window as unknown as { google?: typeof google }).google;
+      if (carregado?.maps) resolve(carregado);
+      else reject(new Error('Google Maps não inicializou'));
+    };
+    script.onerror = () => reject(new Error('Falha ao carregar Google Maps JS API'));
+    document.head.appendChild(script);
+  });
+  return promessaGoogleMaps;
+}
+
+declare namespace google {
+  namespace maps {
+    class Map {
+      constructor(el: HTMLElement, opts: Record<string, unknown>);
+      fitBounds(bounds: LatLngBounds, padding?: Record<string, number> | number): void;
+      setMapTypeId(id: string): void;
+    }
+    class LatLngBounds {
+      extend(pt: { lat: number; lng: number }): void;
+    }
+    class Polyline {
+      constructor(opts: Record<string, unknown>);
+      setPath(path: Array<{ lat: number; lng: number }>): void;
+      setMap(map: Map | null): void;
+    }
+    class Marker {
+      constructor(opts: Record<string, unknown>);
+      setPosition(pt: { lat: number; lng: number }): void;
+      setMap(map: Map | null): void;
+    }
+  }
+}
+
 function hashTexto(texto: string): number {
-  let h = 0;
-  for (const ch of texto) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  let h = 2166136261;
+  for (const ch of texto) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
   return h;
 }
 
-/** Determina origem (restaurante) e destino (casa do cliente) na mesma cidade para uma rota verídica e limpa. */
 function pontosDaEntrega(p: PedidoDetalhe): { origem: Coord; destino: Coord } {
-  const cidade = (p.endereco?.cidade ?? 'Recife').toLowerCase();
+  const origem: Coord = COORDS_RESTAURANTES[p.restaurante.nome] ?? [-8.116282, -35.292347];
   const hEnd = hashTexto(`${p.endereco?.logradouro ?? ''}-${p.endereco?.numero ?? ''}-${p.id}`);
-
-  if (cidade.includes('vitória') || cidade.includes('vitoria')) {
-    // Vitória de Santo Antão - PE (centro comercial -> bairro do cliente)
-    const origem: Coord = [-8.1182, -35.2918];
-    const destino: Coord = [-8.1268 + ((hEnd % 7) - 3) * 0.0012, -35.2804 + (((hEnd >> 3) % 7) - 3) * 0.0014];
-    return { origem, destino };
+  for (let i = 0; i < DESTINOS_VITORIA.length; i++) {
+    const cand = DESTINOS_VITORIA[(hEnd + i) % DESTINOS_VITORIA.length]!;
+    const dist = Math.hypot(origem[0] - cand[0], origem[1] - cand[1]);
+    if (dist > 0.004) return { origem, destino: cand };
   }
-
-  // Recife - PE (usa a coordenada do restaurante cadastrado e um ponto realista a ~2,2 km)
-  const origem: Coord = COORDS_RESTAURANTES[p.restaurante.nome] ?? [-8.1145, -34.8980];
-  const dLat = ((hEnd % 2 === 0 ? 1 : -1) * (0.012 + ((hEnd % 9) * 0.0012)));
-  const dLng = (((hEnd >> 2) % 2 === 0 ? 1 : -1) * (0.011 + (((hEnd >> 4) % 8) * 0.0011)));
-  // Mantém no continente em Recife (lng <= -34.882)
-  const destino: Coord = [origem[0] + dLat, Math.min(-34.885, origem[1] + dLng)];
-  return { origem, destino };
+  return { origem, destino: [origem[0] - 0.006, origem[1] - 0.008] };
 }
 
-/** Rota de fallback curva com vários pontos intermediários caso o OSRM demore ou esteja inacessível. */
 function rotaCurvaFallback(a: Coord, b: Coord): Coord[] {
   const pontos: Coord[] = [];
-  const meio: Coord = [(a[0] + b[0]) / 2 + 0.0045, (a[1] + b[1]) / 2 - 0.0035];
+  const meio: Coord = [(a[0] + b[0]) / 2 + 0.003, (a[1] + b[1]) / 2 - 0.0025];
   const passos = 36;
   for (let i = 0; i <= passos; i++) {
     const t = i / passos;
@@ -60,7 +106,6 @@ function rotaCurvaFallback(a: Coord, b: Coord): Coord[] {
   return pontos;
 }
 
-/** Calcula o progresso [0..1] do entregador na rota com base no status real e no relógio regressivo. */
 function progressoEntrega(p: PedidoDetalhe, agora: number): number {
   if (p.status === 'ENTREGUE') return 1;
   if (p.status === 'PRONTO') return 0.03;
@@ -71,12 +116,11 @@ function progressoEntrega(p: PedidoDetalhe, agora: number): number {
   const fimMs = p.previsaoEntregaEm ? new Date(p.previsaoEntregaEm).getTime() : inicioMs + 90_000;
   const duracao = Math.max(15_000, fimMs - inicioMs);
   const bruto = (agora - inicioMs) / duracao;
-  // Mantém a moto claramente em movimento entre 8% e 95% enquanto está a caminho
   return Math.max(0.08, Math.min(0.95, bruto));
 }
 
 function interpolarNaRota(pontos: Coord[], t: number): { pos: Coord; percorrido: Coord[] } {
-  if (pontos.length < 2) return { pos: pontos[0] ?? [-8.1185, -34.8995], percorrido: pontos };
+  if (pontos.length < 2) return { pos: pontos[0] ?? [-8.116282, -35.292347], percorrido: pontos };
   const clamped = Math.max(0, Math.min(1, t));
   const idxFloat = clamped * (pontos.length - 1);
   const i = Math.min(pontos.length - 2, Math.floor(idxFloat));
@@ -107,9 +151,21 @@ function iconePino(tipo: 'rest' | 'casa' | 'moto', rotulo?: string) {
 export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: PedidoDetalhe; rastreamento?: RastreamentoPedido; agora: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapaRef = useRef<L.Map | null>(null);
+  const camadaMapaRef = useRef<L.TileLayer | null>(null);
+  const camadaSateliteRef = useRef<L.LayerGroup | null>(null);
+  const rotaContornoRef = useRef<L.Polyline | null>(null);
   const rotaBaseRef = useRef<L.Polyline | null>(null);
   const rotaAndadaRef = useRef<L.Polyline | null>(null);
   const motoRef = useRef<L.Marker | null>(null);
+
+  // Referências opcionais quando VITE_GOOGLE_MAPS_API_KEY estiver configurada
+  const gMapaRef = useRef<google.maps.Map | null>(null);
+  const gRotaRef = useRef<google.maps.Polyline | null>(null);
+  const gAndadaRef = useRef<google.maps.Polyline | null>(null);
+  const gMotoRef = useRef<google.maps.Marker | null>(null);
+
+  const [estilo, setEstilo] = useState<EstiloMapa>('mapa');
+  const [usandoGoogle, setUsandoGoogle] = useState(false);
 
   const { origem: origemFallback, destino: destinoBase } = useMemo(
     () => pontosDaEntrega(pedido),
@@ -138,58 +194,161 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
     if (!rotaApi) setRotaFallback(rotaCurvaFallback(origem, destino));
   }, [origem, destino, rotaApi]);
 
-  // Inicializa o mapa Leaflet quando origem/destino estabilizam
+  // Inicializa Google Maps oficial (se VITE_GOOGLE_MAPS_API_KEY estiver configurada) ou Leaflet estilo Google Maps (OSM + Satélite)
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || mapaRef.current) return;
+    if (!el) return;
+    let cancelado = false;
 
-    const mapa = L.map(el, {
-      zoomControl: false,
-      scrollWheelZoom: false,
-      attributionControl: true,
-    });
-    L.control.zoom({ position: 'bottomright' }).addTo(mapa);
+    const inicializarLeaflet = () => {
+      if (cancelado || mapaRef.current) return;
+      const mapa = L.map(el, {
+        zoomControl: false,
+        scrollWheelZoom: false,
+        attributionControl: true,
+      });
+      L.control.zoom({ position: 'bottomright' }).addTo(mapa);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 19,
-    }).addTo(mapa);
+      const camadaRuas = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19,
+      });
+      const camadaSat = L.layerGroup([
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '&copy; Esri Satélite',
+          maxZoom: 19,
+        }),
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19,
+          opacity: 0.85,
+        }),
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19,
+          opacity: 0.9,
+        }),
+      ]);
 
-    L.marker(origem, { icon: iconePino('rest', pedido.restaurante.nome), zIndexOffset: 200 }).addTo(mapa);
-    L.marker(destino, { icon: iconePino('casa', 'Sua casa'), zIndexOffset: 200 }).addTo(mapa);
+      camadaMapaRef.current = camadaRuas;
+      camadaSateliteRef.current = camadaSat;
+      (estilo === 'satelite' ? camadaSat : camadaRuas).addTo(mapa);
 
-    rotaBaseRef.current = L.polyline(rota, { color: '#5BB033', weight: 5, opacity: 0.35, dashArray: '8 8' }).addTo(mapa);
-    rotaAndadaRef.current = L.polyline([], { color: '#2D6A1F', weight: 5, opacity: 0.92 }).addTo(mapa);
-    motoRef.current = L.marker(origem, { icon: iconePino('moto'), zIndexOffset: 500 });
+      L.marker(origem, { icon: iconePino('rest', pedido.restaurante.nome), zIndexOffset: 200 }).addTo(mapa);
+      L.marker(destino, { icon: iconePino('casa', 'Sua casa'), zIndexOffset: 200 }).addTo(mapa);
 
-    const bounds = L.latLngBounds([origem, destino]);
-    mapa.fitBounds(bounds, { paddingTopLeft: [48, 108], paddingBottomRight: [48, 56], maxZoom: 15 });
-    mapaRef.current = mapa;
+      // Rota azul estilo navegação Google Maps (borda azul escuro + miolo azul vivo)
+      rotaContornoRef.current = L.polyline(rota, { color: '#1557B0', weight: 8, opacity: 0.85, lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
+      rotaBaseRef.current = L.polyline(rota, { color: '#4285F4', weight: 5, opacity: 0.96, lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
+      rotaAndadaRef.current = L.polyline([], { color: '#2D6A1F', weight: 5.5, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(mapa);
+      motoRef.current = L.marker(origem, { icon: iconePino('moto'), zIndexOffset: 500 });
+
+      const bounds = L.latLngBounds([origem, destino]);
+      mapa.fitBounds(bounds, { paddingTopLeft: [48, 108], paddingBottomRight: [48, 58], maxZoom: 16 });
+      mapaRef.current = mapa;
+    };
+
+    if (GOOGLE_MAPS_KEY) {
+      carregarGoogleMaps(GOOGLE_MAPS_KEY)
+        .then((g) => {
+          if (cancelado) return;
+          const mapa = new g.maps.Map(el, {
+            center: { lat: origem[0], lng: origem[1] },
+            zoom: 15,
+            mapTypeId: estilo === 'satelite' ? 'hybrid' : 'roadmap',
+            disableDefaultUI: true,
+            zoomControl: true,
+          });
+          new g.maps.Marker({ position: { lat: origem[0], lng: origem[1] }, map: mapa, title: pedido.restaurante.nome });
+          new g.maps.Marker({ position: { lat: destino[0], lng: destino[1] }, map: mapa, title: 'Sua casa' });
+          const path = rota.map(([lat, lng]) => ({ lat, lng }));
+          gRotaRef.current = new g.maps.Polyline({ path, map: mapa, strokeColor: '#1A73E8', strokeOpacity: 0.95, strokeWeight: 6 });
+          gAndadaRef.current = new g.maps.Polyline({ path: [], map: mapa, strokeColor: '#2D6A1F', strokeOpacity: 0.95, strokeWeight: 6 });
+          gMotoRef.current = new g.maps.Marker({ position: { lat: origem[0], lng: origem[1] }, title: 'Entregador' });
+          const b = new g.maps.LatLngBounds();
+          path.forEach((pt) => b.extend(pt));
+          mapa.fitBounds(b, { top: 108, right: 48, bottom: 58, left: 48 });
+          gMapaRef.current = mapa;
+          setUsandoGoogle(true);
+        })
+        .catch(() => {
+          setUsandoGoogle(false);
+          inicializarLeaflet();
+        });
+    } else {
+      inicializarLeaflet();
+    }
 
     return () => {
-      mapa.remove();
-      mapaRef.current = null;
+      cancelado = true;
+      if (mapaRef.current) {
+        mapaRef.current.remove();
+        mapaRef.current = null;
+      }
+      camadaMapaRef.current = null;
+      camadaSateliteRef.current = null;
+      rotaContornoRef.current = null;
       rotaBaseRef.current = null;
       rotaAndadaRef.current = null;
       motoRef.current = null;
+      gMapaRef.current = null;
+      gRotaRef.current = null;
+      gAndadaRef.current = null;
+      gMotoRef.current = null;
     };
   }, [origem[0], origem[1], destino[0], destino[1], pedido.restaurante.nome]);
 
+  // Alterna camada Mapa / Satélite
+  useEffect(() => {
+    if (usandoGoogle && gMapaRef.current) {
+      gMapaRef.current.setMapTypeId(estilo === 'satelite' ? 'hybrid' : 'roadmap');
+      return;
+    }
+    const mapa = mapaRef.current;
+    const ruas = camadaMapaRef.current;
+    const sat = camadaSateliteRef.current;
+    if (!mapa || !ruas || !sat) return;
+    if (estilo === 'satelite') {
+      if (mapa.hasLayer(ruas)) mapa.removeLayer(ruas);
+      if (!mapa.hasLayer(sat)) sat.addTo(mapa);
+    } else {
+      if (mapa.hasLayer(sat)) mapa.removeLayer(sat);
+      if (!mapa.hasLayer(ruas)) ruas.addTo(mapa);
+    }
+  }, [estilo, usandoGoogle]);
+
   // Atualiza a polilinha quando a rota real da API chega
   useEffect(() => {
+    if (usandoGoogle && gMapaRef.current && gRotaRef.current) {
+      const path = rota.map(([lat, lng]) => ({ lat, lng }));
+      gRotaRef.current.setPath(path);
+      return;
+    }
     const mapa = mapaRef.current;
-    if (!mapa || !rotaBaseRef.current) return;
+    if (!mapa || !rotaBaseRef.current || !rotaContornoRef.current) return;
+    rotaContornoRef.current.setLatLngs(rota);
     rotaBaseRef.current.setLatLngs(rota);
     const bounds = L.latLngBounds(rota);
-    mapa.fitBounds(bounds, { paddingTopLeft: [48, 108], paddingBottomRight: [48, 56], maxZoom: 15 });
-  }, [rota]);
+    mapa.fitBounds(bounds, { paddingTopLeft: [48, 108], paddingBottomRight: [48, 58], maxZoom: 16 });
+  }, [rota, usandoGoogle]);
 
-  // Atualiza posição do entregador e trecho percorrido a partir da telemetria da API (ou relógio local)
   const progresso = rastreamento ? rastreamento.posicaoAtual.progresso : progressoEntrega(pedido, agora);
   const mostrarMoto = pedido.status === 'PRONTO' || pedido.status === 'A_CAMINHO' || pedido.status === 'ENTREGUE';
 
   useEffect(() => {
+    const { pos, percorrido } = interpolarNaRota(rota, progresso);
+    const posFinal: Coord = rastreamento ? [rastreamento.posicaoAtual.lat, rastreamento.posicaoAtual.lng] : pos;
+
+    if (usandoGoogle && gMapaRef.current && gMotoRef.current && gAndadaRef.current) {
+      if (!mostrarMoto) {
+        gMotoRef.current.setMap(null);
+        gAndadaRef.current.setPath([]);
+        return;
+      }
+      gMotoRef.current.setPosition({ lat: posFinal[0], lng: posFinal[1] });
+      gMotoRef.current.setMap(gMapaRef.current);
+      gAndadaRef.current.setPath(percorrido.map(([lat, lng]) => ({ lat, lng })));
+      return;
+    }
+
     const mapa = mapaRef.current;
     const moto = motoRef.current;
     const andada = rotaAndadaRef.current;
@@ -201,12 +360,10 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
       return;
     }
 
-    const { pos, percorrido } = interpolarNaRota(rota, progresso);
-    const posFinal: Coord = rastreamento ? [rastreamento.posicaoAtual.lat, rastreamento.posicaoAtual.lng] : pos;
     moto.setLatLng(posFinal);
     if (!mapa.hasLayer(moto)) moto.addTo(mapa);
     andada.setLatLngs(percorrido);
-  }, [rota, progresso, mostrarMoto, rastreamento?.posicaoAtual.lat, rastreamento?.posicaoAtual.lng]);
+  }, [rota, progresso, mostrarMoto, usandoGoogle, rastreamento?.posicaoAtual.lat, rastreamento?.posicaoAtual.lng]);
 
   const vel = rastreamento?.posicaoAtual.velocidadeKmh;
   const legendaRota = pedido.status === 'A_CAMINHO'
@@ -215,12 +372,45 @@ export function MapaEntregaReal({ pedido, rastreamento, agora }: { pedido: Pedid
       ? `Trajeto concluído${rastreamento ? ` · ${Number(rastreamento.distanciaTotalKm).toFixed(1).replace('.', ',')} km` : ''}`
       : `Rota prevista${rastreamento ? ` · ${Number(rastreamento.distanciaTotalKm).toFixed(1).replace('.', ',')} km` : ''}`;
 
+  const urlGoogleMaps = `https://www.google.com/maps/dir/?api=1&origin=${origem[0].toFixed(6)},${origem[1].toFixed(6)}&destination=${destino[0].toFixed(6)},${destino[1].toFixed(6)}&travelmode=driving`;
+
   return (
     <div className={s.wrap}>
-      <div ref={containerRef} className={s.mapa} aria-label="Mapa interativo com a rota da entrega" />
-      <div className={s.barraProgresso} aria-live="polite">
-        <span className={s.barraPonto} aria-hidden />
-        <span>{legendaRota}</span>
+      <div ref={containerRef} className={s.mapa} aria-label="Mapa interativo com a rota da entrega em Vitória de Santo Antão" />
+
+      <div className={s.controlesTopo} role="group" aria-label="Modo de exibição do mapa">
+        <button
+          type="button"
+          className={`${s.botaoModo} ${estilo === 'mapa' ? s.botaoModoAtivo : ''}`}
+          aria-pressed={estilo === 'mapa'}
+          onClick={() => setEstilo('mapa')}
+        >
+          <Layers size={13} aria-hidden /> Mapa
+        </button>
+        <button
+          type="button"
+          className={`${s.botaoModo} ${estilo === 'satelite' ? s.botaoModoAtivo : ''}`}
+          aria-pressed={estilo === 'satelite'}
+          onClick={() => setEstilo('satelite')}
+        >
+          Satélite
+        </button>
+      </div>
+
+      <div className={s.barraInferior}>
+        <div className={s.barraProgresso} aria-live="polite">
+          <span className={s.barraPonto} aria-hidden />
+          <span>{legendaRota}</span>
+        </div>
+        <a
+          href={urlGoogleMaps}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={s.linkGoogleMaps}
+          title="Abrir esta rota no Google Maps"
+        >
+          Google Maps <ExternalLink size={12} aria-hidden />
+        </a>
       </div>
     </div>
   );

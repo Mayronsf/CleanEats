@@ -10,19 +10,30 @@ class RastreamentoPedidoServiceTest {
 
     @Test
     void interpolaPosicaoEVelocidadeAoLongoDaRota() {
-        var rota = RastreamentoPedidoService.rotaCurvaFallback(new double[]{-8.1185, -34.8995}, new double[]{-8.0525, -34.9041});
+        var rota = RastreamentoPedidoService.rotaCurvaFallback(new double[]{-8.116169, -35.270785}, new double[]{-8.116215, -35.294658});
         assertTrue(rota.size() >= 30);
 
         var inicio = RastreamentoPedidoService.interpolar(rota, 0.0, false);
         assertEquals(0, inicio.velocidadeKmh());
-        assertEquals(-8.1185, inicio.lat(), 0.0001);
+        assertEquals(-8.116169, inicio.lat(), 0.0001);
 
         var meio = RastreamentoPedidoService.interpolar(rota, 0.5, true);
         assertTrue(meio.velocidadeKmh() > 0);
         assertEquals(0.5, meio.progresso(), 0.01);
 
         var fim = RastreamentoPedidoService.interpolar(rota, 1.0, false);
-        assertEquals(-8.0525, fim.lat(), 0.0001);
+        assertEquals(-8.116215, fim.lat(), 0.0001);
+    }
+
+    @Test
+    void placasSeguemPadraoMercosulERestaurantesFicamEmVitoriaDeSantoAntao() {
+        for (String[] v : RastreamentoPedidoService.VEICULOS) {
+            assertTrue(v[1].matches("^[A-Z]{3}[0-9][A-Z][0-9]{2}$"), "Placa fora do padrão Mercosul: " + v[1]);
+        }
+        RastreamentoPedidoService.COORDS_RESTAURANTES.forEach((nome, coord) -> {
+            assertTrue(coord[0] < -8.08 && coord[0] > -8.16, "Latitude fora de Vitória de Santo Antão para " + nome);
+            assertTrue(coord[1] < -35.24 && coord[1] > -35.34, "Longitude fora de Vitória de Santo Antão para " + nome);
+        });
     }
 
     @Test
